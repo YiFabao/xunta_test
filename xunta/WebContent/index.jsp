@@ -137,7 +137,7 @@
   		//创建websocket
   		var count=0;
 
-	    var webSocket = new WebSocket('ws://192.168.234.129:8080/xunta//ws/websocket');
+	    var webSocket = new WebSocket('ws://192.168.234.129:8080/ws/websocket');
 	    
 	    webSocket.onerror = function(event) {
 	  		console.log("connet websocket failure");

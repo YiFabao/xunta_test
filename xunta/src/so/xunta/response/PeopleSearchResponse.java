@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import so.xunta.localcontext.LocalContext;
 import so.xunta.people.newest.PageData_Newest;
+import so.xunta.people.newest.SearchPeopSpecify;
 import so.xunta.people.newest.SearchPeople_Newest;
 import so.xunta.people.relevant.PageData_Relevant;
 import so.xunta.people.relevant.SearchPeople_Relevant;
@@ -42,15 +43,8 @@ public class PeopleSearchResponse extends HttpServlet {
 		sV.searchKeywords = request.getParameter("searchKeywords");// 获得搜索关键词.
 		sV.IP = request.getRemoteAddr();//获取IP地址
 		
-		//prt("IP:" + sV.IP);
-		// sV.IP=request.getHeader("x-forwarded-for");
-		// prt("x-forwarded-for:"+sV.IP);
-		// sV.IP=request.getHeader("user-agent");
-		// prt("user-agent:"+sV.IP);
-		// prt("searchKeywords1:"+sV.searchKeywords);
-		// prt("searchKeywords1-urldecoded:"+java.net.URLDecoder.decode(sV.searchKeywords));
-		// prt("searchKeywords1-binarytohexstring:"+BinaryToHexString(searchKeywords.getBytes()));
-		// prt("searchkeywords1-urlencoded:"+java.net.URLEncoder.encode(searchKeywords));
+		sV.post_url=request.getParameter("post_url");
+	
 
 		
 		if (sV.searchKeywords == null) {
@@ -91,7 +85,15 @@ public class PeopleSearchResponse extends HttpServlet {
 		
 		if (sV.searchMode.equals("newest")) {// 两种搜索模式的分支点.
 			long t3=System.currentTimeMillis();
-			call_SearchplusPageData_Newest(request, response, sV);
+			if(sV.post_url!=null&&!"".equals(sV.post_url))
+			{
+				System.out.println("搜索特定");
+				call_SearchPeopleSpecify(request,response,sV);
+			}else
+			{
+				call_SearchplusPageData_Newest(request, response, sV);
+			}
+		
 			long t4=System.currentTimeMillis();
 			System.out.println("call_SearchplusPageData_newest 用时:"+(t4-t3));
 		} else {
@@ -121,13 +123,28 @@ public class PeopleSearchResponse extends HttpServlet {
 			
 			WsManager.searchList.add(json);//将用户的搜索添加到自己定义的搜索词当中，以便后期随机显示
 			System.out.println(json);
-			WsManager.getInstance().broadcast(json);//给所有在线的用户广播
-			System.out.println("//给所有在线的用户广播");
+			if(sV.post_url!=null&&!"".equals(sV.post_url))
+			{
+				System.out.println("微博用户");
+			}else
+			{
+				WsManager.getInstance().broadcast(json);//给所有在线的用户广播
+				System.out.println("//给所有在线的用户广播");
+			}
 			
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		Write2XuntaVisitLog.addLog(sV.IP, sV.searchKeywords, sV.searchMode, "PeopelSearchResponse()",(int)usedTime);
+		
+		
+		if(sV.post_url!=null&&!"".equals(sV.post_url))
+		{
+			Write2XuntaVisitLog.addLog(sV.IP, sV.post_url, sV.searchMode, "PeopelSearchResponse()",(int)usedTime);
+		}else
+		{
+			Write2XuntaVisitLog.addLog(sV.IP, sV.searchKeywords, sV.searchMode, "PeopelSearchResponse()",(int)usedTime);
+
+		}
 	}
 
 
@@ -192,6 +209,38 @@ public class PeopleSearchResponse extends HttpServlet {
 		response.setContentType("text/html;charset=UTF-8");
 		dispatch(LocalContext.jspFilePath + "pSearchResult_Relevant.jsp", request, response);
 	}
+	
+	
+	//搜索特定的一条贴子,根据url
+		void call_SearchPeopleSpecify(HttpServletRequest request, HttpServletResponse response, PeopleSearchVars sV) {
+			try {
+			
+			SearchPeopSpecify.searchPeople(sV);// 执行一次搜索,返回的AuthorRanking数据放在sV中.
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			// System.out.println("AcceptPeopleSearchRequest-执行searchPeople之后:" +
+			// (System.currentTimeMillis() - sV.begin) + "ms");
+
+			try {
+				sV.pageData_newest = new PageData_Newest(sV);
+			} catch (NumberFormatException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}// ;currentPageNo取得某页的页面数据.
+
+			sV.pageData_newest.setSearchKeywords(sV.searchKeywords);// 保留当前的搜索关键词,在结果中仍然出现.
+
+			request.setAttribute("pageData", sV.pageData_newest);
+			request.setAttribute("timepoint",sV.timepoint);
+
+			response.setContentType("text/html;charset=UTF-8");
+			dispatch(LocalContext.jspFilePath + "pSearchResult_Newest.jsp", request, response);
+		}
+	
 
 	// 一段标准转发至jsp页面的代码,含异常处理:
 	void dispatch(String jspPage, HttpServletRequest request, HttpServletResponse response) {

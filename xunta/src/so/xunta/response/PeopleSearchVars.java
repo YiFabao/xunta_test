@@ -23,6 +23,7 @@ public class PeopleSearchVars {
 	public String searchMode;
 	public String pageNo;
 	public String IP;
+	public String post_url;
 	public long beginTime;
 	
 	public Query query;

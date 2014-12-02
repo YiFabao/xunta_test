@@ -21,8 +21,17 @@ public class DocData_Newest implements Comparable{
 	public DocData_Newest(int docId,float score,Document doc,Query query) throws IOException{
 		//Document doc=searcher.doc(docId);
 		this.content=doc.get("index_content");
+		System.out.println("内容:"+content);
+		
 		//this.highlightedContent=SearchMethods.highLighter(this.content,query,15,8);
+		
 		this.highlightedContent=SearchMethods.highLighter(this.content,query,15,8);//query参数仅用于高亮显示.
+		if(this.highlightedContent==null||"".equals(this.highlightedContent))
+		{
+			this.highlightedContent=this.content;
+		}
+		System.out.println("高亮："+this.highlightedContent);
+		
 		timeStamp=Long.parseLong(doc.get("index_publishtimestamp"));//把文档中字符型时间戳转换成long型. 
 		//有人提建议说  yyyy/MM/dd HH:mm:ss格式的日期不好 改yyyy-MM-dd HH:mm:ss 2014/11/10 易
 		this.Date=new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date(timeStamp));
