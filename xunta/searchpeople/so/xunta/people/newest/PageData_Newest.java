@@ -119,8 +119,16 @@ public class PageData_Newest {
 				j++;
 				if (j <= docLines_perAuthor) {// 搜索结果页上,每个作者需要显示的文档内容.
 					doc = sV.searcher.doc(docId);
-					DocData_Newest docData_newest = new DocData_Newest(docId, score_docid.getKey(), doc, sV.query);
-					authorInfo_List.get(i).authorDocData_Set.add(docData_newest);// 将刚生成的docdata放入每个作者的authordocdata-set.
+					if(sV.post_url!=null&&!"".equals(sV.post_url))
+					{
+						DocData_Newest docData_newest = new DocData_Newest(docId, score_docid.getKey(), doc, sV.query,"yifabao");
+						authorInfo_List.get(i).authorDocData_Set.add(docData_newest);// 将刚生成的docdata放入每个作者的authordocdata-set.
+					}else
+					{
+						DocData_Newest docData_newest = new DocData_Newest(docId, score_docid.getKey(), doc, sV.query);
+						authorInfo_List.get(i).authorDocData_Set.add(docData_newest);// 将刚生成的docdata放入每个作者的authordocdata-set.
+					}
+				
 				}
 			
 

@@ -43,7 +43,7 @@ public class PeopleSearchResponse extends HttpServlet {
 		sV.searchKeywords = request.getParameter("searchKeywords");// 获得搜索关键词.
 		sV.IP = request.getRemoteAddr();//获取IP地址
 		
-		sV.post_url=request.getParameter("post_url");
+	
 	
 
 		
@@ -84,6 +84,7 @@ public class PeopleSearchResponse extends HttpServlet {
 		}
 		
 		if (sV.searchMode.equals("newest")) {// 两种搜索模式的分支点.
+			sV.post_url=request.getParameter("post_url");
 			long t3=System.currentTimeMillis();
 			if(sV.post_url!=null&&!"".equals(sV.post_url))
 			{
@@ -91,6 +92,7 @@ public class PeopleSearchResponse extends HttpServlet {
 				call_SearchPeopleSpecify(request,response,sV);
 			}else
 			{
+				sV.post_url="";
 				call_SearchplusPageData_Newest(request, response, sV);
 			}
 		
@@ -123,6 +125,7 @@ public class PeopleSearchResponse extends HttpServlet {
 			
 			WsManager.searchList.add(json);//将用户的搜索添加到自己定义的搜索词当中，以便后期随机显示
 			System.out.println(json);
+		
 			if(sV.post_url!=null&&!"".equals(sV.post_url))
 			{
 				System.out.println("微博用户");
