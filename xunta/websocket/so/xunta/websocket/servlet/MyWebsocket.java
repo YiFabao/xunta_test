@@ -23,7 +23,8 @@ public class MyWebsocket extends MessageInbound {
 	@Override
 	protected void onTextMessage(CharBuffer arg0) throws IOException {
 		//不做任何处理
-		System.out.println("收到客户端的消息");
+		System.out.println("非法连接，关闭该用户连接");
+		WsManager.getInstance().removeSubscriber(this);
 /*		 //收取客户端发来的消息 
 		System.out.println("来自客户端的消息："+arg0);
 		//将该消息推到所有客户端

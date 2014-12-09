@@ -59,9 +59,9 @@
 						<li id="tab2" class="active">
 							<a href="javascript:js_post('<%=basePath%>author_profile?author=${pageData.author}&site=${pageData.site}&searchMode=all&searchKeywords=${pageData.searchKeywords}')">全部</a>
 						</li>
-						<!-- <li id="tab3" class="">
+						 <li id="tab3" class="">
 							<a>知识图谱</a>
-						</li> -->
+						</li>
 					</ul>
 					<!-- /搜索/全部 -->
 					<!-- 搜索结果:作者文档的标题/正文 -->
@@ -274,7 +274,7 @@
 			console.log($("#tab2").attr("class"));
 			//将搜索高亮显示去掉
 			console.log($("#tab2").attr("class",""));
-			console.log(this);
+			//console.log(this);
 			$("#tab3").attr("class","active");
 			//将显示内容清空
 			$(".user-tab-content").html("");

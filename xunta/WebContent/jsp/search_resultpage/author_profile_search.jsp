@@ -66,9 +66,9 @@
 							<!-- 下面的keywords在搜索all时本不需要,但为了保持兼容性而保留 -->
 							<a href="javascript:js_post('<%=basePath%>author_profile?author=${pageData.author}&site=${pageData.site}&searchMode=all&searchKeywords=${pageData.searchKeywords}')">全部</a>
 						</li>
-						<!-- <li id="tab3" class="">
+						<li id="tab3" class="">
 							<a>知识图谱</a>
-						</li> -->
+						</li>
 					</ul>
 					<!-- /搜索/全部 -->
 
@@ -407,6 +407,7 @@ $("#tab3").click(function(){
 	showWordCloud("${pageData.author}","${pageData.site}");
 	console.log("词云图生成完毕");
 });
+
 
 
 </script>

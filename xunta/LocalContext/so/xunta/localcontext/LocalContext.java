@@ -3,9 +3,9 @@ package so.xunta.localcontext;
 public class LocalContext {
 	public static String jspFilePath="/jsp/search_resultpage/";
 	
-/*	//本地测试的本地索引文件路径
-	public static String root="d:/";
-	public static String indexFilePath="D:\\data\\luceneIndex_new\\travel";*/
+	//本地测试的本地索引文件路径
+/*	public static String root="d:/";
+	public static String indexFilePath="E:\\备份\\luceneIndex_8g\\travel";*/
 	
 	//上传到阿里云服务器时，用这个路径
 	public static String root="/";
