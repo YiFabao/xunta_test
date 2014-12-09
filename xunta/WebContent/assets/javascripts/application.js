@@ -151,13 +151,21 @@ $(function() {
 		}
 		
 		//发送post请求，获取json数据
-		$.post("http://xunta.so/DataFactory/wordCloud", {
+		$.post("http://localhost:8080/DataFactory/wordCloud", {
 			"author_name" : author_name,
 			"site":site
 		}, function(data, err) {
 			//生成dataset_nodes;
 			console.log(data);
 			var dataset_nodes = data.nodes;
+			
+			if(dataset_nodes.length==0)
+			{
+				$(".user-tab-content").html("<div id='tip'><b>该用户数据过少，词云图无法生成</b></div>");
+				$("#content").html("<div id='tip'><b>该用户数据过少，词云图无法生成</b></div>");
+				return;
+			}
+			
 			var edges = data.edges;
 			var dataset_edges = [];
 			//生成dataset_edges

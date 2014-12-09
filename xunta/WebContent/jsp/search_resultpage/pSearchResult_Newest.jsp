@@ -89,29 +89,21 @@
 			<div class="row result-item-user-row" data-author="${authorInfo.author}" data-site="${authorInfo.site}">
 				<!-- 作者名/网站名/得分 -->
 				<a href="javascript:js_post_open('author_profile?author=${authorInfo.author}&site=${authorInfo.site}&searchMode=newest&searchKeywords=${pageData.searchKeywords}')">	
-					
 					<div class="col-md-2 col-user">
-					
 						<font color="black">
 							<span class="glyphicon glyphicon-user"></span>
 						</font>
-						
-						<label>
+						<label onclick="js_post_open('author_profile?author=${authorInfo.author}&site=${authorInfo.site}&searchMode=newest&searchKeywords=${pageData.searchKeywords}')">
 							<font color="black">${authorInfo.author}</font>
 						</label>
-						
 						<span class="site">
 							${authorInfo.site}
 						</span>
-						
 						<span class="total-score" style="display: none">
 							(${authorInfo.totalScore})
 						</span>
-						
 						<br />
-					
 					</div>
-					
 				</a>
 				
 				<!-- 作者文章 -->

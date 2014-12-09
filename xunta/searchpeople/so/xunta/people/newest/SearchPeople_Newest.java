@@ -124,9 +124,10 @@ public class SearchPeople_Newest {
 		p.prt("作者总数-totalAuthors:" + sV.totalAuthors + "个");// TODO 要删掉
 		p.prt("文档总数-totalDocs:" + sV.totalDocs + "个");// TODO 要删掉
 
-		if(average!=0)
+		if(sV.totalDocs!=0)
 		{
-			sV.query = SearchMethods.createQuery(sV.searchKeywords,"yifabao");
+			//sV.query = SearchMethods.createQuery(sV.searchKeywords,"yifabao");
+			sV.query = SearchMethods.createQuery(sV.searchKeywords);
 			sV.timepoint = beginPublishDate;
 		}
 

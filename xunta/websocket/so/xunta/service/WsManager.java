@@ -49,26 +49,22 @@ public class WsManager {
 		System.out.println("广播方法里："+json);
 
 		try {
-			System.out.println("添加前："+WsManager.search_history.size());
+
 			WsManager.search_history.add(json);
-			System.out.println("添加后:"+WsManager.search_history.size());
+
 			if(WsManager.search_history.size()>20)
 			{
 				WsManager.search_history.remove(0);
 			}
 
-			System.out.println("准备for");
+
 			for(MessageInbound ws:WebSocketQueue.getInstance().wslist)
 			{
-				System.out.println("打印："+ws);
-				
-					
+
 					MyWebsocket mw=(MyWebsocket)ws;
-					System.out.println(mw);
-					
-					
+
 					mw.getWsOutbound().writeTextMessage(CharBuffer.wrap(json.toString()));
-					mw.print();
+				
 			}
 		} catch (IOException e) {
 			System.out.println("发送消息出错："+e.getMessage());
@@ -106,14 +102,12 @@ public class WsManager {
 				f=40;
 			}
 			long m=(long)(Math.random()*f*1000);
-			System.out.println("等待:"+(m/1000)+"秒");
 			try {
 				Thread.sleep(m);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println("循环广播一次"+new Date()+" 当前用户有："+WsManager.getInstance().getNumOfUser());
 			int c=(int)(Math.random()*(searchList.size()));
 			JSONObject msg=searchList.get(c);
 			if(msg.has("time"))

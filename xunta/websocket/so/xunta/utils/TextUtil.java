@@ -24,8 +24,7 @@ public class TextUtil {
 				if(!"".equals(line.trim()))
 				{
 					String[] ss=line.split(",");
-					System.out.println(ss[0]+"==>"+ss[1]);
-					
+					//System.out.println(ss[0]+"==>"+ss[1]);
 					JSONObject json=new JSONObject();
 					json.append("ipaddress", ss[0]);
 					json.append("searchKeywords",ss[1]);
