@@ -8,7 +8,7 @@
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 	
 	String timepoint=(String)request.getAttribute("timepoint");
-
+	
 %>
 
 <! DOCTYPE html >
