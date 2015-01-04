@@ -52,7 +52,7 @@ public class Register extends HttpServlet {
 			System.out.println("添加用户成功");
 			//将用户保存到session中
 			request.getSession().setAttribute("user",user);
-			response.sendRedirect(request.getContextPath()+"/index.jsp");
+			response.sendRedirect(request.getContextPath()+"jsp/topic/topicmatch.jsp");
 		}
 		else
 		{

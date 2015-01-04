@@ -31,7 +31,7 @@
 		<div class="container">
 			<h2>用户登 录</h2>
 			${requestScope.errorMsg }
-			<form method="post" action="servlet/Login">
+			<form method="post" action="servlet/login">
 				<input type="text" name="xunta_username" value="${xunta_username}"><br/>
 				<input type="password" name="password"><br/>
 				<input type="checkbox" name="checkbox">记住我<br/>

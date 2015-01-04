@@ -131,7 +131,7 @@ public class WeiboLogin extends HttpServlet {
 	}
 	
 	public static void main(String[] args) {
-		String code="c211801de5e6e1481ff9cbaa5958476e";
+		String code="981371869f773cabfe7c57966bc18473";
 		weibo4j.model.User u=null;
 		Oauth oauth = new Oauth();
 		AccessToken accessToken=null;

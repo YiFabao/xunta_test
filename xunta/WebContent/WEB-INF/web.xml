@@ -52,4 +52,32 @@
   	<servlet-name>topic</servlet-name>
   	<url-pattern>/servlet/topic</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+      <servlet-name>local_login</servlet-name>
+      <servlet-class>so.xunta.servlet.Login</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>local_login</servlet-name>
+      <url-pattern>/servlet/login</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+      <servlet-name>register_validate_code</servlet-name>
+      <servlet-class>so.xunta.servlet.ValidateCodeServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>register_validate_code</servlet-name>
+      <url-pattern>/servlet/validateCodeServlet</url-pattern>
+  </servlet-mapping>
+  
+    <servlet>
+      <servlet-name>register</servlet-name>
+      <servlet-class>so.xunta.servlet.Register</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>register</servlet-name>
+      <url-pattern>/servlet/register</url-pattern>
+  </servlet-mapping>
+  
 </web-app>
