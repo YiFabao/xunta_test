@@ -30,7 +30,7 @@
 										<a href="javascript:void(0);">关注微信官方账号</a>
 									</li>
 									<li id="img_weixin" style="display:none">
-											<a href="javascript:void(0);"><img src="assets/images/qrcode_for_gh_43f17f8952ea_258.jpg" width=80px height=80px></img></a>
+											<a href="javascript:void(0);"><img src="assets/images/qrcode_for_gh_43f17f8952ea_258.jpg" width="80px" height="80px"/></a>
 									</li>
 								</ul>
 						</li>
