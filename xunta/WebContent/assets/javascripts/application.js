@@ -151,7 +151,7 @@ $(function() {
 		}
 		
 		//发送post请求，获取json数据
-		$.post("http://localhost:8080/DataFactory/wordCloud", {
+		$.post("http://xunta.so/DataFactory/wordCloud", {//本地 改为:http://localhost:8080/DataFactory/wordCloud
 			"author_name" : author_name,
 			"site":site
 		}, function(data, err) {

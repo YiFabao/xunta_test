@@ -1,6 +1,6 @@
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 
-<%@ include file="/inc/_00meta.inc"%>
+<%@include file="/inc/_00meta.inc"%>
 
 <%
 	String path = request.getContextPath();
@@ -11,7 +11,7 @@
 	
 %>
 
-<! DOCTYPE html >
+<!DOCTYPE html >
 
 <html lang="zh-CN">
 

@@ -1,17 +1,16 @@
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%@ include file="/inc/_00meta.inc"%>
+<%@page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@include file="/inc/_00meta.inc"%>
 <%
 	String path = request.getContextPath();
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 	String ipaddress=request.getRemoteAddr();
 %>
 
-<! DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" >
+<!DOCTYPE html >
 <html lang="zh-CN">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<!-- base href="http://42.121.136.225:80/"-->
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta name="xunta.so" content="寻TA网">
 		<meta name="description" content="寻TA网_跨社区旅游搜人引擎">
@@ -117,7 +116,7 @@
 										<input style="width: 450px;"
 											class="form-control search-keywords" type="text"
 											name="searchKeywords" placeholder="请输入搜索关键词"
-											value="${pageData.getSearchKeywords()}" " />
+											value="${pageData.getSearchKeywords()}" />
 										<span class="input-group-btn">
 											<button class="btn btn-primary" type="submit">
 												.SO

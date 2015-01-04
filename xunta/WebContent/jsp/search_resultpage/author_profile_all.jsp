@@ -1,16 +1,15 @@
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%@ include file="/inc/_00meta.inc"%>
+<%@page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@include file="/inc/_00meta.inc"%>
 <%
 	String path = request.getContextPath();
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 	String ipaddress=request.getRemoteAddr();
 %>
-<! DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" >
+<!DOCTYPE html>
 <html lang="zh-CN">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<!-- base href="http://42.121.136.225:80/"-->
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta name="xunta.so" content="寻TA网">
 		<meta name="description" content="寻TA网_跨社区旅游搜人引擎">
@@ -24,7 +23,7 @@
 		<script type="text/javascript" src="<%=basePath %>assets/d3/d3.js"></script>
 	</head>
 	<body>
-		<%@ include file="top_nav_bar.jsp"%>
+		<%@include file="top_nav_bar.jsp"%>
 		<font class="switch" color="gray">..</font>
 		<br>
 

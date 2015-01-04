@@ -1,10 +1,10 @@
-<%@ page language="java" import="java.util.*,so.xunta.entity.*" pageEncoding="utf-8"%>
+<%@page language="java" import="java.util.*,so.xunta.entity.*" pageEncoding="utf-8"%>
 
 <%@page import="so.xunta.localcontext.LocalContext"%>
 
 <%@page import="so.xunta.ipseeker.IPSeeker"%>
 
-<%@ include file="/inc/_00meta.inc"%>
+<%@include file="/inc/_00meta.inc"%>
 
 <%
 	String path = request.getContextPath();
@@ -18,10 +18,9 @@
 		cmd=null;
 	}
 %>
-
 <!DOCTYPE HTML>
 <html>
-	<head>
+<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta name="xunta.so" content="寻TA网">
 		<meta name="description" content="寻TA网_跨社区旅游搜人引擎">
@@ -32,112 +31,104 @@
 		<link rel="stylesheet" href="<%=basePath%>assets/stylesheets/index.css" />
 
 	</head>
-	
-	<body>
-	<%@ include file="jsp/search_resultpage/top_nav_bar.jsp"%>
-		<div id="container">
-			<div id="header"></div>
-			<div id="body">
-				
-				<form class="form-inline search-form" role="form"
-					action="<%=basePath%>psearch" method="get">
-					<input type="hidden" name="searchTime" value="30days" />
-					<input type="hidden" name="searchMode" value="newest">
+<body>
+<%@ include file="jsp/search_resultpage/top_nav_bar.jsp"%>
+	<div id="container">
+		<div id="header"></div>
+		<div id="body">
+			
+			<form class="form-inline search-form" role="form"
+				action="<%=basePath%>psearch" method="get">
+				<input type="hidden" name="searchTime" value="30days" />
+				<input type="hidden" name="searchMode" value="newest">
 
-					<table width="450" border="0" align="center" cellpadding="2"
-						cellspacing="2">
-						<tr>
+				<table width="450" border="0" align="center" cellpadding="2"
+					cellspacing="2">
+					<tr>
 
-							<td width="700" align="center">
-								<img src="<%=basePath%>/assets/images/xunta_logo_small.jpg"
-									width="250" height="" align="center"><span id="test">(测试版)</span>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<div class="row">
-									<div class="col-lg-4">
-										<div class="input-group">
-											<label class="sr-only" for="keyword">
-												搜索关键词
-											</label>
-											<input style="width: 450px;"
-												class="form-control search-keywords" type="text"
-												name="searchKeywords"
-												placeholder="输入(多个)知识点关键词，寻找旅游达人、组织者、导游及结伴消息。"
-												value="${pageData.searchKeywords}" />
-											<span class="input-group-btn">
-												<button id="search" class="btn btn-primary" type="submit">
-													.SO
-												</button>
-											</span>
-										</div>
-										<!-- /input-group -->
+						<td width="700" align="center">
+							<img src="<%=basePath%>/assets/images/xunta_logo_small.jpg"
+								width="250" height="" align="center"><span id="test">(测试版)</span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="row">
+								<div class="col-lg-4">
+									<div class="input-group">
+										<label class="sr-only" for="keyword">
+											搜索关键词
+										</label>
+										<input style="width: 450px;"
+											class="form-control search-keywords" type="text"
+											name="searchKeywords"
+											placeholder="输入(多个)知识点关键词，寻找旅游达人、组织者、导游及结伴消息。"
+											value="${pageData.searchKeywords}" />
+										<span class="input-group-btn">
+											<button id="search" class="btn btn-primary" type="submit">
+												.SO
+											</button>
+										</span>
 									</div>
-									<!-- /.col-lg-4 -->
+									<!-- /input-group -->
 								</div>
-							</td>
-						</tr>
-					</table>
-				</form>
-				<br />
-		
-					<div id="text" align="center" color="#FF5809">大家在搜什么</div>
-					
-					<div id="history_searchWord">
-					</div>
-			</div>
-			<div id="footer">
-				<div id="logo" align="center">
-					<img src="<%=basePath%>assets/images/LvYoulogo/lvyoulogo.jpg" width="1024" height="60" border="0" usemap="#Map">
-					<map name="Map">
-					  <area shape="rect" coords="9,16,62,45" href="http://www.ctrip.com/?utm_source=baidu&utm_medium=cpc&utm_campaign=baidu81&campaign=CHNbaidu81&adid=index&gclid=&isctrip=T " target="_blank">
-					<area shape="rect" coords="65,15,117,45" href="http://www.qunar.com/" target="_blank">
-					<area shape="rect" coords="126,18,181,44" href="http://www.elvxing.net/" target="_blank">
-					  <area shape="rect" coords="191,17,253,44" href="http://www.lvmama.com/" target="_blank">
-					  <area shape="rect" coords="260,16,293,45" href="http://www.lvye.cn/" target="_blank">
-					<area shape="rect" coords="301,18,353,45" href="http://www.qyer.com/" target="_blank">
-					  <area shape="rect" coords="363,15,431,45" href="http://www.sanfo.com/" target="_blank">
-					    <area shape="rect" coords="439,18,495,44" href="http://travel.sina.com.cn/" target="_blank">
-					    <area shape="rect" coords="502,18,550,44" href="http://www.weibo.com" target="_blank">
-					    <area shape="rect" coords="561,17,618,45" href="http://www.tuniu.com/" target="_blank">
-					      <area shape="rect" coords="623,22,688,47" href="http://www.douban.com/" target="_blank"><area shape="rect" coords="692,20,747,46" href="http://www.traveler365.com/" target="_blank">
-					<area shape="rect" coords="752,19,798,43" href="http://bendi.niwota.com/" target="_blank">
-					  <area shape="rect" coords="804,17,847,45" href="http://www.tianya.cn/" target="_blank"><area shape="rect" coords="852,21,917,45" href="http://bbs.wanjingchina.com/forum.php" target="_blank">
-					<area shape="rect" coords="921,22,982,45" href="http://bbs.163.com/" target="_blank">
-					<area shape="rect" coords="987,18,1014,45" href="http://www.doyouhike.net/" target="_blank">
-					</map>
+								<!-- /.col-lg-4 -->
+							</div>
+						</td>
+					</tr>
+				</table>
+			</form>
+			<br />
+	
+				<div id="text" align="center" color="#FF5809">大家在搜什么</div>
+				
+				<div id="history_searchWord">
 				</div>
-				<div id="info">
-					<div align="center">
-						<font size="2">Powered by <a href="http://www.aigine.com"
-							target="_blank">Aigine InfoTech Co.</a> </font>
-					</div>
-					<div align="center">
-						<a href="http://www.miitbeian.gov.cn/"><font size="1">沪ICP备13012815-1号</font>
-						</a>
-					</div>
-					<div align="center">
-						<font size="2">© XunTa.so 2014</font>
-					</div>
+		</div>
+		<div id="footer">
+			<div id="logo" align="center">
+				<img src="<%=basePath%>assets/images/LvYoulogo/lvyoulogo.jpg" width="1024" height="60" border="0" usemap="#Map">
+				<map name="Map">
+				  <area shape="rect" coords="9,16,62,45" href="http://www.ctrip.com/?utm_source=baidu&utm_medium=cpc&utm_campaign=baidu81&campaign=CHNbaidu81&adid=index&gclid=&isctrip=T " target="_blank">
+				<area shape="rect" coords="65,15,117,45" href="http://www.qunar.com/" target="_blank">
+				<area shape="rect" coords="126,18,181,44" href="http://www.elvxing.net/" target="_blank">
+				  <area shape="rect" coords="191,17,253,44" href="http://www.lvmama.com/" target="_blank">
+				  <area shape="rect" coords="260,16,293,45" href="http://www.lvye.cn/" target="_blank">
+				<area shape="rect" coords="301,18,353,45" href="http://www.qyer.com/" target="_blank">
+				  <area shape="rect" coords="363,15,431,45" href="http://www.sanfo.com/" target="_blank">
+				    <area shape="rect" coords="439,18,495,44" href="http://travel.sina.com.cn/" target="_blank">
+				    <area shape="rect" coords="502,18,550,44" href="http://www.weibo.com" target="_blank">
+				    <area shape="rect" coords="561,17,618,45" href="http://www.tuniu.com/" target="_blank">
+				      <area shape="rect" coords="623,22,688,47" href="http://www.douban.com/" target="_blank"><area shape="rect" coords="692,20,747,46" href="http://www.traveler365.com/" target="_blank">
+				<area shape="rect" coords="752,19,798,43" href="http://bendi.niwota.com/" target="_blank">
+				  <area shape="rect" coords="804,17,847,45" href="http://www.tianya.cn/" target="_blank"><area shape="rect" coords="852,21,917,45" href="http://bbs.wanjingchina.com/forum.php" target="_blank">
+				<area shape="rect" coords="921,22,982,45" href="http://bbs.163.com/" target="_blank">
+				<area shape="rect" coords="987,18,1014,45" href="http://www.doyouhike.net/" target="_blank">
+				</map>
+			</div>
+			<div id="info">
+				<div align="center">
+					<font size="2">Powered by <a href="http://www.aigine.com"
+						target="_blank">Aigine InfoTech Co.</a> </font>
+				</div>
+				<div align="center">
+					<a href="http://www.miitbeian.gov.cn/"><font size="1">沪ICP备13012815-1号</font>
+					</a>
+				</div>
+				<div align="center">
+					<font size="2">© XunTa.so 2014</font>
 				</div>
 			</div>
-		</11111>
-				<script
-			src="<%=basePath%>assets/javascripts/jquery-1.10.2.min.js">
-</script>
-		<script src="<%=basePath%>assets/bootstrap/3.0.0/js/bootstrap.js">
-</script>
-
-		<script type="text/javascript"
-			src="<%=basePath%>assets/javascripts/application.js">
-</script>
-
+		</div>
+	</div>
+<script src="<%=basePath%>assets/javascripts/jquery-1.10.2.min.js"></script>
+<script src="<%=basePath%>assets/bootstrap/3.0.0/js/bootstrap.js"></script>
+<script type="text/javascript" src="<%=basePath%>assets/javascripts/application.js"></script>
 <script type="text/javascript">
   		//创建websocket
   		var count=0;
 
-	    var webSocket = new WebSocket('ws://localhost:8080/xunta/ws/websocket');
+	    var webSocket = new WebSocket('ws://xunta.so/ws/websocket');//本地改为:ws://localhost:8080/xunta/ws/websocket
 	    
 	    webSocket.onerror = function(event) {
 	  		console.log("connet websocket failure");
@@ -197,7 +188,5 @@
 	      console.log("欢迎试用寻Ta搜人引擎……");
 
   </script>
-
-	</body>
-
+</body>
 </html>
