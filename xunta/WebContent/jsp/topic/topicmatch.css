@@ -1,0 +1,536 @@
+*{
+	margin:0px;
+	padding:0px;
+}
+/*全局布局*/
+.top{
+	width:100%;
+	height:48px;
+	background-color:white;
+	-webkit-box-shadow: 1px 1px 10px #cccccc;
+	-moz-box-shadow: 1px 1px 10px  #cccccc;
+	box-shadow: 1px 1px 10px #cccccc;
+	position:fixed;
+	z-index:2;
+}
+.body{
+	width:100%;
+	min-height:1300px;
+	position:relative;
+	top:55px;
+	z-index:1;
+	background-color:lightgray;
+}
+.footing
+{
+	width:100%;
+	height:100px;
+	background-color:green;
+}
+.top_content{
+	width:1024px;
+	height:48px;
+	margin:0px auto;
+}
+.body_content{
+	width:1024px;
+	min-height:1300px;
+	margin:0px auto;
+	background-color:white;
+
+}
+.top_logo{
+	width:140px;
+	height:48px;
+	margin:0;
+	float:left;
+	background-color: aqua;
+}
+.top_logo img{
+	width:140px;
+	height:48px;
+	margin:0px auto;
+}
+
+.top_global_nav {
+	height:48px;
+	width:884px;
+	float:left;
+}
+
+
+.menu,
+.menu ul
+.menu li
+.menu a{
+	margin:0;
+	padding:0;
+	border:none;
+	outline: none;
+}
+
+.menu{
+	width:884px;
+	height:48px;
+}
+
+.menu li{
+	position: relative;
+	list-style: none;
+	float:left;
+	height:40px;
+	display: block;
+}
+
+.menu ul{
+	position:absolute;
+	top:48px;
+	opacity: 0.1;
+	background-color:white;
+	border-radius: 0 0 5px 5px;
+	transition:opacity 0.25s ease 0.1s;
+}
+.top_profile ul{
+	left:20px;
+}
+li.top_profile
+{
+	margin-left:300px;
+}
+
+.userInfo {
+	background-color: #8fde62;
+}
+.userInfo img{
+	width:36px;
+	height:36px;
+	float:left;
+	border-radius: 36px;
+	box-shadow:1px 1px 5px rgba(0,0,0,0.6);
+}
+.userInfo span{
+	display: block;
+	float:left;
+	color:orange;
+	line-height: 28px;
+	margin-top: 5px;
+	margin-left:8px;
+}
+
+.menu li:hover>ul{
+	opacity:1;
+}
+
+.menu ul li{
+	height:0;
+	overflow:hidden;
+	padding:0;
+	transition:height 0.25s ease 0.1s;
+}
+.menu li:hover >ul li{
+	height:36px;
+	overflow:visible;
+	padding:0;
+}
+
+.menu ul li a{
+	width:100px;
+	padding:4px 0 4px 40px;
+	margin:0;
+	border:none;
+	border-bottom:1px solid beige;
+}
+.menu ul li:last-child a{
+	border:none;
+}
+.menu li a{
+	display:block;
+	margin:10px 0;
+	padding:0px 18px;
+	line-height: 28px;
+	text-decoration: none;
+	font-weight: bold;
+	font-size:16px;
+	color:dodgerblue;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+	transition:color 0.2s ease-in-out;
+	border-left:1px solid darkslateblue;
+}
+.menu li:first-child a{
+	border-left: none;
+}
+
+.menu li:hover > a{
+	color:red;
+}
+.menu a.homePage{
+	background:url("images/homePage.png") no-repeat 6px;
+	background-size: 20px 20px;
+}
+.menu a.message{
+	background:url("images/msg.png") no-repeat 6px;
+	background-size: 20px 20px;
+}
+.menu a.configure{
+	background:url("images/configure.png") no-repeat 6px;
+	background-size: 20px 20px;
+}
+.menu a.signOut{
+	background:url("images/signOut.png") no-repeat 6px;
+	background-size: 20px 20px;
+}
+.menu a.writeTopic{
+	background:url("images/writeTopic.png") no-repeat 6px;
+	background-size: 20px 20px;
+}
+.menu a.recommendTopic{
+	background:url("images/recommendTopic.png") no-repeat 6px;
+	background-size: 20px 20px;
+}
+.menu a.historicalTopic{
+	background:url("images/historicalTopic.png") no-repeat 6px;
+	background-size: 20px 20px;
+}
+.menu a.searchTopic{
+	background:url("images/searchTopic.png") no-repeat 6px;
+	background-size: 20px 20px;
+}
+
+/*end ===============================================导航栏布局*/
+
+/*start==主体内容布局===================================================*/
+
+.body_content .myTopic{
+	width:1024px;
+	min-height:1300px;
+}
+
+.body_content .myTopic div.myTopic_SubPage{
+	width:1024px;
+	min-height:1300px;
+	opacity:0;
+	transition: opacity 1s,display 1s;
+	display: none;
+}
+#writeTopic{
+	opacity: 1;
+	display: block;
+}
+
+
+div.topic_input_box{
+	width:1024px;
+	height:185px;
+	background-color:white;
+	margin:0px auto;
+	position: relative;
+	border-top:1px solid lightgray;
+}
+
+div.topic_input_box span{
+	position: relative;
+	display: block;
+	left:12px;
+	top:10px;
+	width:1000px;
+}
+div.topic_input_box textarea{
+	width:600px;
+	height:80px;
+	resize: none;
+	position: relative;
+	left:12px;
+	margin-top:20px;
+	border-color: #ccc;
+	box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+	padding:8px;
+}
+#writeTopic div.line{
+	width:100%;
+	height:10px;
+	background-color:lightgray;
+}
+div.topic_input_box button{
+	padding: 0 10px 0 10px;
+	border-radius: 2px;
+	text-decoration: none;
+	text-align: center;
+	outline: none;
+	box-shadow: 0px 1px 2px rgba(0,0,0,0.25);
+	background: #ffc09f;
+	color: #fff;
+	border: 1px solid #fbbd9e;
+	cursor: pointer;
+	height: 30px;
+	line-height: 29px;
+	width:80px;
+	font-size: 14px;
+	position:relative;
+	left:12px;
+	top:5px;
+}
+
+.topic-list{
+	position: relative;
+	top:10px;
+	left:12px;;
+	width:1000px;
+
+}
+
+.topic-list table{
+	width:1000px;
+}
+.topic-list table{
+	border-radius: 4px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+	margin-bottom: 20px;
+}
+td{
+	padding:4px;
+}
+td.img{
+	top:10px;
+	width:48px;
+	padding:0px;
+}
+td img{
+	position:relative;
+	width:48px;
+	height:48px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,0.6);
+	text-align:center;
+}
+td.name{
+	font-weight: 700;
+}
+td.content{
+	font-family: 'Arial', 'Microsoft YaHei';
+	font-size:14px;
+	color:#333;
+}
+td.datetime{
+	font-family: 'Arial', 'Microsoft YaHei';
+	font-size:14px;
+	color:#333;
+}
+
+
+.webim_page{
+	width:801px;
+	height:600px;
+	top:20%;
+	contenteditable:true;
+	left:30%;
+	background-color:white;
+	position:absolute;
+	z-index: 2;
+	border-radius: 4px;
+	border:1px solid #ccc;
+	box-shadow: 1px 1px 1px rgba(0,0,0,0.15);
+	display: none;
+}
+.webim_page .search{
+	width:200px;
+	height:40px;
+}
+
+.search .search_s{
+	width:200px;
+	height:40px;
+	display: inline-block;
+	position:relative;
+}
+.search .search_s input{
+	width:180px;
+	position:absolute;
+	right:5px;
+	top:5px;
+	border: 1px #ccc solid;
+	background: #fff;
+	color: #808080;
+	padding-left: 10px;
+	height: 28px;
+	line-height: normal;
+	outline-style: none;
+	box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.15) inset;
+}
+.search_s .pos{
+	position: absolute;
+	width:26px;
+	height:26px;
+	top:7px;
+	right:7px;
+}
+.webim_page .people_list{
+	width:200px;
+	height:600px;
+	position:relative;
+	float:left;
+	border-right:1px solid #ccc;
+}
+.pos a{
+	display: inline-block;
+	width:26px;
+	height:26px;
+	text-decoration: none;
+	text-align: center;
+	line-height: 26px;
+	background-image:url("images/search_s.png");
+	background-repeat: no-repeat;
+	background-size: 26px 26px;
+	color:rgba(0,0,0,0);
+}
+
+.people_list .contacts_list{
+	height:560px;
+}
+.webim_page .dialogue_box{
+	width:600px;
+	height:600px;
+
+	position:relative;
+	float:left;
+}
+.contacts_list ul,
+.contacts_list li{
+	list-style: none;
+}
+.contacts_list li{
+	display: list-item;
+	height:40px;
+	margin-bottom: 1px;
+	text-align: match-parent;
+	transition: background-color 300ms;
+
+}
+.search .search_s{
+	position:relative;
+	display: inline-block;
+	border-bottom: 1px solid #ccc;
+}
+
+.head{
+	width:40px;
+	height:40px;
+	float:left;
+}
+.head img{
+	width:36px;
+	height:36px;
+	position: relative;
+	top:2px;
+	left:2px;
+}
+p.nick_name{
+	width:150px;
+	height:40px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	word-wrap: normal;
+	float: left;
+	color: #333;
+	text-decoration: none;
+	display: block;
+	position:relative;
+	font-size: 14px;
+	line-height:40px;
+	padding:0 5px;
+	font-family: 'Arial','Microsoft YaHei';
+}
+
+li.active
+{
+	background-color: lightgray;
+}
+
+
+.private_dialogue_body{
+	width:600px;
+	height:550px;
+}
+.private_send_box{
+	width:600px;
+	height:50px;
+}
+.sendbox_area{
+	width:600px;
+	height:50px;
+}
+.msg_input{
+	box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.15) inset;
+	border:none;
+	line-height: 18px;
+	width:590px;
+	height:40px;
+	padding:5px;
+	font: 12px/1.3 'Arial','Microsoft YaHei';
+	resize: none;
+}
+
+.private_dialogue_body .header{
+	width:600px;
+	height:40px;
+	border-bottom:1px solid #ccc;
+}
+.header .name{
+	width:200px;
+	height:30px;
+	position:relative;
+	line-height: 30px;
+	padding-right:5px;
+	top:5px;
+	left:10px;
+	overflow: hidden;
+	white-space:nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	font-family: 'Arial', 'Microsoft YaHei';
+}
+
+.private_dialogue_body .msg_bubble{
+	width:600px;
+	height:510px;
+}
+
+#mainBox {
+	width: 600px;
+	height:508px;
+	position:relative;
+	overflow: hidden;
+}
+
+#content {
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+
+.scrollDiv {
+	width:10px;
+	position: absolute;
+	top: 0;
+	background: #666;
+	border-radius: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
