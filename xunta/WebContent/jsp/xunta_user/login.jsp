@@ -37,6 +37,8 @@
 				<input type="checkbox" name="checkbox">记住我<br/>
 				<button type="submit">登  录</button>
 			</form>
+			<button class="register">注 册</button>
+			<br>
 		<div>
 			<img id="qq_login" src="assets/images/QQ/Connect_logo_3.png"/>
 			<img id="weibo_login" src="assets/images/weibo/xinlang.png"/>
@@ -53,6 +55,10 @@
 			//var redirect_uri = "http://xunta.so";
 			var  url = "https://api.weibo.com/oauth2/authorize?client_id=3793162942&response_type=code&redirect_uri="+redirect_uri;
 			window.location=url;
+		});
+		var register_node=document.getElementsByClassName("register")[0];
+		register_node.addEventListener("click",function(){
+			window.location="jsp/xunta_user/register.jsp";
 		});
 	</script>
 

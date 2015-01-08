@@ -18,11 +18,10 @@ import so.xunta.manager.impl.UserManagerImpl;
 
 public class Register extends HttpServlet {
 	UserManager userManager=new UserManagerImpl();
-	
+	private String errorMsg="";
 	public Register() {
 		super();
 	}
-
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		request.setCharacterEncoding("UTF-8");
@@ -33,6 +32,8 @@ public class Register extends HttpServlet {
 		String password=request.getParameter("password");
 		String confirm=request.getParameter("confirm");
 		String code=request.getParameter("code");
+		
+
 		//服务器端验证
 		
 		//验证通过
@@ -52,13 +53,13 @@ public class Register extends HttpServlet {
 			System.out.println("添加用户成功");
 			//将用户保存到session中
 			request.getSession().setAttribute("user",user);
-			response.sendRedirect(request.getContextPath()+"jsp/topic/topicmatch.jsp");
+			response.sendRedirect(request.getContextPath()+"/jsp/topic/topicmatch.jsp");
 		}
 		else
 		{
 			request.setAttribute("xunta_username",username);
 			request.setAttribute("email",email);
-		
+			request.setAttribute("errorMsg",errorMsg);
 			request.getRequestDispatcher("/jsp/xunta_user/register.jsp").forward(request, response);
 		}
 		//验证不通过
@@ -72,6 +73,7 @@ public class Register extends HttpServlet {
 		if(password==null||"".equals(password.trim())||confirm==null||"".equals(confirm.trim()))
 		{
 			System.out.println("密码不能为空");
+			errorMsg="密码不能为空";
 			return false;
 		}
 		
@@ -79,13 +81,16 @@ public class Register extends HttpServlet {
 			if(!password.equals(confirm))
 			{
 				System.out.println("密码与确认密码不相同");
+				errorMsg="密码与确认密码不相同";
 				return false;
 			}
 			//验证码是否相同
 			String _code=(String) request.getSession().getAttribute("code");
+			System.out.println(_code);
 			if(!code.equals(_code))
 			{
 				System.out.println("验证码错误");
+				errorMsg="验证码错误";
 				return false;
 			}
 			//验证邮件
@@ -93,21 +98,27 @@ public class Register extends HttpServlet {
 			Matcher matcher = emailPattern.matcher(email);
 			if(!matcher.find()){
 				System.out.println("邮箱不合法");
+				errorMsg="邮箱不合法";
 				return false;
 			}
 			
 			User user=userManager.findUser(username);
 			if(user!=null)
 			{
+				errorMsg="用户名已存在";
 				System.out.println("用户名已存在");
 				return false;
 			}
 			user =userManager.findUserByEmail(email);
 			if(user!=null)
 			{
+				errorMsg="邮箱已存在";
 				System.out.println("邮箱已存在");
 				return false;
 			}
+			//将验证码删除
+			request.getSession().removeAttribute("code");
+			request.removeAttribute("errorMsg");
 			return true;
 			
 			
