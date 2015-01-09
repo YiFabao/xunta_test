@@ -1,20 +1,28 @@
+//所有文档完全加载完成后执行
 window.onload=function(){
     //imgLocation("body_content","box");
     console.log("所有页面资源包括图片加载完成");
-    //单击菜单按钮切换效果
-    subMenuTagChange();
-    //用户输入想聊的话题后，点击发布
-    publishTopic();
 }
+
+//dom结构加载后执行
 window.addEventListener("DOMContentLoaded",function(){
     console.log("文档内容加载完毕");
     //创建websocket
-    createWebsocketConnect("${sessionScope.user.xunta_username}");
+    var userName=document.getElementsByName("userName")[0].value;
+    createWebsocketConnect(userName);
     console.log("创建websocket");
     //创建聊天框的滚动条
     myscroll=new addScroll('mainBox', 'content', 'scrollDiv');
-    //联系人相关
-    contactsShowStyle();
+    //给聊天框添加退出事件
+    addClickExitListener();
+    //单击菜单按钮切换效果
+    addSubMenuTagChangeListener();
+    //发起话题监听器
+    addPublishTopicListener();
+    //话题索索监听器 
+    addSearchTopicListener();
+    //联系人相关监听器
+    addContactsShowStyleListener();
 });
 
 var confirm_node=document.getElementById("confirm");
@@ -78,10 +86,6 @@ window.webimHandle=function(json){
         contentBox.style.top=-moveD+"px";
         scrollDiv.style.top=scrollMove+"px";
     }
-
-
-
-
 };
 
 
@@ -105,7 +109,7 @@ window.document.addEventListener("readystatechange",function(){
 
 //联系人鼠标移上去的显示状态
 var active_li_node=null;
-function contactsShowStyle(){
+function addContactsShowStyleListener(){
     var li_nodes=document.querySelector(".contacts_list")
         .getElementsByTagName("ul")[0]
         .getElementsByTagName("li");
@@ -145,7 +149,7 @@ function contactsShowStyle(){
  * ２.给子菜单添加事件
  * ３.根据子菜单class属性值，做相应的处理
  */
-function subMenuTagChange() {
+function addSubMenuTagChangeListener() {
     var subMenus = getSubMenus();
     for (var i = 0; i < subMenus.length; i++) {
         var li = subMenus[i];
@@ -187,6 +191,9 @@ function subMenuTagChange() {
             case "historicalTopic":
                 console.log("历史话题……");
                 showMyTopicSubpage("historicalTopic");
+                //显示历史话题
+                var userId=document.getElementsByName("userId")[0].value;
+                htjy(userId);
                 break;
             case "searchTopic":
                 console.log("搜索话题……");
@@ -209,6 +216,15 @@ function subMenuTagChange() {
                 break;
         }
     }
+}
+
+//点击聊天框退出
+function addClickExitListener(){
+	var exit_node=document.querySelector("span.exit");
+	exit_node.addEventListener("click",function(){
+		var webim_page=document.getElementsByClassName("webim_page")[0];
+		webim_page.style.display="none";
+	});
 }
 
 //显示我的话题下的子模块,显示某一个，隐藏其他的
@@ -242,8 +258,8 @@ function showMyTopicSubpage(id) {
     },5)
 }
 
-//发布话题
-function publishTopic() {
+//发起话题监听器
+function addPublishTopicListener() {
     //div.topic_input_box a
     var topic_box_node = document.getElementsByClassName("topic_input_box")[0];
     var button_node = topic_box_node.getElementsByTagName("button")[0];
@@ -252,7 +268,6 @@ function publishTopic() {
     //textArea_node.focus();//让输入框获取焦点
     textArea_node.addEventListener("keyup",function(){
         //获取输入框里的字符数……
-        console.log("话题框:"+event.keyCode);
         if(event.keyCode==13)
         {
             pt(event);
@@ -271,28 +286,170 @@ function publishTopic() {
         }
         //将数据发往数据库
         console.log("开始发送数据");
-        sendData(content_value);
+        var userName=document.getElementsByName("userName")[0].value;
+        var userId=document.getElementsByName("userId")[0].value;
+        fqht(content_value,userName,userId);
+    }
+    
+    //发起话题
+    function fqht(mytopic,topicAuthorName,authorId){
+         //发送请求
+        var parameters={
+            mytopic:mytopic,
+            topicAuthorName:topicAuthorName,
+            authorId:authorId,
+            cmd:'fqht'
+        };
+        
+        doRequestUsingPOST("http://"+document.domain+":8080/xunta/servlet/topic?"+toDomString(parameters),mycallback);
+        
+      //以下是callback函数的定义
+        function mycallback(){
+            console.log(xmlHttp.readyState);
+            if(xmlHttp.readyState==4)
+            {
+                console.log("请求完成");
+                if(xmlHttp.status==200)
+                {
+                    console.log("请求成功响应");
+                    var topicListData=xmlHttp.responseText;
+                    topicListData= JSON.parse(topicListData);
+                    //将topicList里的数据清空,将textArea用户输入的内容清空
+                    var textArea_node = document.querySelector("div.topic_input_box textarea");
+
+                    var topic_list_node=document.getElementsByClassName("topic-list")[0];
+                    topic_list_node.innerHTML="";
+
+                    var t=new Date();
+                    var current_datetime=new Date().format("yyyy-MM-dd hh:mm:ss");
+
+                    var myTopic={name:"我",topicContent:textArea_node.value,datetime:current_datetime};
+                  
+                    //var topic_list_node=document.getElementsByClassName("topic-list")[0];
+                    var topic_list_node  =document.querySelector("div#writeTopic div.topic-list");
+                    createTopicList(myTopic,topic_list_node);
+                    textArea_node.value="";
+                    for(var i=0;i<topicListData.length;i++)
+                    {
+                        //创建dom
+                        createTopicList(topicListData[i],topic_list_node);
+                    }
+                }
+                else{
+                    console.log("请求没有成功响应:"+xmlHttp.status);
+                }
+            }
+        }
     }
 }
 
-//发送数据
-function sendData(content_value){
-    if(xmlHttp==null)
-    {
-        console.log("xmlHttp==null");
-        createXMLHttpRequest();//创建xhr
-    }
-    if(xmlHttp.readyState!=0) {
-        console.log("readyState!=0 初始化");
-        xmlHttp.abort();//初始化
-    }
-     //发送请求
+//话题搜索监听器 
+function addSearchTopicListener(){
+	//获取话题搜索输入框,并添加键盘事件回车键事件
+	var search_input_box = document.querySelector("#searchTopic textarea.search_input_box");
+	//键盘回车事件
+	search_input_box.addEventListener("keyup",function(){
+	
+        if(event.keyCode==13)
+        {
+           htss(event);
+        }
+	});
+	
+	//获取搜索按钮，并添加鼠标点击事件
+	var btn_search=document.querySelector("#searchTopic button.btn_search");
+	btn_search.addEventListener("click",htss);
+	//搜索请求
+	function htss(event){
+		//获取用户输入的内容
+		var search_content=search_input_box.value;
+		
+         //发送请求
+        var parameters={
+            mytopic:search_content,
+            cmd:'htss'
+        };
+        
+        doRequestUsingPOST("http://"+document.domain+":8080/xunta/servlet/topic?"+toDomString(parameters),mycallback);
+        
+        function mycallback(){
+            console.log(xmlHttp.readyState);
+            if(xmlHttp.readyState==4)
+            {
+                console.log("请求完成");
+                if(xmlHttp.status==200)
+                {
+                    console.log("请求成功响应");
+                    var topicListData=xmlHttp.responseText;
+                    topicListData= JSON.parse(topicListData);
+                    //将topicList里的数据清空,将textArea用户输入的内容清空
+                    var textArea_node = document.querySelector("div.topic_input_box textarea");
+
+                    var topic_list_node = document.querySelector("div#searchTopic div.topic-list");
+                    
+                    topic_list_node.innerHTML="";
+
+                    var t=new Date();
+                    var current_datetime=new Date().format("yyyy-MM-dd hh:mm:ss");
+                    textArea_node.value="";
+                    for(var i=0;i<topicListData.length;i++)
+                    {
+                        createTopicList(topicListData[i],topic_list_node);
+                    }
+                }
+                else{
+                    console.log("请求没有成功响应:"+xmlHttp.status);
+                }
+            }
+        }
+	}
+}
+
+
+//话题记忆
+function htjy(authorId){
+    //发送请求
+	
     var parameters={
-        mytopic:content_value,
-        cmd:'fqht'
+        authorId:authorId,
+        cmd:'htjy'
     };
     
-    doRequestUsingGET("http://"+document.domain+":8080/xunta/servlet/topic?"+toDomString(parameters),mycallback);
+    doRequestUsingPOST("http://"+document.domain+":8080/xunta/servlet/topic?"+toDomString(parameters),mycallback);
+    
+  //以下是callback函数的定义
+    function mycallback(){
+        console.log(xmlHttp.readyState);
+        if(xmlHttp.readyState==4)
+        {
+            console.log("请求完成");
+            if(xmlHttp.status==200)
+            {
+                console.log("请求成功响应");
+                var topicListData=xmlHttp.responseText;
+                topicListData= JSON.parse(topicListData);
+                //将topicList里的数据清空
+
+                var topic_list_node  =document.querySelector("div#historicalTopic div.topic-list");
+                topic_list_node.innerHTML="";
+              
+                for(var i=0;i<topicListData.length;i++)
+                {
+                	console.log(topicListData[i]);
+                    //创建dom
+                    createTopicList(topicListData[i],topic_list_node);
+                }
+            }
+            else{
+                console.log("请求没有成功响应:"+xmlHttp.status);
+            }
+        }
+    }
+}
+
+//话题推荐
+function httj(){
+	
 }
 
 var xmlHttp=null;//声明一个XHR对象
@@ -308,50 +465,23 @@ function createXMLHttpRequest() {
     }
 }
 //向服务端发起异步请求:GET（入口函数）,callback为回调函数名称
-function doRequestUsingGET(url, callback) {
+function doRequestUsingPOST(url, callback) {
+	if(xmlHttp==null)
+    {
+        console.log("xmlHttp==null");
+        createXMLHttpRequest();//创建xhr
+    }
+    if(xmlHttp.readyState!=0) {
+        console.log("readyState!=0 初始化");
+        xmlHttp.abort();//初始化
+    }
     xmlHttp.onreadystatechange = callback;
     xmlHttp.open("POST", url + "&timeStamp=" + new Date().getTime(), true);
     xmlHttp.send(null);
 }
-//以下是callback函数的定义
-function mycallback(){
-    console.log(xmlHttp.readyState);
-    if(xmlHttp.readyState==4)
-    {
-        console.log("请求完成");
-        if(xmlHttp.status==200)
-        {
-            console.log("请求成功响应");
-            var topicListData=xmlHttp.responseText;
-            topicListData= JSON.parse(topicListData);
-            //将topicList里的数据清空,将textArea用户输入的内容清空
-            var textArea_node = document.querySelector("div.topic_input_box textarea");
-
-            var topic_list_node=document.getElementsByClassName("topic-list")[0];
-            topic_list_node.innerHTML="";
-
-            var t=new Date();
-            var current_datetime=new Date().format("yyyy-MM-dd hh:mm:ss");
-
-            var myTopic={name:"我",topicContent:textArea_node.value,datetime:current_datetime};
-            createTopicList(myTopic);
-            textArea_node.value="";
-            for(var i=0;i<topicListData.length;i++)
-            {
-                //创建dom
-                createTopicList(topicListData[i]);
-            }
-        }
-        else{
-            console.log("请求没有成功响应:"+xmlHttp.status);
-        }
-    }
-}
-
-
 
 //创建话题列表
-function createTopicList(topicItemData){
+function createTopicList(topicItemData,topic_list_node){
     //创建一个table节点
     var table_node = document.createElement("table");
     //在table节点下创建三个tr节点
@@ -371,17 +501,27 @@ function createTopicList(topicItemData){
     //为tr_node3创建一个td 节点
     var tr_node3_td_node1=document.createElement("td");
     tr_node3_td_node1.setAttribute("colspan","2");
-    //为tr_node3_td_node1下创建两个button按钮
-    var btn_invite=document.createElement("button");
-    btn_invite.innerHTML="邀请";
-    var btn_join=document.createElement("button");
-    btn_join.innerHTML="参与";
-    // 为邀请，参与两按钮添加事件
-    btn_invite.addEventListener("click",startChat);
-    btn_join.addEventListener("click",startChat);
-
-    tr_node3_td_node1.appendChild(btn_invite);
-    tr_node3_td_node1.appendChild(btn_join);
+    //为tr_node3_td_node1下创建一个或两个button按钮,如果是自己的话题就创建一个，否则创建两个
+    //获取当前用户的id
+    var currentUserId=document.getElementsByName("userId")[0].value;
+    if(topicItemData.userId==currentUserId||topicItemData.userId==null)
+    {
+        var btn_join=document.createElement("button");
+        btn_join.innerHTML="进入";
+        btn_join.addEventListener("click",startChat);
+        tr_node3_td_node1.appendChild(btn_join);
+    }
+    else {
+        var btn_invite=document.createElement("button");
+        btn_invite.innerHTML="邀请";
+        var btn_join=document.createElement("button");
+        btn_join.innerHTML="参与";
+        // 为邀请，参与两按钮添加事件
+        btn_invite.addEventListener("click",startChat);
+        btn_join.addEventListener("click",startChat);
+        tr_node3_td_node1.appendChild(btn_invite);
+        tr_node3_td_node1.appendChild(btn_join);
+    }
     tr_node3.appendChild(tr_node3_td_node1);
 
     //为tr_node4创建一个td节点
@@ -413,15 +553,47 @@ function createTopicList(topicItemData){
 
     //赋值
     img_node.src="images/1.jpg";
-    tr_node1_td_node2.innerText=topicItemData.name;//"贾乃亮";
+	/**
+	* 	jsonObj.put("name",name);
+	*	jsonObj.put("userId", userId);
+	*	jsonObj.put("topicContent",content);
+	*	jsonObj.put("topicId",topic_id);
+	*	jsonObj.put("datetime",datetime);
+	*/
+    tr_node1_td_node2.innerHTML=topicItemData.name;//"贾乃亮";
+    tr_node1_td_node2.setAttribute("name",topicItemData.name);
+    tr_node1_td_node2.setAttribute("userId",topicItemData.userId);
     tr_node2_td_node1.innerHTML=topicItemData.topicContent;//"这是动态创建的文本";
+    tr_node2_td_node1.setAttribute("topicId",topicItemData.topicId);
+    tr_node2_td_node1.setAttribute("datetime",topicItemData.datetime);
     small_node.innerText=topicItemData.datetime;//时间
 
     //将table节点挂在.topic-list下
-    var topic_list_node=document.getElementsByClassName("topic-list")[0];
+    //var topic_list_node=document.getElementsByClassName("topic-list")[0];
     topic_list_node.appendChild(table_node);
 }
 
+
+
+//开始聊天
+function startChat(e){
+	var webim_page=document.getElementsByClassName("webim_page")[0];
+	webim_page.style.display="block";
+    switch(this.innerHTML.trim()){
+        case "邀请":
+            console.log("invite..");
+            //跳转到聊天页面，话题为自己的话题id
+           // window.location="chat.html?cmd=invite";
+            console.log("邀请聊天");
+            break;
+        case "参与":
+            console.log("参与聊天");
+            break;
+        case "进入":
+        	console.log("进入");
+        	break;
+    }
+}
 
 //{name:"张三",mytopic:"话题"}==>name=张三&mytopic=话题==>并url编码，以便给xhr传参
 
@@ -440,20 +612,6 @@ function toDomString(json){
     return encodeURI(domString);
 }
 
-function startChat(e){
-    switch(this.innerHTML.trim()){
-        case "邀请":
-            console.log("invite..");
-            //跳转到聊天页面，话题为自己的话题id
-           // window.location="chat.html?cmd=invite";
-            console.log("邀请聊天");
-            break;
-        case "参与":
-            console.log("参与聊天");
-            window.location="chat.html?cmd=join";
-            break;
-    }
-}
 
 /**
  * 时间格式化函数

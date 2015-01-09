@@ -440,6 +440,7 @@ p.nick_name{
 	font-family: 'Arial','Microsoft YaHei';
 }
 
+
 li.active
 {
 	background-color: lightgray;
@@ -487,8 +488,22 @@ li.active
 	text-overflow: ellipsis;
 	display: block;
 	font-family: 'Arial', 'Microsoft YaHei';
+	float:left;
 }
-
+span.exit{
+	position:relative;
+	display:block;
+	float:right;
+	width:40px;
+	top:5px;
+	height:30px;
+	line-height: 30px;
+	font-family: bold;
+	font-size:20px;
+}
+span.exit:hover{
+	cursor:pointer;
+}
 .private_dialogue_body .msg_bubble{
 	width:600px;
 	height:510px;

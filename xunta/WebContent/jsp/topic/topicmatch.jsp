@@ -36,7 +36,9 @@
                 <li class="top_profile">
                     <a href="#" class="userInfo">
                         <img src="images/avatar.jpg">
-                        <span>${sessionScope.user.xunta_username }</span>
+                        <input type="hidden" name="userName" value="${sessionScope.user.xunta_username}">
+                        <input type="hidden" name="userId" value="${sessionScope.user.id}">
+                        <span>${sessionScope.user.xunta_username}</span>
                     </a>
                     <ul>
                         <li><a href="javascript:void(0)" class="homePage">我的主页</a></li>
@@ -54,47 +56,18 @@
     <!--发起话题-->
     <div class="body_content">
         <div class="myTopic">
-
+			<!-- 发布话题 -->
             <div class="myTopic_SubPage" id="writeTopic">
-
                 <div  class="topic_input_box">
                     <span>有什么新鲜事告诉家？</span>
                     <textarea></textarea><br>
                     <button>发布</button>
                 </div>
                 <div class="line"></div>
-                <div class="topic-list">
-                    <table>
-                        <tr>
-                            <td class="img">
-                                <img src="images/1.jpg">
-                            </td>
-                            <td class="name">贾乃亮</td>
-                        </tr>
-                        <tr>
-                            <td class="content" colspan="2">
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <button>邀请</button><button>参与</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="datetime">
-                                <small>2014-12-31 23:34:10</small>
-                            </td>
-                        </tr>
-                    </table>
-                 </div>
+                <div class="topic-list"></div>
             </div>
 
+			<!--话题推荐 -->
             <div class="myTopic_SubPage" id="recommendTopic">
                 <div class="topic-list">
                     <table>
@@ -123,59 +96,23 @@
                 </div>
             </div>
 
+			<!-- 历史话题 -->
             <div class="myTopic_SubPage" id="historicalTopic">
                 <div class="topic-list">
-                    <table>
-                        <tr>
-                            <td class="img">
-                                <img src="images/1.jpg">
-                            </td>
-                            <td class="name">贾乃亮</td>
-                        </tr>
-                        <tr>
-                            <td class="content" colspan="2">
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="datetime">
-                                <small>2014-12-31 23:34:10</small>
-                            </td>
-                        </tr>
-                    </table>
+                    
                 </div>
             </div>
-
+			<!-- 话题搜索 -->
             <div class="myTopic_SubPage" id="searchTopic">
+            	<h3>话题搜索</h3>
+            	<textarea rows="5" cols="100" class="search_input_box"></textarea>
+            	<br>
+            	<button class="btn_search">搜    索</button>
+            	<br>
+            	<br>
+            	<hr>
                 <div class="topic-list">
-                    <table>
-                        <tr>
-                            <td class="img">
-                                <img src="images/1.jpg">
-                            </td>
-                            <td class="name">贾乃亮</td>
-                        </tr>
-                        <tr>
-                            <td class="content" colspan="2">
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="datetime">
-                                <small>2014-12-31 23:34:10</small>
-                            </td>
-                        </tr>
-                    </table>
+                    
                 </div>
             </div>
         </div>
@@ -220,6 +157,7 @@
         <div class="private_dialogue_body">
             <div class="header">
                 <span class="name"></span>
+                <span class="exit">x</span>
             </div>
             <div class="msg_bubble">
                <div id="mainBox">

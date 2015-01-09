@@ -1,35 +1,47 @@
 package so.xunta.topic;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldType;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.highlight.Fragmenter;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
+import org.hibernate.Session;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
-import so.xunta.response.SearchMethods;
+import so.xunta.localcontext.LocalContext;
+import so.xunta.utils.HibernateUtils;
 
 public class TopicManagerImpl implements TopicManager {
-	IndexSearcher searcher=SearchMethods.getOneSearcherofTwo();
 	static Analyzer analyzer = new IKAnalyzer();// IK分词器
-
+	Directory directory =null;
 	@Override
 	public  List<Topic> matchMyTopic(String mytopic) {
 		List<Topic> topicList=new ArrayList<>();
@@ -39,7 +51,6 @@ public class TopicManagerImpl implements TopicManager {
 			BooleanQuery query=new BooleanQuery();
 			for(String t:q)
 			{
-				
 				//1.获取每个词的同义词
 				Thesuraus thesuraus=map.get(t);
 				//获取每个词的词关系
@@ -60,35 +71,43 @@ public class TopicManagerImpl implements TopicManager {
 				else
 				{
 					//没有同义词
-					TermQuery tq1=new TermQuery(new Term("index_title",t));
-					if(t.equals("黄山"))
-					{
-						System.out.println("sdkfdf");						
-					}
+					TermQuery tq1=new TermQuery(new Term("topicContent",t));
 					query.add(tq1,Occur.SHOULD);
 				}
 			}
-			
+			if(directory==null)
+			{
+				directory = FSDirectory.open(new File(LocalContext.indexFilePath));
+			}
+		    DirectoryReader ireader = DirectoryReader.open(directory);
+		    IndexSearcher searcher = new IndexSearcher(ireader);
 			ScoreDoc[] hits=searcher.search(query,100).scoreDocs;
 			
 			for (int i = 0; i < hits.length; i++) {
 				int docID = hits[i].doc;
+				//话题唯一id
+				String topicId=searcher.doc(docID).get("topicId");
 				//匹配的话题
-				String topic = searcher.doc(docID).get("index_title");
+				String topicContent = searcher.doc(docID).get("topicContent");
 				//作者名
-				String authorname = searcher.doc(docID).get("index_author");
-				//日期
-				String datetime = searcher.doc(docID).get("index_publishdate");
-				//匹配的话题高亮
-				String hightLightTopic = highLighter(topic, query, analyzer, 10, 10);
+				String topicAuthor = searcher.doc(docID).get("topicAuthorName");
+				//作者id
+				String topicAuthorId = searcher.doc(docID).get("authorId");
 				
-				Topic topicObj = new Topic(hightLightTopic,authorname,datetime);
+				//日期
+				String datetime = searcher.doc(docID).get("topicCreatetime");
+				//匹配的话题高亮
+				String hightLightTopic = highLighter(topicContent, query, analyzer, 10, 10);
+				//(String topicId,String authorId,String hightLightTopic, String authorName,String topicCreatetime) 
+				Topic topicObj = new Topic(topicId,topicAuthorId,hightLightTopic,topicAuthor,datetime);
 				
 				topicList.add(topicObj);
 			}
+			ireader.close();//关闭ireader
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		Collections.sort(topicList);
 		return topicList;
 	}
 
@@ -111,7 +130,6 @@ public class TopicManagerImpl implements TopicManager {
 			System.out.print(term + "\t");
 			q.add(term.toString());
 		}
-		System.out.println();
 		return q;
 	}
 	/**
@@ -140,5 +158,134 @@ public class TopicManagerImpl implements TopicManager {
 			e.printStackTrace();
 		}
 		return highterResult;
+	}
+
+	@Override
+	public void createTopicIndex(String topicId, String topicContent, String authorId,String topicAuthorName, String topicCreatetime) {
+		try {
+			if(directory==null)
+			{
+				directory = FSDirectory.open(new File(LocalContext.indexFilePath));
+			}
+		    IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_43, analyzer);
+		    IndexWriter iwriter = new IndexWriter(directory, config);
+		    
+		    Document doc = new Document();
+		    
+		    FieldType fieldType1=new FieldType();
+		    fieldType1.setIndexed(true);
+		    fieldType1.setStored(true);
+		    fieldType1.storeTermVectors();
+		    fieldType1.storeTermVectorPositions();
+		    fieldType1.storeTermVectorPayloads();
+		    
+		    FieldType fieldType2=new FieldType();
+		    fieldType2.setIndexed(true);
+		    fieldType2.setStored(true);
+		    fieldType2.setTokenized(false);
+		    
+		    doc.add(new Field("topicId",topicId,fieldType2));
+		    doc.add(new Field("authorId",authorId,fieldType2));
+		    doc.add(new Field("topicCreatetime",topicCreatetime,fieldType1));
+		    doc.add(new Field("topicAuthorName",topicAuthorName,fieldType1));
+		    doc.add(new Field("topicContent",topicContent,fieldType1));
+		    iwriter.addDocument(doc);
+		    iwriter.commit();
+		    iwriter.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	
+	public static void main(String[] args) {
+		TopicManager topicmanager=new TopicManagerImpl();
+/*		topicmanager.createTopicIndex("1","黄山哪好玩","001","Candy","2014-1-1");
+		topicmanager.createTopicIndex("2","黄山登山谁去","001","Candy","2014-1-2");
+		topicmanager.createTopicIndex("3","过年大家都在做什么？","001","Candy","2014-1-2");
+		List<Topic> list=topicmanager.matchMyTopicByUserId("001");
+		for(Topic t:list)
+		{
+			System.out.println("话题ID:"+t.topicId);
+			System.out.println("话题内容:"+t.topicContent);
+			System.out.println("话题创建时间:"+t.topicCreatetime);
+			System.out.println("话题作者昵称:"+t.authorName);
+			System.out.println("话题作者id:"+t.authorId);
+			System.out.println("===========================");
+		}*/
+		Topic topic=new Topic("topic1","001","今天想吃点什么","易发宝","2015-1-9 16:46:08");
+		topicmanager.saveTopic(topic);
+		System.out.println("ok");
+	}
+
+	@Override
+	public List<Topic> matchMyTopicByUserId(String authorId) {
+		List<Topic> topicList=new ArrayList<>();
+		try {
+			TermQuery query=new TermQuery(new Term("authorId",authorId));
+			if(directory==null)
+			{
+				directory = FSDirectory.open(new File(LocalContext.indexFilePath));
+			}
+		    DirectoryReader ireader = DirectoryReader.open(directory);
+		    IndexSearcher searcher = new IndexSearcher(ireader);
+			ScoreDoc[] hits=searcher.search(query,100).scoreDocs;
+			
+			for (int i = 0; i < hits.length; i++) {
+				int docID = hits[i].doc;
+				//话题唯一id
+				String topicId=searcher.doc(docID).get("topicId");
+				//匹配的话题
+				String topicContent = searcher.doc(docID).get("topicContent");
+				//作者名
+				String topicAuthor = searcher.doc(docID).get("topicAuthorName");
+				//作者id
+				String topicAuthorId = searcher.doc(docID).get("authorId");
+				
+				//日期
+				String datetime = searcher.doc(docID).get("topicCreatetime");
+
+				//(String topicId,String authorId,String hightLightTopic, String authorName,String topicCreatetime) 
+				Topic topicObj = new Topic(topicId,topicAuthorId,topicContent,topicAuthor,datetime);
+				
+				topicList.add(topicObj);
+			}
+			ireader.close();//关闭ireader
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Collections.sort(topicList);
+		return topicList;
+	}
+
+
+	@Override
+	public void saveTopic(Topic topic) {
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			session.save(topic);
+			session.getTransaction().commit();
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
+	}
+	@Override
+	public void saveTopicMember(TopicMember topicMember) {
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			session.save(topicMember);
+			session.getTransaction().commit();
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
 	}
 }

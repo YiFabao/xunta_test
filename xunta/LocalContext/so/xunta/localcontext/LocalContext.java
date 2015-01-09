@@ -4,12 +4,12 @@ public class LocalContext {
 	public static String jspFilePath="/jsp/search_resultpage/";
 	
 	//本地测试的本地索引文件路径
-/*	public static String root="d:/";
-	public static String indexFilePath="E:\\备份\\luceneIndex_8g\\travel";*/
+	public static String root="d:/";
+	public static String indexFilePath="D://topicIndex";
 	
 	//上传到阿里云服务器时，用这个路径
-	public static String root="/";
-	public static String indexFilePath=root+"data/luceneIndex/travel";
+/*	public static String root="/";
+	public static String indexFilePath=root+"data/luceneIndex/travel";*/
 	
 	
 	public static final String IPSeekerLibLocation=root+"data/qqwry";
