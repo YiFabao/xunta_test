@@ -33,10 +33,12 @@ import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import so.xunta.localcontext.LocalContext;
+import so.xunta.utils.DateTimeUtils;
 import so.xunta.utils.HibernateUtils;
 
 public class TopicManagerImpl implements TopicManager {
@@ -281,6 +283,160 @@ public class TopicManagerImpl implements TopicManager {
 			session.beginTransaction();
 			session.save(topicMember);
 			session.getTransaction().commit();
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
+	}
+
+	@Override
+	public List<MessageAlert> searchMyMessage(String authorId) {
+		//TODO 从数据库中查询出自己的消息
+		System.out.println("从数据库中查询出自己的消息(方法未具体实现)");
+		MessageAlert m1=new MessageAlert("8","test1","10","6EDDD8B52589CFF90723C6E579355AC8","",DateTimeUtils.getCurrentTimeStr());
+		MessageAlert m2=new MessageAlert("8","test1","10","6EDDD8B52589CFF90723C6E579355AC8","",DateTimeUtils.getCurrentTimeStr());
+		m2.setIsHandle(1);
+		List<MessageAlert> l=new ArrayList<MessageAlert>();
+		l.add(m1);
+		l.add(m2);
+		Collections.sort(l);
+		return l;
+		
+	}
+
+	@Override
+	public void addMessageAlert(MessageAlert messageAlert) {
+		System.out.println("添加消息提醒");
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			session.save(messageAlert);
+			session.getTransaction().commit();
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
+	}
+
+	@Override
+	public void addTopicHistory(TopicHistory topicHistory) {
+		System.out.println("添加话题历史");
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			session.save(topicHistory);
+			session.getTransaction().commit();
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
+	}
+
+	@Override
+	public int searchNotReadmessageNum(String authorId) {
+		System.out.println("查询未读消息数");
+		return 0;
+	}
+
+	@Override
+	public boolean checkIsTopicMember(String memberId, String topicId) {
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			org.hibernate.Query query=session.createQuery("from TopicMember as tm where tm.topic_member_id=? and tm.topic_id=?");
+			query.setString(0,memberId);
+			query.setString(1,topicId);
+			List<TopicMember> topicMemberList=query.list();
+			session.getTransaction().commit();
+			if(topicMemberList.size()>0)
+			{
+				return true;
+			}
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
+		return false;
+	}
+
+	@Override
+	public List<TopicMember> searchTopicMemberList(String topicId) {
+		
+		List<TopicMember> topicMembers=new ArrayList<TopicMember>();
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			String hql="from TopicMember tm where tm.topic_id=?";
+			org.hibernate.Query query=session.createQuery(hql);
+			topicMembers=query.setString(0,topicId).list();
+			session.getTransaction().commit();
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
+		return topicMembers;
+	}
+
+	@Override
+	public String searchTopicContent(String topicId) {
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			String hql="select topicContent from Topic t where t.topicId=?";
+			org.hibernate.Query query=session.createQuery(hql);
+			query.setString(0, topicId);
+			String topicContent=(String) query.uniqueResult();
+			session.getTransaction().commit();
+			return topicContent;
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
+	}
+
+	@Override
+	public Topic searchLatestTopic(String authorId) {
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			String hql="from Topic t where t.authorId=? order by t.topicCreatetime desc";
+			org.hibernate.Query query=session.createQuery(hql);
+			query.setString(0, authorId);
+			query.setMaxResults(1);
+			Topic topic=(Topic)query.uniqueResult();
+			return topic;
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
+	}
+
+	@Override
+	public List<Topic> searchTopicHistory(String authorId) {
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			String sql="select topic.* from topic,topichistory where topic.authorId=? and topic.topicId=topichistory.topicId ";
+			SQLQuery sqlquery=session.createSQLQuery(sql);
+			sqlquery.addEntity(Topic.class);
+			sqlquery.setString(0,authorId);
+			List<Topic> topicList=sqlquery.list();
+			return topicList;
+			
 		} catch (RuntimeException e) {
 			session.getTransaction().rollback();
 			throw e;

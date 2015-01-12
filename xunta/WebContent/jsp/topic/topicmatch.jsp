@@ -35,9 +35,9 @@
                 <li><a href="#">我的知识</a></li>
                 <li class="top_profile">
                     <a href="#" class="userInfo">
-                        <img src="images/avatar.jpg">
                         <input type="hidden" name="userName" value="${sessionScope.user.xunta_username}">
                         <input type="hidden" name="userId" value="${sessionScope.user.id}">
+                        <img src="images/avatar.jpg">
                         <span>${sessionScope.user.xunta_username}</span>
                     </a>
                     <ul>
@@ -47,6 +47,7 @@
                         <li><a href="javascript:void(0)" class="signOut">退出</a></li>
                     </ul>
                 </li>
+                <li><a href="#">未读消息消息数:<i>9</i></a></li>
             </ul>
         </div>
     </div>
@@ -132,7 +133,7 @@
         </div>
         <div class="contacts_list">
           <ul>
-              <li class="active">
+<!--               <li class="active">
                   <div class="head">
                       <img src="http://tp3.sinaimg.cn/1298064414/50/5617529344/1">
                   </div>
@@ -149,7 +150,7 @@
                       <img src="http://tp4.sinaimg.cn/2074109747/50/5715079216/1">
                   </div>
                   <p class="nick_name">黎万强</p>
-              </li>
+              </li> -->
           </ul>
       </div>
     </div>
@@ -176,11 +177,6 @@
         </div>
     </div>
 </div>
-自己的id：<input type="text" name="fromUserId"><br>
-发送消息的 Id:<input type="text" name="toUserId"><br>
-话题id:<input type="text" name="topicId"><br>
-<button id="confirm">确认</button>
-
 <script src="topicmatch.js"></script>
 <script src="websocket.js"></script>
 <script src="myscroll.js"></script>

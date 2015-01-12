@@ -1,16 +1,22 @@
 package so.xunta.topic;
 
 public class TopicMember {
-	public int id=0;
+	public int id;
 	public String topic_id;
 	public String topic_member_id;
+	public String topic_member_name;
 	public String join_datetime;
 	public int _exit;
 	public String exit_datetime;
 	
-	public TopicMember(String topic_id,String topic_member_id,String join_datetime,int _exit,String exit_datetime) {
+	public TopicMember() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public TopicMember(String topic_id,String topic_member_id,String topic_member_name,String join_datetime,int _exit,String exit_datetime) {
 		this.topic_id=topic_id;
 		this.topic_member_id=topic_member_id;
+		this.topic_member_name=topic_member_name;
 		this.join_datetime=join_datetime;
 		this._exit=_exit;
 		this.exit_datetime=exit_datetime;
@@ -20,6 +26,13 @@ public class TopicMember {
 	}
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public String getTopic_member_name() {
+		return topic_member_name;
+	}
+	public void setTopic_member_name(String topic_member_name) {
+		this.topic_member_name = topic_member_name;
 	}
 	public String getTopic_id() {
 		return topic_id;

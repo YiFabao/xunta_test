@@ -11,12 +11,6 @@ import so.xunta.utils.DateTimeUtils;
  */
 public class Topic implements Comparable<Topic>{
 	public int id=0;
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
 	//话题唯一id
 	public String topicId;
 	/**作者唯一id*/
@@ -29,6 +23,10 @@ public class Topic implements Comparable<Topic>{
 	public String topicCreatetime;
 	
 
+	public Topic() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	public Topic(String topicId,String authorId,String hightLightTopic, String authorName,String topicCreatetime) {
 		this.topicId = topicId;
 		this.authorId=authorId;
@@ -41,6 +39,12 @@ public class Topic implements Comparable<Topic>{
 	}
 	public void setAuthorId(String authorId) {
 		this.authorId = authorId;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getTopicId() {

@@ -8,6 +8,7 @@
     </id>
     <property name="topic_id" not-null="false"/>
     <property name="topic_member_id" not-null="false" />
+    <property name="topic_member_name" not-null="false" />
     <property name="join_datetime" not-null="false"/>
     <property name="_exit" not-null="false" />
     <property name="exit_datetime" not-null="false" />
