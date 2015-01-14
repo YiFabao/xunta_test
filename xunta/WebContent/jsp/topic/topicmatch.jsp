@@ -38,7 +38,7 @@
                         <input type="hidden" name="userName" value="${sessionScope.user.xunta_username}">
                         <input type="hidden" name="userId" value="${sessionScope.user.id}">
                         <img src="images/avatar.jpg">
-                        <span>${sessionScope.user.xunta_username}</span>
+                        <span>${sessionScope.user.xunta_username}｜id:${sessionScope.user.id}</span>
                     </a>
                     <ul>
                         <li><a href="javascript:void(0)" class="homePage">我的主页</a></li>
@@ -47,7 +47,7 @@
                         <li><a href="javascript:void(0)" class="signOut">退出</a></li>
                     </ul>
                 </li>
-                <li><a href="#">未读消息消息数:<i>9</i></a></li>
+                <li><a href="#" id="unreadMessageNum"></li>
             </ul>
         </div>
     </div>

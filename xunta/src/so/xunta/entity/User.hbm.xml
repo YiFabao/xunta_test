@@ -6,9 +6,9 @@
     <id name="id">
       <generator class="native"/>
     </id>
-    <property name="xunta_username" not-null="false" length="15"/>
+    <property name="xunta_username" not-null="false" length="30"/>
     <property name="password" not-null="false" length="18"/>
-    <property name="email" not-null="false" length="18"/>
+    <property name="email" not-null="false" length="100"/>
     <property name="qq_openId" not-null="false" />
     <property name="qq_accessToken" not-null="false" />
     <property name="weibo_uid" not-null="false" />

@@ -19,7 +19,7 @@ public class RequestFilter implements Filter {
 	private FilterConfig config;
 	@Override
 	public void destroy() {
-		System.out.println("==================>destroy");
+		//System.out.println("==================>destroy");
 	}
 
 	@Override
@@ -53,9 +53,9 @@ public class RequestFilter implements Filter {
 				chain.doFilter(request, response);
 			}
 			else{//如果不是排除的目录，就要验证登录名
-				System.out.println("需要验证用户名");
+				//System.out.println("需要验证用户名");
 				User user=(User) session.getAttribute("user");
-				System.out.println("是否存在用户："+user);
+				//System.out.println("是否存在用户："+user);
 				if(user!=null)
 				{
 					chain.doFilter(request, response);
@@ -68,7 +68,7 @@ public class RequestFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
-		System.out.println("Filter初始化....");
+		//System.out.println("Filter初始化....");
 		this.config=config;
 	}
 

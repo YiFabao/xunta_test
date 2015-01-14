@@ -51,7 +51,7 @@ public class Login extends HttpServlet {
 		}
 		else
 		{
-			System.out.println("登录成功");
+			System.out.println(user.getXunta_username()+"登录成功");
 			//将user保存到session中
 			request.getSession().setAttribute("user",user);
 			if("on".equals(checkbox))

@@ -20,9 +20,10 @@
 				<li>${messageItem.datetime }</li>
 				<li>${messageItem.topicId }</li>
 				<li>${messageItem.isHandle}</li>
+				<li>${messageItem.topicContent}</li>
 				<li>
-					<button>同意</button>
-					<button>不同意</button>
+					<button class="y">同意</button>
+					<button class="n">不同意</button>
 				</li>
 			</ul>
 		</c:if>
@@ -40,11 +41,12 @@
 				<li>${messageItem.topicId }</li>
 				<li>${messageItem.isHandle}</li>
 				<li>
-					<button>同意</button>
-					<button>不同意</button>
+					<button class="y">同意</button>
+					<button class="n">不同意</button>
 				</li>
 			</ul>
 		</c:if>
 	</c:forEach>
+	<script src="<%=request.getContextPath()%>/jsp/topic/myMessage.js"></script>
 </body>
 </html>

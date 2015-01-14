@@ -17,7 +17,7 @@ public interface TopicManager {
 	//查询自己的消息
 	public List<MessageAlert> searchMyMessage(String authorId);
 	//查询未读消息数
-	public int searchNotReadmessageNum(String authorId);
+	public long searchNotReadmessageNum(String authorId);
 	//添加话题历史，当用户发起话题或参与话题时记录
 	public void addTopicHistory(TopicHistory topicHistory);
 	//查询某用户是否是某话题id下的成员
@@ -30,5 +30,10 @@ public interface TopicManager {
 	public Topic searchLatestTopic(String authorId);
 	//搜索话题历史，从数据库中查询
 	public List<Topic> searchTopicHistory(String authorId);
+	//将未读消息更改为已读
+	public void updateMessageAlertToAlreadyRead(String authorId);
+	//查询某条话题是否存在于作者的话题历史当中
+	public boolean checkTopicIsExitInHistory(String authorId,String topicId);
+
 	
 }

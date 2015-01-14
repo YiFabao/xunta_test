@@ -11,6 +11,11 @@ public class TopicHistory implements Comparable<TopicHistory>{
 	public String topicId;
 	public String datetime;
 	
+	public TopicHistory() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public TopicHistory(String authorId,String topicId,String datetime) {
 		this.authorId=authorId;
 		this.topicId=topicId;

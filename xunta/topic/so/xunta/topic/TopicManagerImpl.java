@@ -294,21 +294,29 @@ public class TopicManagerImpl implements TopicManager {
 	@Override
 	public List<MessageAlert> searchMyMessage(String authorId) {
 		//TODO 从数据库中查询出自己的消息
-		System.out.println("从数据库中查询出自己的消息(方法未具体实现)");
-		MessageAlert m1=new MessageAlert("8","test1","10","6EDDD8B52589CFF90723C6E579355AC8","",DateTimeUtils.getCurrentTimeStr());
-		MessageAlert m2=new MessageAlert("8","test1","10","6EDDD8B52589CFF90723C6E579355AC8","",DateTimeUtils.getCurrentTimeStr());
-		m2.setIsHandle(1);
-		List<MessageAlert> l=new ArrayList<MessageAlert>();
-		l.add(m1);
-		l.add(m2);
-		Collections.sort(l);
-		return l;
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			String hql="from MessageAlert as m where m.authorId=?";
+			org.hibernate.Query query = session.createQuery(hql);
+			query.setString(0,authorId);
+			List<MessageAlert> l = query.list();
+			Collections.sort(l);
+			session.getTransaction().commit();
+			return l;
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
+
 		
 	}
 
 	@Override
 	public void addMessageAlert(MessageAlert messageAlert) {
-		System.out.println("添加消息提醒");
+		//System.out.println("添加消息提醒");
 		Session session = HibernateUtils.openSession();
 		try {
 			session.beginTransaction();
@@ -324,7 +332,7 @@ public class TopicManagerImpl implements TopicManager {
 
 	@Override
 	public void addTopicHistory(TopicHistory topicHistory) {
-		System.out.println("添加话题历史");
+		System.out.println("添加话题历史"+topicHistory.authorId+"  "+topicHistory.topicId);
 		Session session = HibernateUtils.openSession();
 		try {
 			session.beginTransaction();
@@ -339,9 +347,24 @@ public class TopicManagerImpl implements TopicManager {
 	}
 
 	@Override
-	public int searchNotReadmessageNum(String authorId) {
-		System.out.println("查询未读消息数");
-		return 0;
+	public long searchNotReadmessageNum(String authorId) {
+		//System.out.println("查询未读消息数");
+		Session session = HibernateUtils.openSession();
+		try {
+			
+			session.beginTransaction();
+			String hql="select count(*) from MessageAlert m where m.authorId=? and m.isHandle=0";
+			org.hibernate.Query query = session.createQuery(hql);
+			query.setString(0, authorId);
+			long num=(Long)query.uniqueResult();
+			session.getTransaction().commit();
+			return num;
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
 	}
 
 	@Override
@@ -416,6 +439,7 @@ public class TopicManagerImpl implements TopicManager {
 			query.setString(0, authorId);
 			query.setMaxResults(1);
 			Topic topic=(Topic)query.uniqueResult();
+			session.getTransaction().commit();
 			return topic;
 		} catch (RuntimeException e) {
 			session.getTransaction().rollback();
@@ -430,13 +454,62 @@ public class TopicManagerImpl implements TopicManager {
 		Session session = HibernateUtils.openSession();
 		try {
 			session.beginTransaction();
-			String sql="select topic.* from topic,topichistory where topic.authorId=? and topic.topicId=topichistory.topicId ";
+			String sql="select topic.* from topic,topichistory where topichistory.authorId=? and topic.topicId=topichistory.topicId ";
 			SQLQuery sqlquery=session.createSQLQuery(sql);
 			sqlquery.addEntity(Topic.class);
 			sqlquery.setString(0,authorId);
 			List<Topic> topicList=sqlquery.list();
+			session.getTransaction().commit();
 			return topicList;
 			
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
+	}
+
+	@Override
+	public void updateMessageAlertToAlreadyRead(String authorId) {
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			String hql="update MessageAlert as ma set ma.isHandle=1 where ma.authorId=?";
+			org.hibernate.Query query=session.createQuery(hql);
+			query.setString(0, authorId);
+			query.executeUpdate();
+			session.getTransaction().commit();
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
+		
+	}
+
+	@Override
+	public boolean checkTopicIsExitInHistory(String authorId, String topicId) {
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			String hql="from TopicHistory t where t.authorId=? and t.topicId=?";
+			org.hibernate.Query query = session.createQuery(hql);
+			
+			query.setString(0, authorId);
+			query.setString(1, topicId);
+			
+			List<TopicHistory> topicHistoryList=query.list();
+			session.getTransaction().commit();
+			if(topicHistoryList.size()>0)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		} catch (RuntimeException e) {
 			session.getTransaction().rollback();
 			throw e;

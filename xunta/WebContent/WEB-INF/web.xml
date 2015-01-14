@@ -103,6 +103,14 @@
           <param-name>exclude5</param-name>
           <param-value>/servlet/validateCodeServlet</param-value>
       </init-param>
+      <init-param>
+          <param-name>exclude6</param-name>
+          <param-value>/WEB-INF/404.jsp</param-value>
+      </init-param>
+      <init-param>
+          <param-name>exclude7</param-name>
+          <param-value>/WEB-INF/500.jsp</param-value>
+      </init-param>
   </filter>
   <filter-mapping>
       <filter-name>RequestFilter</filter-name>
@@ -113,5 +121,12 @@
       <url-pattern>/servlet/*</url-pattern>
   </filter-mapping>
 
-  
+  <error-page>
+    <error-code>500</error-code>
+	<location>/WEB-INF/500.jsp</location>      
+  </error-page>
+  <error-page>
+    <error-code>404</error-code>
+	<location>/WEB-INF/404.jsp</location>      
+  </error-page>
 </web-app>

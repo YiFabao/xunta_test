@@ -40,8 +40,8 @@
 			<button class="register">注 册</button>
 			<br>
 		<div>
-			<img id="qq_login" src="assets/images/QQ/Connect_logo_3.png"/>
-			<img id="weibo_login" src="assets/images/weibo/xinlang.png"/>
+<!-- 			<img id="qq_login" src="assets/images/QQ/Connect_logo_3.png"/>
+			<img id="weibo_login" src="assets/images/weibo/xinlang.png"/> -->
 		</div>
 		</div>
 		
@@ -58,7 +58,7 @@
 		});
 		var register_node=document.getElementsByClassName("register")[0];
 		register_node.addEventListener("click",function(){
-			window.location="jsp/xunta_user/register.jsp";
+			window.location="<%=request.getContextPath()%>/jsp/xunta_user/register.jsp";
 		});
 	</script>
 

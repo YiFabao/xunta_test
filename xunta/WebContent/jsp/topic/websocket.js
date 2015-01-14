@@ -76,6 +76,10 @@ function websocketEvent(userId) {
 			if(window.webimHandle){
 				webimHandle(json);//消息处理 fabao.yi
 			}
+			//广播消息在此接收
+		}else if(status == "4"){
+			alert(json.userId);
+			alert(json.topicId);
 		}
 	}
 }
@@ -107,6 +111,10 @@ function sendMsg(topicId, msgId, sender, accepter, msg, time) {
 
 function heartbeat() {
 	ws.send('{"status" : "-1","msg" : "ping"}');
+}
+//广播该用户进入聊天窗口
+function broadcast(user_id,topic_id) {
+	ws.send('{"status" : "4","userId" : "'+user_id+'","topicId":"'+topic_id+'"}');
 }
 
 function jsonStr(status, topicId, msgId, sender, accepter, msg, time) {

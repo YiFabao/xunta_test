@@ -7,12 +7,47 @@ import java.util.List;
 
 import org.junit.Test;
 
+import so.xunta.topic.MessageAlert;
 import so.xunta.topic.Topic;
 import so.xunta.topic.TopicManagerImpl;
 import so.xunta.topic.TopicMember;
 import so.xunta.utils.DateTimeUtils;
 
 public class TopicManagerImplTest {
+	
+	@Test
+	public void topicIsExitInHistoryTest()
+	{
+		TopicManagerImpl topicManager=new TopicManagerImpl();
+		System.out.println(topicManager.checkTopicIsExitInHistory("8","DD4D08F997C854C81FDC2CE090BCC25A"));
+	}
+	
+	@Test
+	public void updateMessageAlertToAlreadyReadTest()
+	{
+		TopicManagerImpl topicManager=new TopicManagerImpl();
+		topicManager.updateMessageAlertToAlreadyRead("10");
+		System.out.println("ok");
+	}
+	
+	@Test 
+	public void searchMyMessageTest()
+	{
+		TopicManagerImpl topicManager=new TopicManagerImpl();
+		List<MessageAlert> ml=topicManager.searchMyMessage("10");
+		for(MessageAlert m:ml)
+		{
+			System.out.println(m.topicContent);
+		}
+	}
+	@Test
+	public void searchNotReadmessageNumTest()
+	{
+		TopicManagerImpl topicManager=new TopicManagerImpl();
+		long num=topicManager.searchNotReadmessageNum("d");
+		System.out.println(num);
+	}
+	
 	@Test
 	public void testSaveTopicMember(){
 		TopicManagerImpl topicManager=new TopicManagerImpl();

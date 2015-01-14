@@ -4,6 +4,7 @@
 	String path = request.getContextPath();
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 %>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<base href="<%=basePath%>">
@@ -35,11 +36,11 @@
 					
 			</c:if>
 			<form action="servlet/register" method="post">
-				用户名:<input type="text" name="xunta_username" value="${xunta_username}"/><br/>
-				邮箱:<input type="text" name="email" value="${email}"/><br/>
-				密码:<input type="password" name="password" ><br/>
-				确认密码:<input type="password" name="confirm"><br/>
-				输入验证码:<input type="code" name="code"><br/>
+				用户名(不超过30位):<input type="text" name="xunta_username" value="${xunta_username}" size=30><br/>
+				邮箱:<input type="text" name="email" value="${email}"><br/>
+				密码(不超过18位):<input type="password" name="password" size=18 value="${password}"><br/>
+				确认密码(不超过18位):<input type="password" name="confirm" size=18 value="${confirm}"><br/>
+				输入验证码(区分大小写):<input type="code" name="code"><br/>
 				<img src="servlet/validateCodeServlet" width="80" height="30" class="validateImage"/>点击图片换验证码<br />
 				<button type="submit" >注册新用户</button>
 			</form>

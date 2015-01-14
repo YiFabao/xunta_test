@@ -476,7 +476,7 @@ li.active
 	border-bottom:1px solid #ccc;
 }
 .header .name{
-	width:200px;
+	width:80%;
 	height:30px;
 	position:relative;
 	line-height: 30px;

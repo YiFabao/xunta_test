@@ -3,13 +3,14 @@ window.mydomain="http://"+document.domain+":8080/xunta";
 window.onload=function(){
     //imgLocation("body_content","box");
     console.log("所有页面资源包括图片加载完成");
+    window._userId=document.getElementsByName("userId")[0].value;//发送消息人id
 }
 
 //dom结构加载后执行
 window.addEventListener("DOMContentLoaded",function(){
     console.log("文档内容加载完毕");
     //创建websocket
-    var fromUserid=document.getElementsByName("userId")[0].value;//发送消息人id
+    var fromUserid=document.getElementsByName("userId")[0].value;//发送消息人id;
     //var userName=document.getElementsByName("userName")[0].value;
     createWebsocketConnect(fromUserid);
     console.log("创建websocket");
@@ -33,7 +34,6 @@ function addChatSendMessageListener(){
     //监听webim消息输入框
     var msg_input_node=document.getElementsByClassName("msg_input")[0];
     msg_input_node.addEventListener("keyup",function(){
-    	console.log(event.keyCode);
         if(event.keyCode==13)
         {
         	//获取好友列表
@@ -47,7 +47,6 @@ function addChatSendMessageListener(){
         	{
         		var p_node=p_nodes[i];
         		contacts.push(p_node.getAttribute("memberid"));
-        		console.log(contacts);
         	}
             if(msgManagerReady)
             {
@@ -119,6 +118,9 @@ window.webimStateChange=function(state){
     else if(state="no"){
         msgManagerReady=false;
         console.log("websocket异常");
+        var fromUserid=document.getElementsByName("userId")[0].value;//发送消息人id;
+        console.log("重新创建websocket");
+        createWebsocketConnect(fromUserid);
     }
 };
 //监听document加载状态
@@ -246,8 +248,6 @@ function addClickExitListener(){
 		var webim_page=document.getElementsByClassName("webim_page")[0];
 		webim_page.style.display="none";
 		  clearInterval(chat);
-		  chat=null;
-		  topicId=null;
 	});
 }
 
@@ -257,7 +257,6 @@ var currentView=document.getElementById("writeTopic");
 function showMyTopicSubpage(id) {
     if(currentView.id==id)
     {
-        console.log("返回");
         return;
     }
     var body_content_node = document.getElementsByClassName("body_content")[0];
@@ -329,7 +328,6 @@ function fqht(e){
         return;
     }
     //将数据发往数据库
-    console.log("开始发送数据");
     var userName=document.getElementsByName("userName")[0].value;
     var userId=document.getElementsByName("userId")[0].value;
     
@@ -345,13 +343,10 @@ function fqht(e){
     
   //以下是callback函数的定义
     function mycallback(){
-        console.log(xmlHttp.readyState);
         if(xmlHttp.readyState==4)
         {
-            console.log("请求完成");
             if(xmlHttp.status==200)
             {
-                console.log("请求成功响应");
                 var topicListData=xmlHttp.responseText;
                 topicListData= JSON.parse(topicListData);
                 //将topicList里的数据清空,将textArea用户输入的内容清空
@@ -389,13 +384,10 @@ function htss(event){
     doRequestUsingPOST("http://"+document.domain+":8080/xunta/servlet/topic?"+toDomString(parameters),mycallback);
     
     function mycallback(){
-        console.log(xmlHttp.readyState);
         if(xmlHttp.readyState==4)
         {
-            console.log("请求完成");
             if(xmlHttp.status==200)
             {
-                console.log("请求成功响应");
                 var topicListData=xmlHttp.responseText;
                 topicListData= JSON.parse(topicListData);
                 //将topicList里的数据清空,将textArea用户输入的内容清空
@@ -433,13 +425,10 @@ function htjy(authorId){
     
   //以下是callback函数的定义
     function mycallback(){
-        console.log(xmlHttp.readyState);
         if(xmlHttp.readyState==4)
         {
-            console.log("请求完成");
             if(xmlHttp.status==200)
             {
-                console.log("请求成功响应");
                 var topicListData=xmlHttp.responseText;
                 topicListData= JSON.parse(topicListData);
                 //将topicList里的数据清空
@@ -449,9 +438,9 @@ function htjy(authorId){
               
                 for(var i=0;i<topicListData.length;i++)
                 {
-                	console.log(topicListData[i]);
+                	//console.log(topicListData[i]);
                     //创建dom
-                    createTopicList(topicListData[i],topic_list_node);
+                    createTopicList2(topicListData[i],topic_list_node);
                 }
             }
             else{
@@ -485,10 +474,11 @@ function startChat(e){
 	var header_name=document.querySelector("div.header span.name");
     var topicId=this.getAttribute("topicId");
     tid=topicId;
+    //获取点点的话题
 	//查询topicId 对应的话题内容
-	var topicContent="我的话题";
+    var topicContentNode=e.target.parentNode.parentNode.parentNode;//table
+	var topicContent=topicContentNode.getElementsByClassName("content")[0].innerText.trim();
 	setTimeout(searchTopicContent(topicId),3000);
-		//searchTopicContent(topicId);
 	header_name.innerText=topicContent;
     switch(this.innerHTML.trim()){
         case "邀请":
@@ -506,15 +496,14 @@ function startChat(e){
         	//参与聊天，自己会被加入到话题会话列到中
             console.log("参与聊天");
             var topicId=this.getAttribute("topicId");
-            console.log("话题id:"+topicId);
             var memberId=document.getElementsByName("userId")[0].value;
-            //添加成员到话题下,如果已经存在是不会重复添加的
+            //添加成员到话题下,如果已经存在是不会重复添加的，并同时添加到话题历史中，（注意）不能重复添加
             var memberName = document.getElementsByName("userName")[0].value;
             addTopicMember(topicId,memberId,memberName);
-      /*      //查询话题id下的所有成员 ,将成员列表挂到聊天窗口的联系人右侧
-            searchTopicMemberList(topicId);*/
+            //查询话题id下的所有成员 ,将成员列表挂到聊天窗口的联系人右侧
+            searchTopicMemberList(topicId);
       
-              chat=setInterval(showTheNewestContacts,2000);
+            chat=setInterval(showTheNewestContacts,10000);
             
             break;
         case "进入":
@@ -537,7 +526,6 @@ function showTheNewestContacts(){
 //在话题topicId下添加会话成员memberId
 function addTopicMember(topicId,memberId,memberName)
 {
-	console.log("topicId:"+topicId+"  memberId:"+memberId);
 	 //发送请求
     var parameters={
         topicId:topicId,
@@ -548,14 +536,11 @@ function addTopicMember(topicId,memberId,memberName)
     doRequestUsingPOST("http://"+document.domain+":8080/xunta/servlet/topic?"+toDomString(parameters),mycallback);
   //以下是callback函数的定义
     function mycallback(){
-        console.log(xmlHttp.readyState);
         if(xmlHttp.readyState==4)
         {
-            console.log("请求完成");
             if(xmlHttp.status==200)
             {
             	var responseData=xmlHttp.responseText;
-            	console.log("responseData:====="+responseData+"======");
             	if(responseData!=""&&responseData!=null)
             	{
             		var contacts= JSON.parse(responseData);
@@ -567,7 +552,6 @@ function addTopicMember(topicId,memberId,memberName)
                  	   createContactsList(contacts[i]);
                     }
             	}
-                console.log("请求成功响应");
             }
             else{
                 console.log("请求没有成功响应:"+xmlHttp.status);
@@ -591,24 +575,21 @@ function searchTopicContent(topicId)
    function mycallback(){
        if(xmlHttp.readyState==4)
        {
-           console.log("请求完成=====================|||||||");
            if(xmlHttp.status==200)
            {
-               console.log("请求成功响应");
-               console.log("话题内容为：==================================>");
+
            }
            else{
                console.log("请求没有成功响应:"+xmlHttp.status);
            }
        }
    }
-
 }
+
 
 //查询话题下的联系人列表
 function searchTopicMemberList(topicId)
 {
-	console.log("查询"+topicId+"下的联系人列表");
 	 //发送请求
    var parameters={
        topicId:topicId,
@@ -617,13 +598,10 @@ function searchTopicMemberList(topicId)
    doRequestUsingPOST("http://"+document.domain+":8080/xunta/servlet/topic?"+toDomString(parameters),mycallback);
  //以下是callback函数的定义
    function mycallback(){
-       console.log(xmlHttp.readyState);
        if(xmlHttp.readyState==4)
        {
-           console.log("请求完成");
            if(xmlHttp.status==200)
            {
-               console.log("请求成功响应");
                var respoinseData=xmlHttp.responseText;
                var contacts= JSON.parse(respoinseData);
 	           	var contacts_list=document.getElementsByClassName("contacts_list")[0];
@@ -633,7 +611,6 @@ function searchTopicMemberList(topicId)
                {
             	   createContactsList(contacts[i]);
                }
-               
            }
            else{
                console.log("请求没有成功响应:"+xmlHttp.status);
@@ -641,6 +618,7 @@ function searchTopicMemberList(topicId)
        }
    }
 }
+
 function addMessageAlert(_fromUserId,toUserId){
 	//发送请求
     var parameters={
@@ -651,13 +629,10 @@ function addMessageAlert(_fromUserId,toUserId){
     doRequestUsingPOST(window.mydomain+"/servlet/topic?"+toDomString(parameters),mycallback);
     //以下是callback函数的定义
     function mycallback(){
-        console.log(xmlHttp.readyState);
         if(xmlHttp.readyState==4)
         {
-            console.log("请求完成");
             if(xmlHttp.status==200)
             {
-                console.log("请求成功响应");
                 //如果有返回数据，在些接收处理
             }
             else{
@@ -667,6 +642,37 @@ function addMessageAlert(_fromUserId,toUserId){
     }
 }
 
+
+var timer_recNumUnreadMsg=setInterval(searchUnreadMessageNum,5000);
+//查询未读消息数
+function searchUnreadMessageNum()
+{
+	 var parameters={
+        authorId:window._userId,
+        cmd:'searchUnreadMsgNum'
+    };
+    doRequestUsingPOST("http://"+document.domain+":8080/xunta/servlet/topic?"+toDomString(parameters),mycallback);
+    
+  //以下是callback函数的定义
+    function mycallback(){
+        if(xmlHttp.readyState==4)
+        {
+            if(xmlHttp.status==200)
+            {
+                var num=xmlHttp.responseText;
+                var num=parseInt(num);
+                if(num>0)
+                {
+                	alert("你好，收到消息,消息数"+num);
+                	//document.getElementById("unreadMessageNum").innerHTML="未读消息消息数:<i>"+num+"</i>";
+                }
+            }
+            else{
+                console.log("请求没有成功响应:"+xmlHttp.status);
+            }
+        }
+    }
+}
 //创建联系人列表
 function createContactsList(contact){
 	var topicId=contact.topic_id;
@@ -930,7 +936,6 @@ Date.prototype.format = function(format)
 var xmlHttp=null;//声明一个XHR对象
 //创建一个XHR对象
 function createXMLHttpRequest() {
-  console.log("创建xhr");
   if (window.ActiveXObject) {
       xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
   } else {
@@ -943,11 +948,9 @@ function createXMLHttpRequest() {
 function doRequestUsingPOST(url, callback) {
 	if(xmlHttp==null)
   {
-      console.log("xmlHttp==null");
       createXMLHttpRequest();//创建xhr
   }
   if(xmlHttp.readyState!=0) {
-      console.log("readyState!=0 初始化");
       xmlHttp.abort();//初始化
   }
   xmlHttp.onreadystatechange = callback;
