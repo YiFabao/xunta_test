@@ -12,7 +12,8 @@ public class MessageAlert implements Comparable<MessageAlert>{
 	public String _fromUserId;//id
 	public String topicId;//邀请要进入的话题id
 	public String topicContent;//topicId对应的话题内容
-	public int isHandle=0;//0 未处理  1已处理
+	public int isHandle = 0;//0 未处理  1已处理
+	public int isRead = 0;//默认未读
 	public String datetime;
 	
 	public MessageAlert() {
@@ -40,6 +41,12 @@ public class MessageAlert implements Comparable<MessageAlert>{
 		this.authorId = authorId;
 	}
 
+	public int getIsRead() {
+		return isRead;
+	}
+	public void setIsRead(int isRead) {
+		this.isRead = isRead;
+	}
 	public String get_fromUsername() {
 		return _fromUsername;
 	}

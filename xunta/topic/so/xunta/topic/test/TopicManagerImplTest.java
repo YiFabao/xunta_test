@@ -15,6 +15,12 @@ import so.xunta.utils.DateTimeUtils;
 
 public class TopicManagerImplTest {
 	@Test
+	public void deleteOneMessageTest()
+	{
+		TopicManagerImpl topicManager=new TopicManagerImpl();
+		topicManager.deleteOneMessage(1);
+	}
+	@Test
 	public void searchNicknameByUserId()
 	{
 		TopicManagerImpl topicManager=new TopicManagerImpl();

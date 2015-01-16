@@ -95,9 +95,36 @@ public class Topic extends HttpServlet {
 		case "joinTopic":
 			joinTopic(request,response);
 			break;
+		case "agreeToJoinTopic":
+			agreeToJoinTopic(request,response);
+			break;
+		case "notAgreeToJoinTopic":
+			notAgreeToJoinTopic(request,response);
+			break;
 		default:
 				break;
 		}
+	}
+	private void notAgreeToJoinTopic(HttpServletRequest request, HttpServletResponse response) {
+		//获取 消息的主键id
+		String id_str = request.getParameter("id");
+		if(id_str==null||"".equals(id_str))return;
+		
+		int id = Integer.parseInt(id_str);
+		
+		//将消息改为已处理
+		topicManager.updateMessageAlertToAlreadyHandle(id);
+		
+	}
+	private void agreeToJoinTopic(HttpServletRequest request, HttpServletResponse response) {
+		
+		joinTopic(request, response);
+		String id_str = request.getParameter("id");
+		if(id_str==null||"".equals(id_str))return;
+		
+		int id = Integer.parseInt(id_str);
+		//将消息改为已处理
+		topicManager.updateMessageAlertToAlreadyHandle(id);
 	}
 	private void joinTopic(HttpServletRequest request, HttpServletResponse response) {
 		//获取话题id

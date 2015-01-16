@@ -59,6 +59,22 @@ Date.prototype.format = function(format)
                 ("00"+ o[k]).substr((""+ o[k]).length));
     return format;
 }
+//{name:"张三",mytopic:"话题"}==>name=张三&mytopic=话题==>并url编码，以便给xhr传参
+function toDomString(json){
+    var domString="";
+    for(var p in json)//p为json对象里的属性名
+    {
+        if(domString=="")
+        {
+            domString+=(p+"="+json[p]);
+        }
+        else{
+            domString+="&"+p+"="+json[p];
+        }
+    }
+    return encodeURI(domString);
+}
+
 
 var xmlHttp=null;//声明一个XHR对象
 //创建一个XHR对象

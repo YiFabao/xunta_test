@@ -297,7 +297,7 @@ public class TopicManagerImpl implements TopicManager {
 		Session session = HibernateUtils.openSession();
 		try {
 			session.beginTransaction();
-			String hql="from MessageAlert as m where m.authorId=?";
+			String hql="from MessageAlert as m where m.authorId=? and m.isHandle = 0";
 			org.hibernate.Query query = session.createQuery(hql);
 			query.setString(0,authorId);
 			List<MessageAlert> l = query.list();
@@ -353,7 +353,7 @@ public class TopicManagerImpl implements TopicManager {
 		try {
 			
 			session.beginTransaction();
-			String hql="select count(*) from MessageAlert m where m.authorId=? and m.isHandle=0";
+			String hql="select count(*) from MessageAlert m where m.authorId=? and m.isRead=0";
 			org.hibernate.Query query = session.createQuery(hql);
 			query.setString(0, authorId);
 			long num=(Long)query.uniqueResult();
@@ -476,7 +476,7 @@ public class TopicManagerImpl implements TopicManager {
 		Session session = HibernateUtils.openSession();
 		try {
 			session.beginTransaction();
-			String hql="update MessageAlert as ma set ma.isHandle=1 where ma.authorId=?";
+			String hql="update MessageAlert as ma set ma.isRead=1 where ma.authorId=?";
 			org.hibernate.Query query=session.createQuery(hql);
 			query.setString(0, authorId);
 			query.executeUpdate();
@@ -530,6 +530,42 @@ public class TopicManagerImpl implements TopicManager {
 			String nickname = (String) query.uniqueResult();
 			session.getTransaction().commit();
 			return nickname;
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
+	}
+
+	@Override
+	public void deleteOneMessage(int id) {
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			String hql="delete MessageAlert as m where m.id = ?";
+			org.hibernate.Query query = session.createQuery(hql);
+			query.setInteger(0, id);
+			query.executeUpdate();
+			session.getTransaction().commit();
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
+	}
+
+	@Override
+	public void updateMessageAlertToAlreadyHandle(int pid) {
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			String hql="update MessageAlert as ma set ma.isHandle=1 where id=?";
+			org.hibernate.Query query=session.createQuery(hql);
+			query.setInteger(0, pid);
+			query.executeUpdate();
+			session.getTransaction().commit();
 		} catch (RuntimeException e) {
 			session.getTransaction().rollback();
 			throw e;

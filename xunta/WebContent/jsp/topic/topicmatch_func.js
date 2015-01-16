@@ -436,21 +436,7 @@ function createTopicList2(topicItemData,topic_list_node){
     topic_list_node.appendChild(table_node);
 }
 
-//{name:"张三",mytopic:"话题"}==>name=张三&mytopic=话题==>并url编码，以便给xhr传参
-function toDomString(json){
-    var domString="";
-    for(var p in json)//p为json对象里的属性名
-    {
-        if(domString=="")
-        {
-            domString+=(p+"="+json[p]);
-        }
-        else{
-            domString+="&"+p+"="+json[p];
-        }
-    }
-    return encodeURI(domString);
-}
+
 //发起话题
 function fqht(e){
 	//获取用户输入的话题内容
