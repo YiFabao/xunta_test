@@ -138,12 +138,13 @@ function addMessageAlert(_fromUserId,toUserId){
 }
 
 
-//var timer_recNumUnreadMsg=setInterval(searchUnreadMessageNum,5000);
+var timer_recNumUnreadMsg=setInterval(searchUnreadMessageNum,5000);
 //查询未读消息数
 function searchUnreadMessageNum()
 {
+	console.log("未读消息数");
 	 var parameters={
-        authorId:window._userId,
+        authorId:_currentUserId,
         cmd:'searchUnreadMsgNum'
     };
     doRequestUsingPOST("servlet/topic?"+toDomString(parameters),mycallback);
@@ -158,8 +159,8 @@ function searchUnreadMessageNum()
                 var num=parseInt(num);
                 if(num>0)
                 {
-                	alert("你好，收到消息,消息数"+num);
-                	//document.getElementById("unreadMessageNum").innerHTML="未读消息消息数:<i>"+num+"</i>";
+                	//alert("你好，收到消息,消息数"+num);
+                	document.getElementById("unreadMessageNum").innerHTML="未读消息消息数:<i>"+num+"</i>";
                 }
             }
             else{

@@ -168,10 +168,10 @@
 <script src="util.js"></script>
 <script src="myscroll.js"></script>
 <script src="topicmatch_config.js"></script>
-<script src="websocket.js"></script>
 <script src="dynamic.js"></script>
 <script src="topicmatch_func.js"></script>
 <script src="eventListener.js"></script>
+<script src="websocket.js"></script>
 <script src="topicmatch.js"></script>
 
 </body>

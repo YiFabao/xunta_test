@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="xunta">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/LocalContext"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/searchpeople"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/author_profile"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/searchauthor"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/websocket"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/topic"/>
+        <property name="context-root" value="xunta"/>
+        <property name="java-output-path" value="/xunta/build/classes"/>
+    </wb-module>
+</project-modules>

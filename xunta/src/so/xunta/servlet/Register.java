@@ -31,7 +31,7 @@ public class Register extends HttpServlet {
 		String email=request.getParameter("email");
 		String password=request.getParameter("password");
 		String confirm=request.getParameter("confirm");
-		String code=request.getParameter("code");
+		String code=request.getParameter("code").toLowerCase();
 		
 
 		//服务器端验证
@@ -86,6 +86,10 @@ public class Register extends HttpServlet {
 			}
 			//验证码是否相同
 			String _code=(String) request.getSession().getAttribute("code");
+			if(_code!=null)
+			{
+				_code=_code.toLowerCase();
+			}
 			System.out.println(_code);
 			if(!code.equals(_code))
 			{

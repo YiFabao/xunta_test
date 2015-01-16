@@ -81,6 +81,8 @@ function websocketEvent(userId) {
 			if(window.receiveBroadcast){
 				receiveBroadcast(json);//接收广播消息  fabao.yi
 			}
+		}else{
+			alert(event.data);
 		}
 	}
 }
@@ -96,8 +98,9 @@ function websocketEvent(userId) {
  */
 function sendMsg(topicId, msgId, sender, accepter, msg, time,nickname) {
 	console.log("sendMsg方法accepter:"+accepter);
+	var message = encodeURIComponent(msg);
 	//发送消息后可以做一个发送中的动画效果,发送成功后,会触发 onmessage中的status==2,表明发送消息成功,取消动画效果,如果在10秒钟还没有发送成功,会触发 if条件表达式,显示消息发送失败
-	var msg = jsonStr('1', topicId, msgId, sender, accepter, msg, time,nickname);
+	var msg = jsonStr('1', topicId, msgId, sender, accepter, message, time,nickname);
 	msgArray.unshift(msg); //将消息添加到数组,监听状态
 	ws.send(msg);
 	setTimeout(function() {
@@ -156,4 +159,70 @@ function checkWebSocketState() {
 			}
 		}
 	}, 10000);*/
+}
+
+function getHistoryMessage(topicId,count){
+	 var parameters={
+       topicId:topicId,
+       biginIndex:count,
+       endIndex:count+20
+   };
+   doRequestUsingPOST_fang("http://aigine.eicp.net:21280/WebSocket_fang/servlet/TopicHistoryMessage?"+toDomString_fang(parameters),function(){
+       console.log(xmlHttp.readyState);
+       if(xmlHttp.readyState==4)
+       {
+           console.log("请求完成");
+           if(xmlHttp.status==200)
+           {
+               console.log("请求成功响应");
+               var historyMessage = xmlHttp.responseText;
+               alert(historyMessage);
+           }
+           else{
+               console.log("请求没有成功响应:"+xmlHttp.status);
+           }
+       }
+   });
+}
+
+function toDomString_fang(json){
+   var domString="";
+   for(var p in json)//p为json对象里的属性名
+   {
+       if(domString=="")
+       {
+           domString+=(p+"="+json[p]);
+       }
+       else{
+           domString+="&"+p+"="+json[p];
+       }
+   }
+   return encodeURI(domString);
+}
+
+
+var xmlHttp=null;//声明一个XHR对象
+//创建一个XHR对象
+function createXMLHttpRequest_fang() {
+ if (window.ActiveXObject) {
+     xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+ } else {
+     if (window.XMLHttpRequest) {
+         xmlHttp = new XMLHttpRequest();
+     }
+ }
+}
+ 
+//向服务端发起异步请求:GET（入口函数）,callback为回调函数名称
+function doRequestUsingPOST_fang(url, callback) {
+if(xmlHttp==null)
+ {
+     createXMLHttpRequest_fang();//创建xhr
+ }
+ if(xmlHttp.readyState!=0) {
+     xmlHttp.abort();//初始化
+ }
+ xmlHttp.onreadystatechange = callback;
+ xmlHttp.open("POST",url + "&timeStamp=" + new Date().getTime(),false);//true表示异步,false表示同步
+ xmlHttp.send(null);
 }

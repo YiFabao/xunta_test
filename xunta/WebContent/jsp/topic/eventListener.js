@@ -258,15 +258,9 @@ window.receiveBroadcast = function(json)
 //创建消息处理函数
 window.webimHandle=function(json){
   console.log("接收到的消息："+json.msg);
-  var msg=json.msg;
   var msg_bubble_list_node=document.getElementsByClassName("msg_bubble_list")[0];
   var li_node=document.createElement("li");
   var msgStr="";
-/*   for(var p in json)
-   {
-      msgStr+=p+":"+json[p]+"<br/>";
-      console.log(json[p]);
-   }*/
   var topicId=json.topicId;
   //消息要发送到指定的topicId窗口上
   var private_dialogue_body = document.getElementsByClassName("private_dialogue_body")[0];
@@ -281,7 +275,7 @@ window.webimHandle=function(json){
   var nickname=json.nickname;
   var sender=json.sender;
   var accepter=json.accepter;
-  var msg = json.msg;
+  var msg = decodeURIComponentUrl(dejson.msg);
   var time = json.time;
   msgStr=nickname+"<br/>"+sender+"<br/>"+msg+"<br/>"+time;
   msgStr+="<hr/>";
