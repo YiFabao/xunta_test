@@ -34,6 +34,8 @@ public interface TopicManager {
 	public void updateMessageAlertToAlreadyRead(String authorId);
 	//查询某条话题是否存在于作者的话题历史当中
 	public boolean checkTopicIsExitInHistory(String authorId,String topicId);
+	//通过userId 查询用户的昵称
+	public String searchNicknameByUserId(int userId);
 
 	
 }

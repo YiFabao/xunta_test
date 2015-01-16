@@ -460,6 +460,7 @@ public class TopicManagerImpl implements TopicManager {
 			sqlquery.setString(0,authorId);
 			List<Topic> topicList=sqlquery.list();
 			session.getTransaction().commit();
+			Collections.sort(topicList);
 			return topicList;
 			
 		} catch (RuntimeException e) {
@@ -510,6 +511,25 @@ public class TopicManagerImpl implements TopicManager {
 			{
 				return false;
 			}
+		} catch (RuntimeException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			session.close();
+		}
+	}
+
+	@Override
+	public String searchNicknameByUserId(int userId) {
+		Session session = HibernateUtils.openSession();
+		try {
+			session.beginTransaction();
+			String hql="select xunta_username from User where id = ?";
+			org.hibernate.Query query = session.createQuery(hql);
+			query.setInteger(0,userId);
+			String nickname = (String) query.uniqueResult();
+			session.getTransaction().commit();
+			return nickname;
 		} catch (RuntimeException e) {
 			session.getTransaction().rollback();
 			throw e;

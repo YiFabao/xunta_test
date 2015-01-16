@@ -89,11 +89,87 @@ public class Topic extends HttpServlet {
 		case "searchUnreadMsgNum":
 			searchUnreadMsgNum(request,response);
 			break;
+		case "searchnicknameByUserId":
+			searchnicknameByUserId(request,response);
+			break;
+		case "joinTopic":
+			joinTopic(request,response);
+			break;
 		default:
 				break;
 		}
 	}
-
+	private void joinTopic(HttpServletRequest request, HttpServletResponse response) {
+		//获取话题id
+		String topicId=request.getParameter("topicId");
+		//用户id
+		String memberId=request.getParameter("userId");
+		//用户昵称
+		String memberName=request.getParameter("userName");
+		System.out.println("话题"+topicId+"下添加成员");
+		//检查在话题topicId下 成员memberId是否存在
+		boolean isMemberIdExistinTopic=topicManager.checkIsTopicMember(memberId, topicId);
+		System.out.println("话题成员是否存在："+isMemberIdExistinTopic);
+		if(!isMemberIdExistinTopic)
+		{
+			String currentTime=DateTimeUtils.getCurrentTimeStr();
+			TopicMember topicMember =new TopicMember(topicId, memberId,memberName,currentTime,0,"");
+			topicManager.saveTopicMember(topicMember);
+		}
+		else{
+		}
+		//保存话题成员的同时，要保存话题历史
+		//查询该话题是否存在于我的话题记忆当中
+		TopicHistory topicHistory=new TopicHistory(memberId, topicId,DateTimeUtils.getCurrentTimeStr());
+		//检查话题历史是否存在
+		if(!topicManager.checkTopicIsExitInHistory(memberId, topicId))
+		{
+			topicManager.addTopicHistory(topicHistory);
+		}
+		
+		
+		List<TopicMember> topicMembers=topicManager.searchTopicMemberList(topicId);
+		//组合成一个json格式的对象
+		JSONArray jarray=new JSONArray();
+		
+		for(int i=0;i<topicMembers.size();i++)
+		{
+			String topic_id=topicMembers.get(i).topic_id;//话题id
+			String topic_memberId=topicMembers.get(i).topic_member_id;//话题成员id
+			String topic_member_name=topicMembers.get(i).topic_member_name;//成员昵称
+			
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("topic_id",topic_id);
+			jsonObj.put("topic_memberId", topic_memberId);
+			jsonObj.put("topic_member_name",topic_member_name);
+			jarray.add(jsonObj);
+		}
+		try {
+			response.getOutputStream().write(jarray.toString().getBytes("UTF-8"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	//通过用户的id 查询用户的昵称
+	private void searchnicknameByUserId(HttpServletRequest request, HttpServletResponse response) {
+		//获取请求参数 userId
+		String userId = request.getParameter("userId");
+		String nickname = topicManager.searchNicknameByUserId(Integer.parseInt(userId));
+		JSONObject jsonObj=new JSONObject();
+		jsonObj.put("nickname",nickname);
+		System.out.println(nickname);
+		try {
+			response.getOutputStream().write(jsonObj.toString().getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	private void searchUnreadMsgNum(HttpServletRequest request, HttpServletResponse response) {
 		String authorId=request.getParameter("authorId");
 		long num=topicManager.searchNotReadmessageNum(authorId);
@@ -118,7 +194,6 @@ public class Topic extends HttpServlet {
 		
 		String topicId=request.getParameter("topicId");
 		String topicContent = topicManager.searchTopicContent(topicId);
-		System.out.println("话题"+topicId+"对应的内容为:"+topicContent);
 		try {
 			JSONObject jsonObj=new JSONObject();
 			jsonObj.put("topicContent",topicContent);
@@ -170,7 +245,6 @@ public class Topic extends HttpServlet {
 	private void viewMessage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String authorId = request.getParameter("authorId");
 		//查看自己的消息
-		System.out.println("authorid:"+authorId+" 查看自己的消息 ");
 		//查询自己的消息
 		List<MessageAlert> messageAlertList=topicManager.searchMyMessage(authorId);
 		topicManager.updateMessageAlertToAlreadyRead(authorId);
@@ -185,10 +259,10 @@ public class Topic extends HttpServlet {
 		String memberId=request.getParameter("memberId");
 		//用户昵称
 		String memberName=request.getParameter("memberName");
-		System.out.println("用户参与话题 topicId:"+topicId+" memberId:"+memberId);
-		
+		System.out.println("话题"+topicId+"下添加成员");
 		//检查在话题topicId下 成员memberId是否存在
 		boolean isMemberIdExistinTopic=topicManager.checkIsTopicMember(memberId, topicId);
+		System.out.println("话题成员是否存在："+isMemberIdExistinTopic);
 		if(!isMemberIdExistinTopic)
 		{
 			String currentTime=DateTimeUtils.getCurrentTimeStr();
@@ -196,19 +270,16 @@ public class Topic extends HttpServlet {
 			topicManager.saveTopicMember(topicMember);
 		}
 		else{
-			System.out.println("话题"+topicId+"下已经存在成员"+memberId);
 		}
 		
 		//保存话题成员的同时，要保存话题历史
 		//查询该话题是否存在于我的话题记忆当中
 		TopicHistory topicHistory=new TopicHistory(memberId, topicId,DateTimeUtils.getCurrentTimeStr());
 		//检查话题历史是否存在
-		System.out.println("检查话题历史是否存在:"+topicManager.checkTopicIsExitInHistory(memberId, topicId));
 		if(!topicManager.checkTopicIsExitInHistory(memberId, topicId))
 		{
 			topicManager.addTopicHistory(topicHistory);
 		}
-		System.out.println("查询话题成员");
 		searchTopicMemberList(request,response);
 
 	}
@@ -216,9 +287,7 @@ public class Topic extends HttpServlet {
 	private void htjy(HttpServletRequest request, HttpServletResponse response) throws IOException, UnsupportedEncodingException {
 		//话题发起人id
 		String authorId = request.getParameter("authorId");
-		System.out.println("用户id:"+authorId);
 		List<so.xunta.topic.Topic> historyTopic=topicManager.searchTopicHistory(authorId);
-		System.out.println("结果数："+historyTopic.size());
 		//组合成一个json格式的对象
 		JSONArray jarray=new JSONArray();
 		
@@ -239,7 +308,6 @@ public class Topic extends HttpServlet {
 			if(i>100)
 				break;
 		}
-		System.out.println("话题记忆");
 		response.getOutputStream().write(jarray.toString().getBytes("UTF-8"));
 	}
 
@@ -247,7 +315,6 @@ public class Topic extends HttpServlet {
 		//我的话题内容
 		String mytopic = request.getParameter("mytopic");//会乱码要转码
 		mytopic=new String(mytopic.getBytes("ISO-8859-1"),"utf-8");
-		System.out.println("我的话题："+mytopic);
 		List<so.xunta.topic.Topic> recommendTopic = topicManager.matchMyTopic(mytopic);
 		// 组合成一个json格式的对象
 		JSONArray jarray = new JSONArray();
@@ -262,7 +329,6 @@ public class Topic extends HttpServlet {
 			if (i > 100)
 				break;
 		}
-		System.out.println("话题推荐");
 		response.getOutputStream().write(jarray.toString().getBytes("UTF-8"));
 	}
 
@@ -270,7 +336,6 @@ public class Topic extends HttpServlet {
 		//我的话题内容
 		String mytopic = request.getParameter("mytopic");//会乱码要转码
 		mytopic=new String(mytopic.getBytes("ISO-8859-1"),"utf-8");
-		System.out.println("我的话题："+mytopic);
 		List<so.xunta.topic.Topic> searchedTopic=topicManager.matchMyTopic(mytopic);
 		//组合成一个json格式的对象
 		JSONArray jarray=new JSONArray();
@@ -300,7 +365,6 @@ public class Topic extends HttpServlet {
 		//我的话题内容
 		String mytopic = request.getParameter("mytopic");//会乱码要转码
 		mytopic=new String(mytopic.getBytes("ISO-8859-1"),"utf-8");
-		System.out.println("我的话题："+mytopic);
 		//话题发起人昵称
 		String topicAuthorName = request.getParameter("topicAuthorName");
 		topicAuthorName=new String(topicAuthorName.getBytes("ISO-8859-1"),"utf-8");
@@ -336,7 +400,6 @@ public class Topic extends HttpServlet {
 			if(i>100)
 				break;
 		}
-		System.out.println("发起话题");
 		//开启线程将索引保存到数据库中 和 保存到索引中
 		new Thread(new AddTopicIndexThread(topicManager, topicId,mytopic, authorId, topicAuthorName, topicCreateTime)).start();
 		so.xunta.topic.Topic topic=new so.xunta.topic.Topic(topicId, authorId, mytopic, topicAuthorName, topicCreateTime);

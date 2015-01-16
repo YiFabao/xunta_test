@@ -4,11 +4,9 @@
 	String path = request.getContextPath();
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 %>
-<!DOCTYPE html>
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-
     <title>话题匹配</title>
     <link rel="stylesheet" type="text/css" href="topicmatch.css">
 </head>
@@ -80,12 +78,12 @@
                         </tr>
                         <tr>
                             <td class="content" colspan="2">
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
-                                如果你早认清你在别人心中没那么重要，你会快乐很多
+						                                如果你早认清你在别人心中没那么重要，你会快乐很多
+						                                如果你早认清你在别人心中没那么重要，你会快乐很多
+						                                如果你早认清你在别人心中没那么重要，你会快乐很多
+						                                如果你早认清你在别人心中没那么重要，你会快乐很多
+						                                如果你早认清你在别人心中没那么重要，你会快乐很多
+						                                如果你早认清你在别人心中没那么重要，你会快乐很多
                             </td>
                         </tr>
                         <tr>
@@ -133,31 +131,20 @@
         </div>
         <div class="contacts_list">
           <ul>
-<!--               <li class="active">
+<!--          <li class="active">
                   <div class="head">
                       <img src="http://tp3.sinaimg.cn/1298064414/50/5617529344/1">
                   </div>
                   <p class="nick_name">黄刚-物流与供应链物流与供应链</p>
               </li>
-              <li>
-                  <div class="head">
-                      <img src="http://tp4.sinaimg.cn/2074109747/50/5715079216/1">
-                  </div>
-                  <p class="nick_name">毛启盈</p>
-              </li>
-              <li>
-                  <div class="head">
-                      <img src="http://tp4.sinaimg.cn/2074109747/50/5715079216/1">
-                  </div>
-                  <p class="nick_name">黎万强</p>
-              </li> -->
+ -->
           </ul>
       </div>
     </div>
     <div class="dialogue_box">
-        <div class="private_dialogue_body">
+        <div class="private_dialogue_body" topicId="">
             <div class="header">
-                <span class="name"></span>
+                <span class="topic_name" topicName=""></span>
                 <span class="exit">x</span>
             </div>
             <div class="msg_bubble">
@@ -177,11 +164,15 @@
         </div>
     </div>
 </div>
-<script src="topicmatch.js"></script>
-<script src="websocket.js"></script>
-<script src="myscroll.js"></script>
-<script>
 
-</script>
+<script src="util.js"></script>
+<script src="myscroll.js"></script>
+<script src="topicmatch_config.js"></script>
+<script src="websocket.js"></script>
+<script src="dynamic.js"></script>
+<script src="topicmatch_func.js"></script>
+<script src="eventListener.js"></script>
+<script src="topicmatch.js"></script>
+
 </body>
 </html>

@@ -14,6 +14,12 @@ import so.xunta.topic.TopicMember;
 import so.xunta.utils.DateTimeUtils;
 
 public class TopicManagerImplTest {
+	@Test
+	public void searchNicknameByUserId()
+	{
+		TopicManagerImpl topicManager=new TopicManagerImpl();
+
+	}
 	
 	@Test
 	public void topicIsExitInHistoryTest()

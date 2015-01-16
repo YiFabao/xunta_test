@@ -78,8 +78,9 @@ function websocketEvent(userId) {
 			}
 			//广播消息在此接收
 		}else if(status == "4"){
-			alert(json.userId);
-			alert(json.topicId);
+			if(window.receiveBroadcast){
+				receiveBroadcast(json);//接收广播消息  fabao.yi
+			}
 		}
 	}
 }
@@ -93,10 +94,10 @@ function websocketEvent(userId) {
  * @param msg 消息内容
  * @param time 2014-12-1 12:00:01
  */
-function sendMsg(topicId, msgId, sender, accepter, msg, time) {
+function sendMsg(topicId, msgId, sender, accepter, msg, time,nickname) {
 	console.log("sendMsg方法accepter:"+accepter);
 	//发送消息后可以做一个发送中的动画效果,发送成功后,会触发 onmessage中的status==2,表明发送消息成功,取消动画效果,如果在10秒钟还没有发送成功,会触发 if条件表达式,显示消息发送失败
-	var msg = jsonStr('1', topicId, msgId, sender, accepter, msg, time);
+	var msg = jsonStr('1', topicId, msgId, sender, accepter, msg, time,nickname);
 	msgArray.unshift(msg); //将消息添加到数组,监听状态
 	ws.send(msg);
 	setTimeout(function() {
@@ -114,11 +115,11 @@ function heartbeat() {
 }
 //广播该用户进入聊天窗口
 function broadcast(user_id,topic_id) {
-	ws.send('{"status" : "4","userId" : "'+user_id+'","topicId":"'+topic_id+'"}');
+	ws.send('{"status" : "4","userId" : "'+user_id+'","topicId":"'+topic_id+'"}');//用户打开聊天框
 }
 
-function jsonStr(status, topicId, msgId, sender, accepter, msg, time) {
-	var jsonString = '{"status":"' + status + '","topicId":"' + topicId + '","msgId":"' + msgId + '","sender":"' + sender + '","msg":" ' + msg + '","time":"' + time + '","accepter": [';
+function jsonStr(status, topicId, msgId, sender, accepter, msg, time,nickname) {
+	var jsonString = '{"status":"' + status + '","topicId":"' + topicId + '","msgId":"' + msgId + '","sender":"' + sender + '","msg":" ' + msg + '","time":"' + time + '","nickname":"' + nickname + '","accepter": [';
 	console.log("accepter:"+accepter);
 	for (var a = 0; a < accepter.length; a++) {
 		if (a == accepter.length - 1) {

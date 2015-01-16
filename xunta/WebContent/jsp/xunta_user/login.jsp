@@ -39,10 +39,10 @@
 			</form>
 			<button class="register">注 册</button>
 			<br>
-		<div>
-<!-- 			<img id="qq_login" src="assets/images/QQ/Connect_logo_3.png"/>
-			<img id="weibo_login" src="assets/images/weibo/xinlang.png"/> -->
-		</div>
+			<div>
+	<!-- 			<img id="qq_login" src="assets/images/QQ/Connect_logo_3.png"/>
+				<img id="weibo_login" src="assets/images/weibo/xinlang.png"/> -->
+			</div>
 		</div>
 		
 	<script type="text/javascript">
