@@ -74,7 +74,7 @@
 		</c:if>
 	</c:forEach>
 	<script type="text/javascript">
-			window.mydomain="http://"+document.domain+":8080/xunta/";
+			window.mydomain="http://"+document.domain+":21280/xunta/";
 			var btn_y = document.getElementById("y");
 			var btn_n = document.getElementById("n");
 			if(btn_y!=null){

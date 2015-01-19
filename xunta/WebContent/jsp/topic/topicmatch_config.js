@@ -1,4 +1,4 @@
-window.mydomain="http://"+document.domain+":8080/xunta/";
+window.mydomain="http://"+document.domain+":21280/xunta/";
 //全局变量
 var _currentUserId=document.getElementsByName("userId")[0].value;
 var _currentUserName=document.getElementsByName("userName")[0].value;

@@ -178,14 +178,14 @@ function getHistoryMessage(topicId,count){
                console.log("请求成功响应");
                var historyMessage = xmlHttp.responseText;
                ret_msgs = JSON.parse(historyMessage);
-               console.log("赋值在前:"+ret_msgs);
+               //console.log("赋值在前:"+ret_msgs);
            }
            else{
                console.log("请求没有成功响应:"+xmlHttp.status);
            }
        }
    });
-   console.log("返回在后");
+   //console.log("返回在后");
    return ret_msgs;
 }
 
