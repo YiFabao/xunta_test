@@ -1,5 +1,6 @@
 /*
 	 	定义成员变量
+	 	yifabao.test
 	 * */
 var ws; //WebSocket-Obj
 var wssae = 'null'; //WebSocket state mark;
