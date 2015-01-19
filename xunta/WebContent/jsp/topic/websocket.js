@@ -227,6 +227,6 @@ if(xmlHttp==null)
      xmlHttp.abort();//初始化
  }
  xmlHttp.onreadystatechange = callback;
- xmlHttp.open("POST",url + "&timeStamp=" + new Date().getTime(),false);//true表示异步,false表示同步
+ xmlHttp.open("POST",url + "&timeStamp=" + new Date().getTime(),true);//true表示异步,false表示同步
  xmlHttp.send(null);
 }

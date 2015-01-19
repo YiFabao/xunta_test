@@ -103,24 +103,20 @@ function startChat(e){
       case "参与":
       	//参与聊天，自己会被加入到话题会话列到中
           console.log("参与聊天");
-      	broadcast(_currentUserId,topicId);//广播通知用户,调用的websocket.js中的函数
+          broadcast(_currentUserId,topicId);//广播通知用户,调用的websocket.js中的函数
       	//合成一个函数，就是用户参与,逻辑放后台 ==>判断是否是新成员，不是就添加到数据库，然后 返回该话题下的所有联系人
       	  joinTopic(topicId);
-         /* //添加成员到话题下,如果已经存在是不会重复添加的，并同时添加到话题历史中，（注意）不能重复添加
-          addTopicMember(topicId,_currentUserId,_currentUserName);
-          //查询话题id下的所有成员 ,将成员列表挂到聊天窗口的联系人右侧
-          searchTopicMemberList(topicId);
-          */
+         
           //查询该话题下的历史消息，显示历史消息
       	var msg_count = private_dialogue_body.getAttribute("msg_count");
-      	/*var historyMsgs = getHistoryMessage(topicId,msg_count);
+      	var historyMsgs = getHistoryMessage(topicId,msg_count);
       	var msg_num = historyMsgs.length;
       	private_dialogue_body.setAttribute("msg_count",msg_num+msg_count);
       	for(var i=0;i<msg_num;i++)
       	{
       		var history_msg = historyMsgs[i];
       		webimHandle(history_msg);
-      	}*/
+      	}
          //TODO
       	webim_page.style.display="block";//显示聊天窗口
           
@@ -129,14 +125,14 @@ function startChat(e){
     	var topicId=this.getAttribute("topicId");
     	joinTopic(topicId);
     	var msg_count = private_dialogue_body.getAttribute("msg_count");
-      /*	var historyMsgs = getHistoryMessage(topicId,msg_count);
+      	var historyMsgs = getHistoryMessage(topicId,msg_count);
       	var msg_num = historyMsgs.length;
       	private_dialogue_body.setAttribute("msg_count",msg_num+msg_count);
       	for(var i=0;i<msg_num;i++)
       	{
       		var history_msg = historyMsgs[i];
       		webimHandle(history_msg);
-      	}*/
+      	}
       	webim_page.style.display="block";
       	//参与聊天，自己会被加入到话题会话列到中
           console.log("进入自己的话题下聊天");
