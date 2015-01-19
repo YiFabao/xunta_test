@@ -31,7 +31,6 @@ function addContactsShowStyleListener(){
             name_span_node.innerText=this.getElementsByClassName("nick_name")[0].innerText.trim();
         });
     }
-
 }
 
 /**

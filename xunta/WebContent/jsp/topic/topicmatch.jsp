@@ -5,7 +5,7 @@
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 %>
 <html>
-<head lang="en">
+<head lang="zh">
     <meta charset="UTF-8">
     <title>话题匹配</title>
     <link rel="stylesheet" type="text/css" href="topicmatch.css">
@@ -142,7 +142,7 @@
       </div>
     </div>
     <div class="dialogue_box">
-        <div class="private_dialogue_body" topicId="">
+        <div class="private_dialogue_body" topicId="" msg_count="0">
             <div class="header">
                 <span class="topic_name" topicName=""></span>
                 <span class="exit">x</span>

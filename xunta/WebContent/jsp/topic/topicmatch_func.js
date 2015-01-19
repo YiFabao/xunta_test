@@ -587,6 +587,8 @@ function joinTopic(topicId)
         userName:_currentUserName,
         cmd:'joinTopic'
     };
+    
+    console.log("发送的用户名:"+_currentUserName);
   
     doRequestUsingPOST("servlet/topic?"+toDomString(parameters),mycallback);
   //以下是callback函数的定义

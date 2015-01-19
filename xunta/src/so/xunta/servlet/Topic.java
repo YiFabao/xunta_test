@@ -169,10 +169,11 @@ public class Topic extends HttpServlet {
 			jsonObj.put("topic_id",topic_id);
 			jsonObj.put("topic_memberId", topic_memberId);
 			jsonObj.put("topic_member_name",topic_member_name);
+			System.out.println(topic_member_name);
 			jarray.add(jsonObj);
 		}
 		try {
-			response.getOutputStream().write(jarray.toString().getBytes("UTF-8"));
+			response.getOutputStream().write(jarray.toString().getBytes());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

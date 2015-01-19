@@ -82,6 +82,8 @@ function startChat(e){
   var topicId=this.getAttribute("topicId");//话题id
   var private_dialogue_body = document.getElementsByClassName("private_dialogue_body")[0];
   private_dialogue_body.setAttribute("topicId",topicId);
+
+  console.log("消息数："+msg_count);
   //给聊天框设置话题昵称
   var topicContentNode=e.target.parentNode.parentNode.parentNode;//table
   var topicContent=topicContentNode.getElementsByClassName("content")[0].innerText.trim();//话题内容
@@ -110,13 +112,31 @@ function startChat(e){
           searchTopicMemberList(topicId);
           */
           //查询该话题下的历史消息，显示历史消息
-          //TODO
+      	var msg_count = private_dialogue_body.getAttribute("msg_count");
+      	/*var historyMsgs = getHistoryMessage(topicId,msg_count);
+      	var msg_num = historyMsgs.length;
+      	private_dialogue_body.setAttribute("msg_count",msg_num+msg_count);
+      	for(var i=0;i<msg_num;i++)
+      	{
+      		var history_msg = historyMsgs[i];
+      		webimHandle(history_msg);
+      	}*/
+         //TODO
       	webim_page.style.display="block";//显示聊天窗口
           
           break;
       case "进入":
     	var topicId=this.getAttribute("topicId");
     	joinTopic(topicId);
+    	var msg_count = private_dialogue_body.getAttribute("msg_count");
+      /*	var historyMsgs = getHistoryMessage(topicId,msg_count);
+      	var msg_num = historyMsgs.length;
+      	private_dialogue_body.setAttribute("msg_count",msg_num+msg_count);
+      	for(var i=0;i<msg_num;i++)
+      	{
+      		var history_msg = historyMsgs[i];
+      		webimHandle(history_msg);
+      	}*/
       	webim_page.style.display="block";
       	//参与聊天，自己会被加入到话题会话列到中
           console.log("进入自己的话题下聊天");
@@ -275,7 +295,7 @@ window.webimHandle=function(json){
   var nickname=json.nickname;
   var sender=json.sender;
   var accepter=json.accepter;
-  var msg = decodeURIComponentUrl(dejson.msg);
+  var msg = decodeURIComponent(dejson.msg);
   var time = json.time;
   msgStr=nickname+"<br/>"+sender+"<br/>"+msg+"<br/>"+time;
   msgStr+="<hr/>";

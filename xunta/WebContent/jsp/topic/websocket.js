@@ -162,13 +162,14 @@ function checkWebSocketState() {
 }
 
 function getHistoryMessage(topicId,count){
+	var ret_msgs = null;
 	 var parameters={
        topicId:topicId,
        biginIndex:count,
        endIndex:count+20
    };
-   doRequestUsingPOST_fang("http://aigine.eicp.net:21280/WebSocket_fang/servlet/TopicHistoryMessage?"+toDomString_fang(parameters),function(){
-       console.log(xmlHttp.readyState);
+   doRequestUsingPOST_fang("http://aigine.eicp.net:21280/WebSocket/servlet/TopicHistoryMessage?"+toDomString_fang(parameters),function(){
+
        if(xmlHttp.readyState==4)
        {
            console.log("请求完成");
@@ -176,13 +177,16 @@ function getHistoryMessage(topicId,count){
            {
                console.log("请求成功响应");
                var historyMessage = xmlHttp.responseText;
-               alert(historyMessage);
+               ret_msgs = JSON.parse(historyMessage);
+               console.log("赋值在前:"+ret_msgs);
            }
            else{
                console.log("请求没有成功响应:"+xmlHttp.status);
            }
        }
    });
+   console.log("返回在后");
+   return ret_msgs;
 }
 
 function toDomString_fang(json){
