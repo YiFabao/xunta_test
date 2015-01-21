@@ -1,0 +1,285 @@
+*{
+	margin:0px;
+	padding:0px;
+}
+
+.webim_page{
+	width:801px;
+	height:600px;
+	top:20%;
+	contenteditable:true;
+	left:30%;
+	background-color:white;
+	position:absolute;
+	z-index: 2;
+	border-radius: 4px;
+	border:1px solid #ccc;
+	box-shadow: 1px 1px 1px rgba(0,0,0,0.15);
+	display:block;
+}
+.webim_page .search{
+	width:200px;
+	height:40px;
+}
+
+.search .search_s{
+	width:200px;
+	height:40px;
+	display: inline-block;
+	position:relative;
+}
+.search .search_s input{
+	width:180px;
+	position:absolute;
+	right:5px;
+	top:5px;
+	border: 1px #ccc solid;
+	background: #fff;
+	color: #808080;
+	padding-left: 10px;
+	height: 28px;
+	line-height: normal;
+	outline-style: none;
+	box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.15) inset;
+}
+.search_s .pos{
+	position: absolute;
+	width:26px;
+	height:26px;
+	top:7px;
+	right:7px;
+}
+.webim_page .people_list{
+	width:200px;
+	height:600px;
+	position:relative;
+	float:left;
+	border-right:1px solid #ccc;
+}
+.pos a{
+	display: inline-block;
+	width:26px;
+	height:26px;
+	text-decoration: none;
+	text-align: center;
+	line-height: 26px;
+	background-image:url("../images/search_s.png");
+	background-repeat: no-repeat;
+	background-size: 26px 26px;
+	color:rgba(0,0,0,0);
+}
+
+.people_list .topic_group_list{
+	height:560px;
+}
+.webim_page .dialogue_box{
+	width:600px;
+	height:600px;
+
+	position:relative;
+	float:left;
+}
+.topic_group_list ul,
+.topic_group_list li{
+	list-style: none;
+}
+.topic_group_list li{
+	display: list-item;
+	height:40px;
+	margin-bottom: 1px;
+	text-align: match-parent;
+	transition: background-color 300ms;
+
+}
+.search .search_s{
+	position:relative;
+	display: inline-block;
+	border-bottom: 1px solid #ccc;
+}
+
+.head{
+	width:40px;
+	height:40px;
+	float:left;
+}
+.head img{
+	width:36px;
+	height:36px;
+	position: relative;
+	top:2px;
+	left:2px;
+}
+p.topic_name{
+	width:150px;
+	height:40px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	word-wrap: normal;
+	float: left;
+	color: #333;
+	text-decoration: none;
+	display: block;
+	position:relative;
+	font-size: 14px;
+	line-height:40px;
+	padding:0 5px;
+	font-family: 'Arial','Microsoft YaHei';
+}
+
+
+li.active
+{
+	background-color: lightgray;
+}
+
+
+.private_dialogue_body{
+	width:600px;
+	height:550px;
+}
+.private_send_box{
+	width:600px;
+	height:50px;
+}
+.sendbox_area{
+	width:600px;
+	height:50px;
+}
+.msg_input{
+	box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.15) inset;
+	border:none;
+	line-height: 18px;
+	width:590px;
+	height:40px;
+	padding:5px;
+	font: 12px/1.3 'Arial','Microsoft YaHei';
+	resize: none;
+}
+
+.private_dialogue_body .header{
+	width:600px;
+	height:40px;
+	border-bottom:1px solid #ccc;
+	background-color:orange;
+}
+.header ul li{
+	list-style: none;
+	display:block;
+	position:relative;
+	float:left;
+	line-height: 38px;
+	margin-right:3px;
+}
+.header ul li:first-child{
+	height:20px;
+	background-color:orange;
+	margin-top:7px;
+	margin-left:5px;
+}
+.header ul li:last-child{
+	width:25px;
+}
+.header ul li img{
+	width:25px;
+	height:25px;
+	top:7px;
+}
+.header .nickname{
+	width:80px;
+}
+.header .topic{
+	width:450px;
+}
+
+.header .name{
+	width:80%;
+	height:30px;
+	position:relative;
+	line-height: 30px;
+	padding-right:5px;
+	top:5px;
+	left:10px;
+	overflow: hidden;
+	white-space:nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	font-family: 'Arial', 'Microsoft YaHei';
+	float:left;
+}
+span.exit{
+	position:relative;
+	display:block;
+	float:right;
+	width:40px;
+	top:5px;
+	height:30px;
+	line-height: 30px;
+	font-family: bold;
+	font-size:20px;
+}
+span.exit:hover{
+	cursor:pointer;
+}
+.contacts{
+	width:600px;
+	height:52px;
+	border-bottom:1px solid #ccc;
+}
+.contacts ul li{
+	list-style: none;
+	position:relative;
+	float:left;
+	margin-left:5px;
+	margin-top:2px;
+}
+.contacts ul li img{
+	width:22px;
+	height:22px;
+	border-radius:45px;
+}
+.private_dialogue_body .msg_bubble{
+	width:600px;
+	height:460px;
+}
+
+#mainBox {
+	width: 600px;
+	height:508px;
+	position:relative;
+	overflow: hidden;
+}
+
+#content {
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+
+.scrollDiv {
+	width:10px;
+	position: absolute;
+	top: 0;
+	background: #666;
+	border-radius: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

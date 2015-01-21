@@ -43,90 +43,53 @@
     <servlet-name>weiboLogin</servlet-name>
     <url-pattern>/servlet/weiboLogin</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>topic</servlet-name>
+    <servlet-class>so.xunta.servlet.Topic</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>topic</servlet-name>
+    <url-pattern>/servlet/topic</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>local_login</servlet-name>
+    <servlet-class>so.xunta.servlet.Login</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>local_login</servlet-name>
+    <url-pattern>/servlet/login</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>register_validate_code</servlet-name>
+    <servlet-class>so.xunta.servlet.ValidateCodeServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>register_validate_code</servlet-name>
+    <url-pattern>/servlet/validateCodeServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>register</servlet-name>
+    <servlet-class>so.xunta.servlet.Register</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>register</servlet-name>
+    <url-pattern>/servlet/register</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>topic_service</servlet-name>
+    <servlet-class>so.xunta.servlet.TopicService</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>topic_service</servlet-name>
+    <url-pattern>/servlet/topic_service</url-pattern>
+  </servlet-mapping>
   
   <servlet>
-  	<servlet-name>topic</servlet-name>
-  	<servlet-class>so.xunta.servlet.Topic</servlet-class>
+    <servlet-name>topicMatch_service</servlet-name>
+    <servlet-class>so.xunta.servlet.TopicMatchServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>topic</servlet-name>
-  	<url-pattern>/servlet/topic</url-pattern>
+    <servlet-name>topicMatch_service</servlet-name>
+    <url-pattern>/servlet/matchedTopic</url-pattern>
   </servlet-mapping>
-  
-  <servlet>
-      <servlet-name>local_login</servlet-name>
-      <servlet-class>so.xunta.servlet.Login</servlet-class>
-  </servlet>
-  <servlet-mapping>
-      <servlet-name>local_login</servlet-name>
-      <url-pattern>/servlet/login</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-      <servlet-name>register_validate_code</servlet-name>
-      <servlet-class>so.xunta.servlet.ValidateCodeServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-      <servlet-name>register_validate_code</servlet-name>
-      <url-pattern>/servlet/validateCodeServlet</url-pattern>
-  </servlet-mapping>
-  
-    <servlet>
-      <servlet-name>register</servlet-name>
-      <servlet-class>so.xunta.servlet.Register</servlet-class>
-  </servlet>
-  <servlet-mapping>
-      <servlet-name>register</servlet-name>
-      <url-pattern>/servlet/register</url-pattern>
-  </servlet-mapping>
-  
-  <filter>
-      <filter-name>RequestFilter</filter-name>
-      <filter-class>so.xunta.filter.RequestFilter</filter-class>
-      <init-param>
-          <param-name>exclude1</param-name>
-          <param-value>/servlet/login</param-value>
-      </init-param>
-      <init-param>
-          <param-name>exclude2</param-name>
-          <param-value>/servlet/register</param-value>
-      </init-param>
-      <init-param>
-          <param-name>exclude3</param-name>
-          <param-value>/jsp/xunta_user/login.jsp</param-value>
-      </init-param>
-      <init-param>
-          <param-name>exclude4</param-name>
-          <param-value>/jsp/xunta_user/register.jsp</param-value>
-      </init-param>
-      <init-param>
-          <param-name>exclude5</param-name>
-          <param-value>/servlet/validateCodeServlet</param-value>
-      </init-param>
-      <init-param>
-          <param-name>exclude6</param-name>
-          <param-value>/WEB-INF/404.jsp</param-value>
-      </init-param>
-      <init-param>
-          <param-name>exclude7</param-name>
-          <param-value>/WEB-INF/500.jsp</param-value>
-      </init-param>
-  </filter>
-  <filter-mapping>
-      <filter-name>RequestFilter</filter-name>
-      <url-pattern>*.jsp</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-      <filter-name>RequestFilter</filter-name>
-      <url-pattern>/servlet/*</url-pattern>
-  </filter-mapping>
-
-  <error-page>
-    <error-code>500</error-code>
-	<location>/WEB-INF/500.jsp</location>      
-  </error-page>
-  <error-page>
-    <error-code>404</error-code>
-	<location>/WEB-INF/404.jsp</location>      
-  </error-page>
 </web-app>

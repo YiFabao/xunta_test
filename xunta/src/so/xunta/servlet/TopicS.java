@@ -21,17 +21,17 @@ import so.xunta.topic.SecurityUtil;
 import so.xunta.topic.TopicHistory;
 import so.xunta.topic.TopicManager;
 import so.xunta.topic.TopicManagerImpl;
-import so.xunta.topic.TopicMember;
+import so.xunta.topic.TopicGroup;
 import so.xunta.utils.DateTimeUtils;
 
 /**
  * Servlet implementation class Topic
  */
 @WebServlet("/Topic")
-public class Topic extends HttpServlet {
+public class TopicS extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private static TopicManager topicManager=new TopicManagerImpl(); 
-    public Topic() {
+    public TopicS() {
         super();
     }
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -140,8 +140,8 @@ public class Topic extends HttpServlet {
 		if(!isMemberIdExistinTopic)
 		{
 			String currentTime=DateTimeUtils.getCurrentTimeStr();
-			TopicMember topicMember =new TopicMember(topicId, memberId,memberName,currentTime,0,"");
-			topicManager.saveTopicMember(topicMember);
+			TopicGroup topicMember =new TopicGroup(topicId, memberId,memberName,currentTime,0,"");
+			topicManager.saveTopicGroup(topicMember);
 		}
 		else{
 		}
@@ -155,7 +155,7 @@ public class Topic extends HttpServlet {
 		}
 		
 		
-		List<TopicMember> topicMembers=topicManager.searchTopicMemberList(topicId);
+		List<TopicGroup> topicMembers=topicManager.searchTopicMemberList(topicId);
 		//组合成一个json格式的对象
 		JSONArray jarray=new JSONArray();
 		
@@ -236,7 +236,7 @@ public class Topic extends HttpServlet {
 	}
 	private void searchTopicMemberList(HttpServletRequest request, HttpServletResponse response) {
 		String topicId=request.getParameter("topicId");	
-		List<TopicMember> topicMembers=topicManager.searchTopicMemberList(topicId);
+		List<TopicGroup> topicMembers=topicManager.searchTopicMemberList(topicId);
 		//组合成一个json格式的对象
 		JSONArray jarray=new JSONArray();
 		
@@ -294,8 +294,8 @@ public class Topic extends HttpServlet {
 		if(!isMemberIdExistinTopic)
 		{
 			String currentTime=DateTimeUtils.getCurrentTimeStr();
-			TopicMember topicMember =new TopicMember(topicId, memberId,memberName,currentTime,0,"");
-			topicManager.saveTopicMember(topicMember);
+			TopicGroup topicMember =new TopicGroup(topicId, memberId,memberName,currentTime,0,"");
+			topicManager.saveTopicGroup(topicMember);
 		}
 		else{
 		}
@@ -362,9 +362,9 @@ public class Topic extends HttpServlet {
 
 	private void htss(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException, IOException {
 		//我的话题内容
-		String mytopic = request.getParameter("mytopic");//会乱码要转码
-		mytopic=new String(mytopic.getBytes("ISO-8859-1"),"utf-8");
-		List<so.xunta.topic.Topic> searchedTopic=topicManager.matchMyTopic(mytopic);
+		String search_word = request.getParameter("search_word");//会乱码要转码
+		search_word=new String(search_word.getBytes("ISO-8859-1"),"utf-8");
+		List<so.xunta.topic.Topic> searchedTopic=topicManager.matchMyTopic(search_word);
 		//组合成一个json格式的对象
 		JSONArray jarray=new JSONArray();
 		

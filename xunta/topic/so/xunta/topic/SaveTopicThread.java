@@ -11,16 +11,14 @@ public class SaveTopicThread implements Runnable {
 	@Override
 	public void run() {
 		
-		TopicMember tm=new TopicMember(topic.topicId,topic.authorId,topic.authorName,topic.topicCreatetime,0,"");
-		
+		TopicGroup topicGroup = new TopicGroup(topic.topicId,topic.userId,topic.userName,topic.createTime);
 		//保存话题
 		topicManager.saveTopic(topic);
-		//保存话题成员
-		topicManager.saveTopicMember(tm);
+		//将用户保存到话题组
+		topicManager.saveTopicGroup(topicGroup);
 		//保存话题历史
-		TopicHistory topicHistory = new TopicHistory(topic.authorId,topic.topicId,topic.topicCreatetime);
+		TopicHistory topicHistory = new TopicHistory(topic.userId,topic.topicId,topic.createTime,"publish");
 		topicManager.addTopicHistory(topicHistory);
-		
 	}
 
 }

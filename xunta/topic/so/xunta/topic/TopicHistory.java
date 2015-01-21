@@ -6,20 +6,22 @@ import java.util.Date;
 import so.xunta.utils.DateTimeUtils;
 
 public class TopicHistory implements Comparable<TopicHistory>{
+	
 	public int id;
 	public String authorId;
 	public String topicId;
 	public String datetime;
+	public String action;
 	
 	public TopicHistory() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public TopicHistory(String authorId,String topicId,String datetime) {
-		this.authorId=authorId;
-		this.topicId=topicId;
-		this.datetime=datetime;
+	public TopicHistory(String authorId,String topicId,String datetime,String action) {
+		this.authorId = authorId;
+		this.topicId = topicId;
+		this.datetime = datetime;
+		this.action = action;
 	}
 
 	public int getId() {
@@ -52,6 +54,14 @@ public class TopicHistory implements Comparable<TopicHistory>{
 
 	public void setDatetime(String datetime) {
 		this.datetime = datetime;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
 	}
 
 	@Override

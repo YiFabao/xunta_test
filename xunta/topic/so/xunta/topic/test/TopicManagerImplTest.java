@@ -10,79 +10,50 @@ import org.junit.Test;
 import so.xunta.topic.MessageAlert;
 import so.xunta.topic.Topic;
 import so.xunta.topic.TopicManagerImpl;
-import so.xunta.topic.TopicMember;
+import so.xunta.topic.TopicGroup;
 import so.xunta.utils.DateTimeUtils;
 
 public class TopicManagerImplTest {
 	@Test
-	public void deleteOneMessageTest()
+	public void searhMyJoinTopic()
 	{
 		TopicManagerImpl topicManager=new TopicManagerImpl();
-		topicManager.deleteOneMessage(1);
+		List<Topic> topicList =topicManager.searhMyJoinTopic("3");
+		for(Topic t:topicList)
+		{
+			System.out.println(t.userName);
+		}
+		
 	}
+	@Test
+	public void testsearchMyTopicHistory()
+	{
+		TopicManagerImpl topicManager=new TopicManagerImpl();
+		List<Topic> topicList = topicManager.searchMyTopicHistory("3");
+		for(Topic t:topicList)
+		{
+			System.out.println(t.topicContent);
+		}
+		
+	}
+	@Test
+	public void testmatchUserRelativeTopic()
+	{
+		TopicManagerImpl topicManager=new TopicManagerImpl();
+		List<Topic> l=topicManager.matchUserRelativeTopic("2","上海");
+		for(Topic t:l)
+		{
+			System.out.println(t.topicContent);
+		}
+	}
+	
 	@Test
 	public void searchNicknameByUserId()
 	{
 		TopicManagerImpl topicManager=new TopicManagerImpl();
 
 	}
-	
-	@Test
-	public void topicIsExitInHistoryTest()
-	{
-		TopicManagerImpl topicManager=new TopicManagerImpl();
-		System.out.println(topicManager.checkTopicIsExitInHistory("8","DD4D08F997C854C81FDC2CE090BCC25A"));
-	}
-	
-	@Test
-	public void updateMessageAlertToAlreadyReadTest()
-	{
-		TopicManagerImpl topicManager=new TopicManagerImpl();
-		topicManager.updateMessageAlertToAlreadyRead("10");
-		System.out.println("ok");
-	}
-	
-	@Test 
-	public void searchMyMessageTest()
-	{
-		TopicManagerImpl topicManager=new TopicManagerImpl();
-		List<MessageAlert> ml=topicManager.searchMyMessage("10");
-		for(MessageAlert m:ml)
-		{
-			System.out.println(m.topicContent);
-		}
-	}
-	@Test
-	public void searchNotReadmessageNumTest()
-	{
-		TopicManagerImpl topicManager=new TopicManagerImpl();
-		long num=topicManager.searchNotReadmessageNum("d");
-		System.out.println(num);
-	}
-	
-	@Test
-	public void testSaveTopicMember(){
-		TopicManagerImpl topicManager=new TopicManagerImpl();
-		//TopicMember tm=new TopicMember(topic_id, topic_member_id, join_datetime, exit, exit_datetime)
-		TopicMember tm=new TopicMember("1", "11","fabaoyi", "2015-1-9 17:20",0, "2015-1-10 18:20");
-		topicManager.saveTopicMember(tm);
-		System.out.println("ok");
-		
-	}
-	@Test
-	public void searchTopicMemberListTest()
-	{
-		TopicManagerImpl topicManager=new TopicManagerImpl();
-		List<TopicMember> topicMembers=topicManager.searchTopicMemberList("1");
-		for(TopicMember t:topicMembers)
-		{
-			System.out.println(t.topic_member_name);
-			System.out.println(t.id);
-			System.out.println(t.topic_id);
-			System.out.println(t.topic_member_id);
-			System.out.println(t.join_datetime);
-		}
-	}
+
 	
 	@Test
 	public void testCompareTime(){

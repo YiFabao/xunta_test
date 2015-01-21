@@ -22,7 +22,7 @@
 		<mapping resource="so/xunta/entity/User.hbm.xml" />
 		<mapping resource="so/xunta/response/XunTaVisitLog.hbm.xml" />
 		<mapping resource="so/xunta/topic/Topic.hbm.xml" />
-		<mapping resource="so/xunta/topic/TopicMember.hbm.xml" />
+		<mapping resource="so/xunta/topic/TopicGroup.hbm.xml" />
 		<mapping resource="so/xunta/topic/TopicHistory.hbm.xml" />
 		<mapping resource="so/xunta/topic/MessageAlert.hbm.xml" />
 	</session-factory>
