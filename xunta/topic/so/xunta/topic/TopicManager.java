@@ -1,6 +1,7 @@
 package so.xunta.topic;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TopicManager {
 	//创建话题索引 
@@ -9,6 +10,8 @@ public interface TopicManager {
 	public List<Topic> matchMyTopic(String mytopic);
 	public List<Topic> matchMyTopicByUserId(String userId);
 	public List<Topic> matchUserRelativeTopic(String userId,String topicContent);
+	//搜索话题　返回map<userId,List<joinRelativeTopic>>
+	public Map<String,List<Topic>> searchTopicFromIndex(String searchWord);
 	//将话题保存到数据库中
 	public void saveTopic(Topic topic);
 	//保存话题成员
@@ -45,6 +48,4 @@ public interface TopicManager {
 	public List<Topic> searchMyTopicHistory(String userId);
 	//查询我参与的话题
 	public List<Topic> searhMyJoinTopic(String userId);
-
-	
 }

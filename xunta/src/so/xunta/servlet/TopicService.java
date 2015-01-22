@@ -1,6 +1,7 @@
 package so.xunta.servlet;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,7 +46,66 @@ public class TopicService extends HttpServlet {
 			//发起话题
 			fqht(request,response);
 			break;
+		case "htss":
+			htss(request,response);
+			break;
 		}
+	}
+
+	private void htss(HttpServletRequest request, HttpServletResponse response) {
+			String searchWord = request.getParameter("search_word");
+			try {
+				searchWord=new String(searchWord.getBytes("ISO-8859-1"),"utf-8");
+			} catch (UnsupportedEncodingException e1) {
+				e1.printStackTrace();
+			}
+			System.out.println("话题搜索");
+			System.out.println(searchWord);
+			//搜索话题
+			List<so.xunta.topic.Topic> matchedtopicList=topicManager.matchMyTopic(searchWord);
+			//按userId分组
+			Map<String,List<Topic>> topicMap = new HashMap<String,List<Topic>>();
+			for(Topic t:matchedtopicList)
+			{
+				if(topicMap.containsKey(t.userId))
+				{
+					topicMap.get(t.userId).add(t);
+					topicMap.put(t.userId,topicMap.get(t.userId));
+				}
+				else
+				{
+					List<Topic> list=new ArrayList<Topic>();
+					list.add(t);
+					topicMap.put(t.userId,list);
+				}
+			}
+			System.out.println("＝＝＝＝>"+matchedtopicList.size());
+			System.out.println("topicMap.size:"+topicMap.size());
+			List<MatchedTopic> mtlist = new ArrayList<MatchedTopic>();
+			Iterator<Entry<String, List<Topic>>> iterator =topicMap.entrySet().iterator();
+			while(iterator.hasNext())
+			{
+				Entry<String,List<Topic>> e = iterator.next();
+				MatchedTopic mt = new MatchedTopic();
+				mt.setUserId(e.getKey());
+				mt.setRelativeTopicList(e.getValue());
+				mt.setUserName(e.getValue().get(0).getUserName());
+				mtlist.add(mt);
+			}
+			System.out.println("mtlist====>"+mtlist.size());
+			request.setAttribute("searchWord",searchWord);
+			request.setAttribute("topicList",mtlist);
+	
+			try {
+				request.getRequestDispatcher("/jsp/topic/htss.jsp").forward(request, response);
+			} catch (ServletException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 	}
 
 	private void fqht(HttpServletRequest request, HttpServletResponse response) {
@@ -73,7 +133,6 @@ public class TopicService extends HttpServlet {
 		request.setAttribute("myTopic",topic);
 		//匹配话题
 		List<so.xunta.topic.Topic> matchedtopicList=topicManager.matchMyTopic(topic.topicContent);
-		
 		//按userId分组
 		Map<String,List<Topic>> topicMap = new HashMap<String,List<Topic>>();
 		for(Topic t:matchedtopicList)
@@ -89,7 +148,6 @@ public class TopicService extends HttpServlet {
 				list.add(t);
 				topicMap.put(t.userId,list);
 			}
-			
 		}
 		System.out.println("＝＝＝＝>"+matchedtopicList.size());
 		System.out.println("topicMap.size:"+topicMap.size());
@@ -106,7 +164,6 @@ public class TopicService extends HttpServlet {
 		}
 		System.out.println("mtlist====>"+mtlist.size());
 		request.setAttribute("matchedTopicList",mtlist);
-
 		try {
 			request.getRequestDispatcher("/jsp/topic/fqht.jsp").forward(request,response);
 		} catch (ServletException e) {
@@ -114,7 +171,6 @@ public class TopicService extends HttpServlet {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

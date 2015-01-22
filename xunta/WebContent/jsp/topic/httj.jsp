@@ -23,9 +23,9 @@
 	<script src="${pageContext.request.contextPath }/assets/javascripts/jquery-1.10.2.js"></script>
 	<script src="${pageContext.request.contextPath }/jsp/topic/js/navbar.js"></script>
 	<script>
-		$.post("${pageContext.request.contextPath }/jsp/topic/include/topic_items.jsp",null,function(res){
+ 		$.post("${pageContext.request.contextPath }/jsp/topic/include/topic_items.jsp",null,function(res){
 			$("body").append(res);
-		});
+		}); 
 	</script>
 
 </body>

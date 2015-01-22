@@ -10,7 +10,10 @@
         <div class="top_global_nav">
             <ul class="menu">
                 <li>
-                   <a> <input type="text" id="search_word"><button id="btn_search">搜索</button></a>
+                   <a href="javascript:void(0)"> 
+	                   <input type="text" id="search_word">
+	                   <button id="btn_search">搜索</button>
+                   </a>
                 </li>
                 <li><a href="${pageContext.request.contextPath}/jsp/topic/httj.jsp" class="recommendTopic">话题推荐</a></li>
                 <li><a href="${pageContext.request.contextPath}/jsp/topic/fqht.jsp" class="writeTopic">发起话题</a></li>

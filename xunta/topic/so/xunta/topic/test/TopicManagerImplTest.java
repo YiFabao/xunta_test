@@ -15,6 +15,13 @@ import so.xunta.utils.DateTimeUtils;
 
 public class TopicManagerImplTest {
 	@Test
+	public void searchTopicFromIndex()
+	{
+		TopicManagerImpl topicManager=new TopicManagerImpl();
+		topicManager.searchTopicFromIndex("随州");
+	}
+	
+	@Test
 	public void searhMyJoinTopic()
 	{
 		TopicManagerImpl topicManager=new TopicManagerImpl();

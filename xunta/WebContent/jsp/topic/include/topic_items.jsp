@@ -6,11 +6,19 @@
     pageEncoding="utf-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
-	
+	//获取cmd 参数，此模版 被 我发的话题与我参与的话题公用
+	String cmd = request.getParameter("cmd");
 	String userId = request.getParameter("userId");
 	TopicManager topicManager =new TopicManagerImpl();
-	List<Topic> topicList =topicManager.searchMyTopicHistory(userId);
-	pageContext.setAttribute("myTopicList", topicList);
+	if("myTopicHistory".equals(cmd))
+	{
+		List<Topic> topicList =topicManager.searchMyTopicHistory(userId);
+		pageContext.setAttribute("topicList", topicList);
+	}else if("myJoinTopic".equals(cmd))
+	{
+		List<Topic> topicList =topicManager.searhMyJoinTopic(userId);
+		pageContext.setAttribute("topicList", topicList);
+	}
 %>
 <!DOCTYPE html>
 <div id="topic_recommend_item" align="center">
@@ -24,7 +32,7 @@
 			<th>话题发起时间</th>
 			<th>最后活跃时间</th>
 		</tr>
-		<c:forEach items="${pageScope.myTopicList }" var="topic">
+		<c:forEach items="${pageScope.topicList }" var="topic">
 		<tr>
 			<td>${topic.userName }</td>
 			<td>

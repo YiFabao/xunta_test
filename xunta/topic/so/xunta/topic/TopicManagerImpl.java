@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -38,7 +39,6 @@ import org.hibernate.Session;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import so.xunta.localcontext.LocalContext;
-import so.xunta.utils.DateTimeUtils;
 import so.xunta.utils.HibernateUtils;
 
 public class TopicManagerImpl implements TopicManager {
@@ -642,6 +642,38 @@ public class TopicManagerImpl implements TopicManager {
 		} finally {
 			session.close();
 		}
+	}
+
+	@Override
+	public Map<String,List<Topic>> searchTopicFromIndex(String searchWord) {
+		
+		List<Topic> topicList=new ArrayList<>();
+		
+		try {
+			List<String> q=showTerms(searchWord,analyzer);
+			BooleanQuery query=new BooleanQuery();
+			for(String t:q)
+			{
+				TermQuery tq1=new TermQuery(new Term("topicContent",t));
+				query.add(tq1,Occur.SHOULD);
+			}
+			if(directory==null)
+			{
+				directory = FSDirectory.open(new File(LocalContext.indexFilePath));
+			}
+		    DirectoryReader ireader = DirectoryReader.open(directory);
+		    IndexSearcher searcher = new IndexSearcher(ireader);
+		    SearchTopicCollector searchTopicCollector = new SearchTopicCollector(searcher);
+			searcher.search(query,searchTopicCollector);
+		
+			Set<String> userIdSet = searchTopicCollector.getUserIdSet();
+			Set<String> topicIdSet = searchTopicCollector.getTopicIdSet();
+			ireader.close();//关闭ireader
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Collections.sort(topicList);
+		return null;
 	}
 
 

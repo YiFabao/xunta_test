@@ -31,14 +31,14 @@
 <script src="${pageContext.request.contextPath }/jsp/topic/js/navbar.js"></script>
 <script>
 	//默认显示自己发的话题
-	$.post("${pageContext.request.contextPath }/jsp/topic/include/topic_items.jsp",{userId:"${sessionScope.user.id}"},function(res){
+	$.post("${pageContext.request.contextPath }/jsp/topic/include/topic_items.jsp",{userId:"${sessionScope.user.id}",cmd:"myTopicHistory"},function(res){
 		$("body").append(res);
 	});
 	//点击 我发起的话题 按钮
 	$("#mytopic_btn").click(function(){
 		//判断如果 #topic_recommend_item 存在则删除
 		$("#topic_recommend_item")&&$("#topic_recommend_item").remove();
-		$.post("${pageContext.request.contextPath }/jsp/topic/include/topic_items.jsp",null,function(res){
+		$.post("${pageContext.request.contextPath }/jsp/topic/include/topic_items.jsp",{userId:"${sessionScope.user.id}",cmd:"myTopicHistory"},function(res){
 			$("body").append(res);
 		});
 	});
@@ -47,7 +47,7 @@
 	$("#myjoin_btn").click(function(){
 		//判断如果 #topic_recommend_item 存在则删除
 		$("#topic_recommend_item")&&$("#topic_recommend_item").remove();
-		$.post("${pageContext.request.contextPath }/jsp/topic/include/topic_items.jsp",null,function(res){
+		$.post("${pageContext.request.contextPath }/jsp/topic/include/topic_items.jsp",{userId:"${sessionScope.user.id}",cmd:"myJoinTopic"},function(res){
 			$("body").append(res);
 		});
 	});

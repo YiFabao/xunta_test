@@ -6,7 +6,7 @@ $("#btn_search").click(function(e){
 		cmd:'htss',
 		search_word:search_word
 	};
-	window.location = contextPath+"/jsp/topic/htss.jsp";
+	window.location.href = contextPath+"/servlet/topic_service?"+toDomString(request_parameters);
 });
 
 function toDomString(json){
