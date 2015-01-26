@@ -1,4 +1,4 @@
-package so.xunta.topic;
+package so.xunta.topic.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

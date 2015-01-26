@@ -1,7 +1,7 @@
-<%@page import="so.xunta.topic.Topic"%>
+<%@page import="so.xunta.topic.entity.Topic"%>
 <%@page import="java.util.List"%>
-<%@page import="so.xunta.topic.TopicManagerImpl"%>
-<%@page import="so.xunta.topic.TopicManager"%>
+<%@page import="so.xunta.topic.model.impl.TopicManagerImpl"%>
+<%@page import="so.xunta.topic.model.TopicManager"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -17,23 +17,12 @@
 	width:1024px;
 	margin:auto;
 }
-.topic_item{
-		width:340px;
-		position:relative;
-		float:left;
-		margin-bottom:20px;
-	}
-	ol{
-		margin-left:40px;
-	}
-	.topic_item:hover{
-		cursor:pointer;
-	}
-	
-	.hover_box{
-		position:absolute;
-		background: orange;
-	}
+tr:hover{
+	cursor:pointer;
+}
+tr:hover{
+	background-color:orange;
+}
 </style>
 </head>
 <body>
@@ -42,81 +31,69 @@
 		<h1>搜索结果</h1>
 	</div><br>
 	<hr>
-	<div align="center">
-		<input type="hidden" value="${requestScope.searchWord }" id="searchWord">
-		<c:choose>
-		       <c:when test="${requestScope.topicList!=null}">
-					<h3 align="center">搜索结果</h3>
-					<c:forEach var="matched_topic" items="${requestScope.topicList}" varStatus="status">
-					<c:if test="${matched_topic.userId!=sessionScope.user.id }">
-					<div class="matched_topic">
-						<div class="topic_item" userId="${matched_topic.userId }">
-							<table border="1" width="300px" cellspacing="0px">
-								<tr>
-									<td width="48px">
-										<img src="${pageContext.request.contextPath }/jsp/topic/images/2.jpg" style="width:48px;height:48px;">
-									</td>
-									<td width="100px">${matched_topic.userName }</td>
-									<td align="right">
-										<input type="button" value="邀请">
-									</td>
-								</tr>
-								<tr>
-									<td colspan="3">发起相关话题：${matched_topic.relativeTopicList.size() }个</td>
-								</tr>
-							</table>
-						</div>
-					</div>
-					</c:if>
-					</c:forEach>
-		       </c:when>
-		       <c:otherwise>
-		   			搜索结果为0
-		       </c:otherwise>
-		</c:choose>
-	</div>	
+	<div id="topic_recommend_item" align="center">
+	<table border="1" cellspacing="0" color="#ccc">
+		<tr>
+			<th>话题发起人</th>
+			<th>发起人图像</th>
+			<th>话题</th>
+			<th>话题描述</th>
+			<th>参与人数</th>
+			<th>话题发起时间</th>
+		</tr>
+		<c:forEach items="${requestScope.topicList }" var="topic">
+		<c:if test="${topic.userId!=sessionScope.user.id }">
+		<tr class="searched_topic_item" topicId="${topic.topicId }">
+			<td class="topic_publisher" value="${topic.userName }">${topic.userName }</td>
+			<td>
+				<img src="${pageContext.request.contextPath }/jsp/topic/images/1.jpg" style="width:48px;height:48px;">
+			</td>
+			<td class="topic_name" value="${topic.topicName }">${topic.topicName }</td>
+			<td width="400px" class="topic_content" value="${topic.topicContent }">
+				${topic.topicContent }
+			</td>
+			<td class="topic_joinPeople_num">${topic.join_people_num }</td>
+			<td class="topic_createTime">${topic.createTime }</td>
+		</tr>
+		</c:if>
+		</c:forEach>
+	</table>
+</div>
+
+
 <script src="${pageContext.request.contextPath }/assets/javascripts/jquery-1.10.2.js"></script>
 <script src="${pageContext.request.contextPath }/jsp/topic/js/navbar.js"></script>
 <script>
-		
-		var topic_items = document.getElementsByClassName("topic_item");
-		for(var i=0;i<topic_items.length;i++)
+
+	var flag = false;//标识聊天窗口是否加载
+	
+	$(".searched_topic_item").click(function(event){
+		//拿到topicId==>查询topic,话题下的用户列表
+		var topicId = $(this).attr("topicId");
+		//拿到自己的id==>查询自己
+		var userId ="${sessionScope.user.id}";
+		//查看当前的聊天窗口是否存在
+		if(!flag)
 		{
-			var topic_item = topic_items[i];
-			topic_item.addEventListener("click",function(e){
-				var mouse_x = e.clientX;
-				var mouse_y = e.clientY;
-				//判断是否存在hover_box
-				var hover_box = document.getElementsByClassName("hover_box")[0];
-				if(hover_box)
-				{
-					console.log("移除");
-					$(".hover_box").get(0).remove();
-				}
-				
-				var myTopicContent = $("#searchWord").attr("value");
-				var currentUserId = $(this).attr("userId");
-				console.log(myTopicContent);
-				console.log(currentUserId);
-				$.post("${pageContext.request.contextPath }/jsp/topic/include/hover.jsp",{userId:currentUserId,topicContent:myTopicContent},function(res){
-					$("body").append(res);//显示悬浮框
-					//获取悬浮框的高度和宽度
-					var hover_box = document.getElementsByClassName("hover_box")[0];
-					hover_box.style.display="block";
-					var hover_box_width = hover_box.clientWidth;
-					var hover_box_height = hover_box.clientHeight;
-					hover_box.style.left = (mouse_x - 0.5*hover_box_width)+"px";
-					hover_box.style.top = (mouse_y - 0.5*hover_box_height)+"px";
-					var btn_exit = document.getElementById("btn_exit");
-					btn_exit.addEventListener("click",function(){
-						var hover_box = document.getElementsByClassName("hover_box")[0];
-						hover_box.style.display = "none";
-						$(".hover_box").get(0).remove();
-					});
-				});
+			//post
+			$.post("${pageContext.request.contextPath}/servlet/topic_service",{cmd:"joinTopic",topicId:topicId,userId:userId},function(result,state){
+				$("body").append(result);
 			});
-		} 
-		
-	</script>
+			flag =true;
+		}
+		else
+		{
+			console.log("聊天窗口已加载");
+			showWebimPage();
+		}
+	});
+	function showWebimPage()
+	{
+		var bar_message = document.getElementById("bar_message");
+		var webim_page = document.getElementById("webim_page");
+		webim_page.style.display = "block";
+		bar_message.style.display = "none";
+	}
+</script>
 </body>
 </html>

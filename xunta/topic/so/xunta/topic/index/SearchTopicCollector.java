@@ -1,4 +1,4 @@
-package so.xunta.topic;
+package so.xunta.topic.index;
 
 import java.io.IOException;
 import java.util.HashSet;

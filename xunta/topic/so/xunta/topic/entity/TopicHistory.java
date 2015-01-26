@@ -1,4 +1,4 @@
-package so.xunta.topic;
+package so.xunta.topic.entity;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -11,17 +11,17 @@ public class TopicHistory implements Comparable<TopicHistory>{
 	public String authorId;
 	public String topicId;
 	public String datetime;
-	public String action;
+	public char publish_or_join;//p 为发起话题　j为参与话题
 	
 	public TopicHistory() {
 		super();
 	}
 
-	public TopicHistory(String authorId,String topicId,String datetime,String action) {
+	public TopicHistory(String authorId,String topicId,String datetime,char publish_or_join) {
 		this.authorId = authorId;
 		this.topicId = topicId;
 		this.datetime = datetime;
-		this.action = action;
+		this.publish_or_join = publish_or_join;
 	}
 
 	public int getId() {
@@ -56,12 +56,12 @@ public class TopicHistory implements Comparable<TopicHistory>{
 		this.datetime = datetime;
 	}
 
-	public String getAction() {
-		return action;
+	public char getPublish_or_join() {
+		return publish_or_join;
 	}
 
-	public void setAction(String action) {
-		this.action = action;
+	public void setPublish_or_join(char publish_or_join) {
+		this.publish_or_join = publish_or_join;
 	}
 
 	@Override

@@ -14,14 +14,14 @@ import org.jsoup.helper.DataUtil;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import so.xunta.topic.AddTopicIndexThread;
-import so.xunta.topic.MessageAlert;
-import so.xunta.topic.SaveTopicThread;
-import so.xunta.topic.SecurityUtil;
-import so.xunta.topic.TopicHistory;
-import so.xunta.topic.TopicManager;
-import so.xunta.topic.TopicManagerImpl;
-import so.xunta.topic.TopicGroup;
+import so.xunta.topic.entity.MessageAlert;
+import so.xunta.topic.entity.TopicGroup;
+import so.xunta.topic.entity.TopicHistory;
+import so.xunta.topic.model.TopicManager;
+import so.xunta.topic.model.impl.AddTopicIndexThread;
+import so.xunta.topic.model.impl.SaveTopicThread;
+import so.xunta.topic.model.impl.TopicManagerImpl;
+import so.xunta.topic.utils.SecurityUtil;
 import so.xunta.utils.DateTimeUtils;
 
 /**
@@ -212,7 +212,7 @@ public class TopicS extends HttpServlet {
 	private void addMessageAlert(HttpServletRequest request, HttpServletResponse response) {
 		String _fromUserId=request.getParameter("_fromUserId");//邀请人的id
 		String authorId=request.getParameter("authorId");//被邀请的人的id,消息提配是他的
-		so.xunta.topic.Topic _fromUserTopic=topicManager.searchLatestTopic(_fromUserId);//查询_fromUser的最近一条话题
+		so.xunta.topic.entity.Topic _fromUserTopic=topicManager.searchLatestTopic(_fromUserId);//查询_fromUser的最近一条话题
 		MessageAlert messageAlert=new MessageAlert(authorId, _fromUserTopic.authorName, _fromUserId,_fromUserTopic.topicId,_fromUserTopic.topicContent,DateTimeUtils.getCurrentTimeStr());
 		//保存消息提醒
 		topicManager.addMessageAlert(messageAlert);
@@ -315,7 +315,7 @@ public class TopicS extends HttpServlet {
 	private void htjy(HttpServletRequest request, HttpServletResponse response) throws IOException, UnsupportedEncodingException {
 		//话题发起人id
 		String authorId = request.getParameter("authorId");
-		List<so.xunta.topic.Topic> historyTopic=topicManager.searchTopicHistory(authorId);
+		List<so.xunta.topic.entity.Topic> historyTopic=topicManager.searchTopicHistory(authorId);
 		//组合成一个json格式的对象
 		JSONArray jarray=new JSONArray();
 		
@@ -343,7 +343,7 @@ public class TopicS extends HttpServlet {
 		//我的话题内容
 		String mytopic = request.getParameter("mytopic");//会乱码要转码
 		mytopic=new String(mytopic.getBytes("ISO-8859-1"),"utf-8");
-		List<so.xunta.topic.Topic> recommendTopic = topicManager.matchMyTopic(mytopic);
+		List<so.xunta.topic.entity.Topic> recommendTopic = topicManager.matchMyTopic(mytopic);
 		// 组合成一个json格式的对象
 		JSONArray jarray = new JSONArray();
 
@@ -364,7 +364,7 @@ public class TopicS extends HttpServlet {
 		//我的话题内容
 		String search_word = request.getParameter("search_word");//会乱码要转码
 		search_word=new String(search_word.getBytes("ISO-8859-1"),"utf-8");
-		List<so.xunta.topic.Topic> searchedTopic=topicManager.matchMyTopic(search_word);
+		List<so.xunta.topic.entity.Topic> searchedTopic=topicManager.matchMyTopic(search_word);
 		//组合成一个json格式的对象
 		JSONArray jarray=new JSONArray();
 		
@@ -404,9 +404,9 @@ public class TopicS extends HttpServlet {
 		String topicId=SecurityUtil.strToMD5(authorId+mytopic+topicCreateTime);
 		
 		//我的话题Topic
-		so.xunta.topic.Topic myselfTopic=new so.xunta.topic.Topic(topicId, authorId,mytopic, topicAuthorName,topicCreateTime);
+		so.xunta.topic.entity.Topic myselfTopic=new so.xunta.topic.entity.Topic(topicId, authorId,mytopic, topicAuthorName,topicCreateTime);
 		
-		List<so.xunta.topic.Topic> matchedtopic=topicManager.matchMyTopic(mytopic);
+		List<so.xunta.topic.entity.Topic> matchedtopic=topicManager.matchMyTopic(mytopic);
 		matchedtopic.add(0, myselfTopic);//将自己的话题添加到数组中返回
 		//组合成一个json格式的对象
 		JSONArray jarray=new JSONArray();
@@ -430,7 +430,7 @@ public class TopicS extends HttpServlet {
 		}
 		//开启线程将索引保存到数据库中 和 保存到索引中
 		new Thread(new AddTopicIndexThread(topicManager, topicId,mytopic, authorId, topicAuthorName, topicCreateTime)).start();
-		so.xunta.topic.Topic topic=new so.xunta.topic.Topic(topicId, authorId, mytopic, topicAuthorName, topicCreateTime);
+		so.xunta.topic.entity.Topic topic=new so.xunta.topic.entity.Topic(topicId, authorId, mytopic, topicAuthorName, topicCreateTime);
 		new Thread(new SaveTopicThread(topicManager, topic)).start();
 		//设置允许谁访问
 		response.addHeader("Access-Control-Allow-Origin","http://localhost:63342");

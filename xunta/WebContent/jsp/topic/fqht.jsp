@@ -60,7 +60,7 @@
 	<hr/>
 	
 	<c:if test="${requestScope.myTopic!=null}">
-	<div align="center" topicContent="${requestScope.myTopic.topicContent}" id="myTopic">
+	<div align="center" topicName="${requestScope.myTopic.topicName }" topicContent="${requestScope.myTopic.topicContent}" id="myTopic">
 		<table border="1" cellspacing="0px" color="#ccc" cellpadding="0px" width="1024px" >
 			<tr>
 				<td width="48px">
@@ -131,11 +131,13 @@
 					$(".hover_box").get(0).remove();
 				}
 				
+				var topicName = $("#myTopic").attr("topicName");
 				var myTopicContent = $("#myTopic").attr("topicContent");
 				var currentUserId = $(this).attr("userId");
 				console.log(myTopicContent);
 				console.log(currentUserId);
-				$.post("${pageContext.request.contextPath }/jsp/topic/include/hover.jsp",{userId:currentUserId,topicContent:myTopicContent},function(res){
+				console.log(topicName);
+				$.post("${pageContext.request.contextPath }/jsp/topic/include/hover.jsp",{userId:currentUserId,topicName:topicName,topicContent:myTopicContent},function(res){
 					$("body").append(res);//显示悬浮框
 					//获取悬浮框的高度和宽度
 					var hover_box = document.getElementsByClassName("hover_box")[0];

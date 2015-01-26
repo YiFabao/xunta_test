@@ -1,7 +1,7 @@
-<%@page import="so.xunta.topic.Topic"%>
+<%@page import="so.xunta.topic.entity.Topic"%>
 <%@page import="java.util.List"%>
-<%@page import="so.xunta.topic.TopicManagerImpl"%>
-<%@page import="so.xunta.topic.TopicManager"%>
+<%@page import="so.xunta.topic.model.impl.TopicManagerImpl"%>
+<%@page import="so.xunta.topic.model.TopicManager"%>
 <%@page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>

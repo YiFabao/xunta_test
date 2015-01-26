@@ -1,4 +1,4 @@
-package so.xunta.topic;
+package so.xunta.topic.entity;
 
 public class TopicGroup {
 	public int id;

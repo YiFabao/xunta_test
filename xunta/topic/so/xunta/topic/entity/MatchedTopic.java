@@ -1,4 +1,4 @@
-package so.xunta.topic;
+package so.xunta.topic.entity;
 
 import java.util.List;
 

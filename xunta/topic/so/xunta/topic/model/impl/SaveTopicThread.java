@@ -1,4 +1,9 @@
-package so.xunta.topic;
+package so.xunta.topic.model.impl;
+
+import so.xunta.topic.entity.Topic;
+import so.xunta.topic.entity.TopicGroup;
+import so.xunta.topic.entity.TopicHistory;
+import so.xunta.topic.model.TopicManager;
 
 public class SaveTopicThread implements Runnable {
 	private Topic topic;
@@ -17,7 +22,7 @@ public class SaveTopicThread implements Runnable {
 		//将用户保存到话题组
 		topicManager.saveTopicGroup(topicGroup);
 		//保存话题历史
-		TopicHistory topicHistory = new TopicHistory(topic.userId,topic.topicId,topic.createTime,"publish");
+		TopicHistory topicHistory = new TopicHistory(topic.userId,topic.topicId,topic.createTime,'p');
 		topicManager.addTopicHistory(topicHistory);
 	}
 

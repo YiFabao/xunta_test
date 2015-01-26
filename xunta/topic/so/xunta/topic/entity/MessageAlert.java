@@ -1,4 +1,4 @@
-package so.xunta.topic;
+package so.xunta.topic.entity;
 
 import java.text.ParseException;
 import java.util.Date;

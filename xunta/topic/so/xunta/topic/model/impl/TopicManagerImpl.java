@@ -1,4 +1,4 @@
-package so.xunta.topic;
+package so.xunta.topic.model.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +38,15 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
+import com.sun.xml.internal.ws.org.objectweb.asm.Type;
+
+import so.xunta.entity.User;
 import so.xunta.localcontext.LocalContext;
+import so.xunta.topic.entity.MessageAlert;
+import so.xunta.topic.entity.Topic;
+import so.xunta.topic.entity.TopicGroup;
+import so.xunta.topic.entity.TopicHistory;
+import so.xunta.topic.model.TopicManager;
 import so.xunta.utils.HibernateUtils;
 
 public class TopicManagerImpl implements TopicManager {
@@ -54,7 +62,62 @@ public class TopicManagerImpl implements TopicManager {
 			{
 				//没有同义词
 				TermQuery tq1=new TermQuery(new Term("topicContent",t));
+				TermQuery tq2=new TermQuery(new Term("topicName",t));
 				query.add(tq1,Occur.SHOULD);
+				query.add(tq2,Occur.SHOULD);
+
+			}
+			if(directory==null)
+			{
+				directory = FSDirectory.open(new File(LocalContext.indexFilePath));
+			}
+		    DirectoryReader ireader = DirectoryReader.open(directory);
+		    IndexSearcher searcher = new IndexSearcher(ireader);
+			ScoreDoc[] hits=searcher.search(query,Integer.MAX_VALUE).scoreDocs;
+			
+			for (int i = 0; i < hits.length; i++) {
+				int docID = hits[i].doc;
+				//话题唯一id
+				String topicId=searcher.doc(docID).get("topicId");
+				//匹配的话题
+				String topicContent = searcher.doc(docID).get("topicContent");
+				//话题名
+				String topicName = searcher.doc(docID).get("topicName");
+				//用户id
+				String userId = searcher.doc(docID).get("userId");
+				//用户名
+				String userName = searcher.doc(docID).get("userName");
+				//日期
+				String createTime = searcher.doc(docID).get("createTime");
+				//匹配的话题高亮
+				String hightLightTopic = highLighter(topicContent, query, analyzer, 10, 10);
+				
+				Topic topic = new Topic(topicId, userId, userName, topicName, topicContent,"", createTime,"");
+				topicList.add(topic);
+			}
+			ireader.close();//关闭ireader
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Collections.sort(topicList);
+		return topicList;
+	}
+	
+	@Override
+	public List<Topic> matchMyTopic(String _topicName, String mytopic) {
+		List<Topic> topicList=new ArrayList<>();
+		try {
+			List<String> q=showTerms(mytopic,analyzer);
+			List<String> q2 = showTerms(_topicName, analyzer);
+			q.addAll(q2);
+			BooleanQuery query=new BooleanQuery();
+			for(String t:q)
+			{
+				//没有同义词
+				TermQuery tq1=new TermQuery(new Term("topicContent",t));
+				TermQuery tq2= new TermQuery(new Term("topicName",t));
+				query.add(tq1,Occur.SHOULD);
+				query.add(tq2,Occur.SHOULD);
 
 			}
 			if(directory==null)
@@ -108,7 +171,6 @@ public class TopicManagerImpl implements TopicManager {
 				bq.add(tq1,Occur.MUST);
 				bq.add(termquery,Occur.MUST);
 				query.add(bq,Occur.SHOULD);
-
 			}
 			if(directory==null)
 			{
@@ -145,6 +207,66 @@ public class TopicManagerImpl implements TopicManager {
 		Collections.sort(topicList);
 		return topicList;
 	}
+	
+
+	@Override
+	public List<Topic> matchUserRelativeTopic(String userId, String _topicName, String topicContent) {
+		List<Topic> topicList=new ArrayList<>();
+		try {
+			List<String> q=showTerms(topicContent,analyzer);
+			List<String> q2=showTerms(_topicName, analyzer);
+			q.addAll(q2);
+			BooleanQuery query=new BooleanQuery();
+			TermQuery termquery = new TermQuery(new Term("userId",userId));
+			for(String t:q)
+			{
+				BooleanQuery  bq = new BooleanQuery();
+				BooleanQuery topicBooleanQuery = new BooleanQuery();
+				TermQuery tq1=new TermQuery(new Term("topicContent",t));
+				TermQuery tq2 = new  TermQuery(new Term("topicName",t));
+				topicBooleanQuery.add(tq1,Occur.SHOULD);
+				topicBooleanQuery.add(tq2,Occur.SHOULD);
+				
+				bq.add(topicBooleanQuery,Occur.MUST);
+				bq.add(termquery,Occur.MUST);
+				query.add(bq,Occur.SHOULD);
+			}
+			if(directory==null)
+			{
+				directory = FSDirectory.open(new File(LocalContext.indexFilePath));
+			}
+		    DirectoryReader ireader = DirectoryReader.open(directory);
+		    IndexSearcher searcher = new IndexSearcher(ireader);
+			ScoreDoc[] hits=searcher.search(query,Integer.MAX_VALUE).scoreDocs;
+			
+			for (int i = 0; i < hits.length; i++) {
+				int docID = hits[i].doc;
+				//话题唯一id
+				String topicId=searcher.doc(docID).get("topicId");
+				//匹配的话题
+				String _topicContent = searcher.doc(docID).get("topicContent");
+				//话题名
+				String topicName = searcher.doc(docID).get("topicName");
+				//用户id
+				String _userId = searcher.doc(docID).get("userId");
+				//用户名
+				String userName = searcher.doc(docID).get("userName");
+				//日期
+				String createTime = searcher.doc(docID).get("createTime");
+				//匹配的话题高亮
+				String hightLightTopic = highLighter(topicContent, query, analyzer, 10, 10);
+				
+				Topic topic = new Topic(topicId, _userId, userName, topicName, _topicContent,"", createTime,"");
+				topicList.add(topic);
+			}
+			ireader.close();//关闭ireader
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Collections.sort(topicList);
+		return topicList;
+	}
+
 
 	/**
 	 * 分词
@@ -403,7 +525,7 @@ public class TopicManagerImpl implements TopicManager {
 		Session session = HibernateUtils.openSession();
 		try {
 			session.beginTransaction();
-			org.hibernate.Query query=session.createQuery("from TopicMember as tm where tm.topic_member_id=? and tm.topic_id=?");
+			org.hibernate.Query query=session.createQuery("from TopicGroup as tg where tg.topicMemberId=? and tg.topicId = ?");
 			query.setString(0,memberId);
 			query.setString(1,topicId);
 			List<TopicGroup> topicMemberList=query.list();
@@ -428,7 +550,7 @@ public class TopicManagerImpl implements TopicManager {
 		Session session = HibernateUtils.openSession();
 		try {
 			session.beginTransaction();
-			String hql="from TopicMember tm where tm.topic_id=?";
+			String hql="from TopicGroup tg where tg.topicId=?";
 			org.hibernate.Query query=session.createQuery(hql);
 			topicMembers=query.setString(0,topicId).list();
 			session.getTransaction().commit();
@@ -629,7 +751,7 @@ public class TopicManagerImpl implements TopicManager {
 		Session session = HibernateUtils.openSession();
 		try {
 			session.beginTransaction();
-			String sql="select * from topic where topicId not in (select topicId from topichistory where userId=?)";
+			String sql="select t.* from topic  as t where t.topicId in (select th.topicId from topichistory as th where th.authorId=? and th.publish_or_join = 'j')";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.setString(0, userId);
 			query.addEntity(Topic.class);
@@ -645,35 +767,25 @@ public class TopicManagerImpl implements TopicManager {
 	}
 
 	@Override
-	public Map<String,List<Topic>> searchTopicFromIndex(String searchWord) {
-		
-		List<Topic> topicList=new ArrayList<>();
-		
-		try {
-			List<String> q=showTerms(searchWord,analyzer);
-			BooleanQuery query=new BooleanQuery();
-			for(String t:q)
-			{
-				TermQuery tq1=new TermQuery(new Term("topicContent",t));
-				query.add(tq1,Occur.SHOULD);
-			}
-			if(directory==null)
-			{
-				directory = FSDirectory.open(new File(LocalContext.indexFilePath));
-			}
-		    DirectoryReader ireader = DirectoryReader.open(directory);
-		    IndexSearcher searcher = new IndexSearcher(ireader);
-		    SearchTopicCollector searchTopicCollector = new SearchTopicCollector(searcher);
-			searcher.search(query,searchTopicCollector);
-		
-			Set<String> userIdSet = searchTopicCollector.getUserIdSet();
-			Set<String> topicIdSet = searchTopicCollector.getTopicIdSet();
-			ireader.close();//关闭ireader
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		Collections.sort(topicList);
-		return null;
+	public Topic findTopicByTopicId(String topicId) {
+		Session session = HibernateUtils.openSession();
+		String hql = "from Topic as t where t.topicId = ? ";
+		org.hibernate.Query query = session.createQuery(hql);
+		query.setString(0, topicId);
+		Topic topic = (Topic) query.uniqueResult();
+		session.close();
+		return topic;
+	}
+
+	@Override
+	public List<String> findMemberIdsByTopicId(String topicId) {
+		Session session = HibernateUtils.openSession();
+		String hql = "select topicMemberId from TopicGroup as tg where tg.topicId = ?";
+		org.hibernate.Query query = session.createQuery(hql);
+		query.setString(0, topicId);
+		List<String> memberIds = query.list();
+		session.close();
+		return memberIds;
 	}
 
 

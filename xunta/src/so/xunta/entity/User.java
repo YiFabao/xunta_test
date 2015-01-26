@@ -3,16 +3,16 @@ package so.xunta.entity;
 import java.util.Date;
 
 public class User {
-	private long id;//用户全局标识；主键
-	private String xunta_username;
-	private String password;
-	private String email;
-	private String qq_openId;
-	private String qq_accessToken;
-	private String weibo_uid;
-	private String weibo_accessToken;
-	private Date createTime; //寻他账号创建时间
-	private String latestLoginTime;//最后一次登录时间
+	public long id;//用户全局标识；主键
+	public String xunta_username;
+	public String password;
+	public String email;
+	public String qq_openId;
+	public String qq_accessToken;
+	public String weibo_uid;
+	public String weibo_accessToken;
+	public Date createTime; //寻他账号创建时间
+	public String latestLoginTime;//最后一次登录时间
 	public long getId() {
 		return id;
 	}

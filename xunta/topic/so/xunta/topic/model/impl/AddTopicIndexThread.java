@@ -1,4 +1,7 @@
-package so.xunta.topic;
+package so.xunta.topic.model.impl;
+
+import so.xunta.topic.entity.Topic;
+import so.xunta.topic.model.TopicManager;
 
 public class AddTopicIndexThread implements Runnable{
 

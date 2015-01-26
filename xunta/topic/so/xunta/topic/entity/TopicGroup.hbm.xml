@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-  <class table="topicgroup" name="so.xunta.topic.TopicGroup">
+  <class table="topicgroup" name="so.xunta.topic.entity.TopicGroup">
     <id name="id">
       <generator class="native"/>
     </id>

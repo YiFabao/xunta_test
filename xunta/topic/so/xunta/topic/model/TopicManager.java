@@ -1,21 +1,28 @@
-package so.xunta.topic;
+package so.xunta.topic.model;
 
 import java.util.List;
-import java.util.Map;
+
+import so.xunta.entity.User;
+import so.xunta.topic.entity.MessageAlert;
+import so.xunta.topic.entity.Topic;
+import so.xunta.topic.entity.TopicGroup;
+import so.xunta.topic.entity.TopicHistory;
 
 public interface TopicManager {
 	//创建话题索引 
 	public void createTopicIndex(Topic topic);
 	//获取匹配的话题,从索引里查询
 	public List<Topic> matchMyTopic(String mytopic);
+	public List<Topic> matchMyTopic(String topicName,String mytopic);
 	public List<Topic> matchMyTopicByUserId(String userId);
 	public List<Topic> matchUserRelativeTopic(String userId,String topicContent);
-	//搜索话题　返回map<userId,List<joinRelativeTopic>>
-	public Map<String,List<Topic>> searchTopicFromIndex(String searchWord);
+	public List<Topic> matchUserRelativeTopic(String userId,String topicName,String topicContent);
+
 	//将话题保存到数据库中
 	public void saveTopic(Topic topic);
 	//保存话题成员
 	public void saveTopicGroup(TopicGroup topicMember);
+	
 	//添加消息
 	public void addMessageAlert(MessageAlert messageAlert);
 	//查询自己的消息
@@ -28,6 +35,8 @@ public interface TopicManager {
 	public void updateMessageAlertToAlreadyHandle(int pid);
 	//根据消息的自增id删除
 	public void deleteOneMessage(int id);
+	
+	
 	//添加话题历史，当用户发起话题或参与话题时记录
 	public void addTopicHistory(TopicHistory topicHistory);
 	//查询某用户是否是某话题id下的成员
@@ -48,4 +57,11 @@ public interface TopicManager {
 	public List<Topic> searchMyTopicHistory(String userId);
 	//查询我参与的话题
 	public List<Topic> searhMyJoinTopic(String userId);
+	
+	//根据topicId 查询话题Topic
+	public Topic findTopicByTopicId(String topicId);
+	//根据topicId 查询出List<topicMemberId>
+	public List<String> findMemberIdsByTopicId(String topicId);
+
+
 }

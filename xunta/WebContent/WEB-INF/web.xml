@@ -77,23 +77,13 @@
   </servlet-mapping>
   <servlet>
     <servlet-name>topic_service</servlet-name>
-    <servlet-class>so.xunta.servlet.TopicService</servlet-class>
+    <servlet-class>so.xunta.topic.controller.TopicService</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>topic_service</servlet-name>
     <url-pattern>/servlet/topic_service</url-pattern>
   </servlet-mapping>
   
-  <servlet>
-    <servlet-name>topicMatch_service</servlet-name>
-    <servlet-class>so.xunta.servlet.TopicMatchServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>topicMatch_service</servlet-name>
-    <url-pattern>/servlet/matchedTopic</url-pattern>
-  </servlet-mapping>
-  
-    
   <filter>
       <filter-name>RequestFilter</filter-name>
       <filter-class>so.xunta.filter.RequestFilter</filter-class>
@@ -134,7 +124,6 @@
       <filter-name>RequestFilter</filter-name>
       <url-pattern>/servlet/*</url-pattern>
   </filter-mapping>
-
   <error-page>
     <error-code>500</error-code>
 	<location>/WEB-INF/500.jsp</location>      
@@ -143,4 +132,5 @@
     <error-code>404</error-code>
 	<location>/WEB-INF/404.jsp</location>      
   </error-page>
+
 </web-app>

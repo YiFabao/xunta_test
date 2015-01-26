@@ -1,5 +1,7 @@
 package so.xunta.manager;
 
+import java.util.List;
+
 import so.xunta.entity.User;
 
 public interface UserManager {
@@ -50,7 +52,9 @@ public interface UserManager {
 	  */
 	 public User findUserByWeiboUid(String weibo_uid);
 	
-
-	
+	//根据List<userID> 查询出List<User>
+	public List<User> findUserListByUserIdList(List<Long> userIdList);
+	//根据用户ID查询出用户
+	public User findUserById(int userId);
 	
 }

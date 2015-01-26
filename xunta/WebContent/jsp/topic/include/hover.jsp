@@ -1,15 +1,16 @@
-<%@page import="so.xunta.topic.Topic"%>
+<%@page import="so.xunta.topic.entity.Topic"%>
 <%@page import="java.util.List"%>
-<%@page import="so.xunta.topic.TopicManagerImpl"%>
-<%@page import="so.xunta.topic.TopicManager"%>
+<%@page import="so.xunta.topic.model.impl.TopicManagerImpl"%>
+<%@page import="so.xunta.topic.model.TopicManager"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
 	TopicManager topicManager = new TopicManagerImpl();
 	String userId = request.getParameter("userId");
+	String topicName = request.getParameter("topicName");
 	String topicContent = request.getParameter("topicContent");
-	List<Topic> topicList = topicManager.matchUserRelativeTopic(userId, topicContent);
+	List<Topic> topicList = topicManager.matchUserRelativeTopic(userId,topicName,topicContent);
 	request.setAttribute("topicList",topicList);
 %>
 <!DOCTYPE html>
@@ -33,7 +34,7 @@
 						<c:out value="${requestScope.toicList.size() }"></c:out>
 						<ol>
 							<c:forEach items="${requestScope.topicList }" var="topic">
-								<li topicId="${topic.topicId }">${topic.topicContent}</li>
+								<li topicId="${topic.topicId }">话题:${topic.topicName}|话题描述:${topic.topicContent}</li>
 							</c:forEach>
 						</ol>
 					</div>

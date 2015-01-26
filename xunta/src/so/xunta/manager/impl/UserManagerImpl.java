@@ -1,5 +1,7 @@
 package so.xunta.manager.impl;
 
+import java.util.List;
+
 import org.hibernate.Session;
 
 import so.xunta.entity.User;
@@ -244,6 +246,30 @@ public class UserManagerImpl implements UserManager {
 		} finally {
 			session.close();
 		}
+	}
+	
+
+	@Override
+	public List<User> findUserListByUserIdList(List<Long> userIdList) {
+		Session session = HibernateUtils.openSession();
+		String hql = "from User as u where u.id in (:userIdList)";
+		org.hibernate.Query query = session.createQuery(hql);
+		query.setParameterList("userIdList", userIdList);
+		@SuppressWarnings("unchecked")
+		List<User> userList = query.list();
+		session.close();
+		return userList;
+	}
+
+	@Override
+	public User findUserById(int userId) {
+		Session session = HibernateUtils.openSession();
+		String hql = "from User as u where u.id =?";
+		org.hibernate.Query query = session.createQuery(hql);
+		query.setInteger(0, userId);
+		User user = (User) query.uniqueResult();
+		session.close();
+		return user;
 	}
 
 }
