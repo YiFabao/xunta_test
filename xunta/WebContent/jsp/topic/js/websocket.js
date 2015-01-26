@@ -77,7 +77,7 @@ function websocketEvent(userId) {
 				webimHandle(json);//消息处理 fabao.yi
 			}
 			//广播消息在此接收
-		}else if(status == "4"){
+		}else if(status == "3"){
 			if(window.receiveBroadcast){
 				receiveBroadcast(json);//接收广播消息  fabao.yi
 			}
@@ -96,11 +96,10 @@ function websocketEvent(userId) {
  * @param msg 消息内容
  * @param time 2014-12-1 12:00:01
  */
-function sendMsg(topicId, msgId, sender, accepter, msg, time,nickname) {
+function sendMsg(status,topic_id,message_id,sender_id,nickname,message,time,accepter_id){
 	console.log("sendMsg方法accepter:"+accepter);
-	var message = encodeURIComponent(msg);
 	//发送消息后可以做一个发送中的动画效果,发送成功后,会触发 onmessage中的status==2,表明发送消息成功,取消动画效果,如果在10秒钟还没有发送成功,会触发 if条件表达式,显示消息发送失败
-	var msg = jsonStr('1', topicId, msgId, sender, accepter, message, time,nickname);
+	var msg = jsonStr(status,topic_id,message_id,sender_id,nickname,encodeURIComponent(message),time,accepter_id);
 	msgArray.unshift(msg); //将消息添加到数组,监听状态
 	ws.send(msg);
 	setTimeout(function() {
@@ -110,7 +109,7 @@ function sendMsg(topicId, msgId, sender, accepter, msg, time,nickname) {
 				alert("消息发送失败");
 			}
 		}
-	}, 10000);
+	}, 5000);
 }
 
 function heartbeat() {
@@ -118,17 +117,16 @@ function heartbeat() {
 }
 //广播该用户进入聊天窗口
 function broadcast(user_id,topic_id) {
-	ws.send('{"status" : "4","userId" : "'+user_id+'","topicId":"'+topic_id+'"}');//用户打开聊天框
+	ws.send('{"status" : "3","userId" : "'+user_id+'","topicId":"'+topic_id+'"}');//用户打开聊天框
 }
 
-function jsonStr(status, topicId, msgId, sender, accepter, msg, time,nickname) {
-	var jsonString = '{"status":"' + status + '","topicId":"' + topicId + '","msgId":"' + msgId + '","sender":"' + sender + '","msg":" ' + msg + '","time":"' + time + '","nickname":"' + nickname + '","accepter": [';
-	console.log("accepter:"+accepter);
-	for (var a = 0; a < accepter.length; a++) {
-		if (a == accepter.length - 1) {
-			jsonString += '"' + accepter[a] + '"]}';
+function jsonStr(status, topic_id, message_id, sender_id, nickname, message, time,accepter_id) {
+	var jsonString = '{"status":"' + status + '","topicId":"' + topic_id + '","messageId":"' + message_id + '","senderId":"' + sender_id + '","nickname":" ' + nickname + '","message":"' + message + '","time":"' + time + '","accepterIds": [';
+	for (var a = 0; a < accepter_id.length; a++) {
+		if (a == accepter_id.length - 1) {
+			jsonString += '"' + accepter_id[a] + '"]}';
 		} else {
-			jsonString += '"' + accepter[a] + '",';
+			jsonString += '"' + accepter_id[a] + '",';
 		}
 	}
 	return jsonString;
@@ -168,7 +166,7 @@ function getHistoryMessage(topicId,count){
        biginIndex:count,
        endIndex:count+20
    };
-   doRequestUsingPOST_fang("http://aigine.eicp.net:21280/WebSocket/servlet/TopicHistoryMessage?"+toDomString_fang(parameters),function(){
+   doRequestUsingPOST_fang("http://localhost:3306/WebSocket/TopicHistoryMessage?"+toDomString_fang(parameters),function(){
 
        if(xmlHttp.readyState==4)
        {
