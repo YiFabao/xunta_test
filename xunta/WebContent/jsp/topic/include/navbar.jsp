@@ -27,7 +27,7 @@
                         <li><a href="${pageContext.request.contextPath}/jsp/topic/myknowledge.jsp">我的知识</a></li>
                         <li><a href="${pageContext.request.contextPath}/jsp/topic/mymessage.jsp" class="message">消息</a></li>
                         <li><a href="javascript:void(0)" class="configure">设置</a></li>
-                        <li><a href="javascript:void(0)" class="signOut">更换账号</a></li>
+                        <li><a href="${pageContext.request.contextPath}/servlet/topic_service?cmd=exit" class="signOut">更换账号</a></li>
                     </ul>
                 </li>
             </ul>

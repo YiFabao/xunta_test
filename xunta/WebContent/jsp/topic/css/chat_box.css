@@ -78,6 +78,10 @@
 	position:relative;
 	float:left;
 }
+.topic_group_list{
+	overflow:auto
+}
+
 .topic_group_list ul,
 .topic_group_list li{
 	list-style: none;
@@ -109,7 +113,7 @@
 	left:2px;
 }
 p.topic_name{
-	width:150px;
+	width:130px;
 	height:40px;
 	overflow: hidden;
 	text-overflow: ellipsis;

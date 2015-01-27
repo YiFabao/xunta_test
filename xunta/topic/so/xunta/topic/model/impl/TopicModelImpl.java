@@ -65,4 +65,6 @@ public class TopicModelImpl implements TopicModel{
 		request.setAttribute("memberList",memberList);
 		
 	}
+	
+	
 }

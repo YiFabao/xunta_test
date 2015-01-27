@@ -54,6 +54,23 @@ public class TopicService extends HttpServlet {
 		case "joinTopic":
 			joinTopic(request,response);
 			break;
+		case "exit":
+			exit(request,response);
+			break;
+		}
+	}
+
+	//退出登录
+	private void exit(HttpServletRequest request, HttpServletResponse response) {
+		request.getSession().removeAttribute("user");
+		try {
+			request.getRequestDispatcher("/jsp/xunta_user/login.jsp").forward(request, response);
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -64,7 +81,7 @@ public class TopicService extends HttpServlet {
 		//调用用户参与话题的业务处理逻辑模型
 		topicModel.joinTopic(request, response, userId, topicId);
 		try {
-			request.getRequestDispatcher("/jsp/topic/chat_box.jsp").forward(request, response);
+			request.getRequestDispatcher("/jsp/topic/include/dialogue_box.jsp").forward(request, response);
 		} catch (ServletException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
