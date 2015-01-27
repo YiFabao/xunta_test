@@ -58,11 +58,13 @@ function websocketEvent(userId) {
 	ws.onerror = function(event) {}
 		//客户端接受到消息触发该事件
 	ws.onmessage = function(event) {
+		console.log(event.data);
 		var json = JSON.parse(event.data);
 		var status = json.status;
+		console.log('status  :   '+status);
 		if (status == '2') {
 			var topic_id = json.topicId;
-			var msg_id = json.msgId;
+			var msg_id = json.messageId;
 			for (var s = 0; s < msgArray.length; s++) {
 				if (msgArray[s].indexOf(topic_id) != -1 && msgArray[s].indexOf(msg_id) != -1) {
 					msgArray.splice(s,1);//移除该条消息
@@ -81,9 +83,12 @@ function websocketEvent(userId) {
 			if(window.receiveBroadcast){
 				receiveBroadcast(json);//接收广播消息  fabao.yi
 			}
-		}else{
-			alert(event.data);
+		}else if(status == "4"){
+			console.log('4');
 		}
+		
+		
+		
 	}
 }
 /**
@@ -96,9 +101,9 @@ function websocketEvent(userId) {
  * @param msg 消息内容
  * @param time 2014-12-1 12:00:01
  */
-function sendMsg(topic_id,message_id,sender_id,nickname,message,time,accepter_id){
+function sendMsg(topic_id,message_id,sender_id,nickname,message,accepter_id){
 	//发送消息后可以做一个发送中的动画效果,发送成功后,会触发 onmessage中的status==2,表明发送消息成功,取消动画效果,如果在10秒钟还没有发送成功,会触发 if条件表达式,显示消息发送失败
-	var msg = jsonStr(1,topic_id,message_id,sender_id,nickname,encodeURIComponent(message),time,accepter_id);
+	var msg = jsonStr(1,topic_id,message_id,sender_id,nickname,encodeURIComponent(message),accepter_id);
 	msgArray.unshift(msg); //将消息添加到数组,监听状态
 	ws.send(msg);
 	setTimeout(function() {
@@ -120,8 +125,8 @@ function heartbeat() {
 	ws.send('{"status" : "3","userId" : "'+user_id+'","topicId":"'+topic_id+'"}');//用户打开聊天框"",""
 }*/
 
-function jsonStr(status, topic_id, message_id, sender_id, nickname, message, time,accepter_id) {
-	var jsonString = '{"status":"' + status + '","topicId":"' + topic_id + '","messageId":"' + message_id + '","senderId":"' + sender_id + '","nickname":" ' + nickname + '","message":"' + message + '","time":"' + time + '","accepterIds": [';
+function jsonStr(status, topic_id, message_id, sender_id, nickname, message,accepter_id) {
+	var jsonString = '{"status":"' + status + '","topicId":"' + topic_id + '","messageId":"' + message_id + '","senderId":"' + sender_id + '","nickname":" ' + nickname + '","message":"' + message + '","accepterIds": [';
 	for (var a = 0; a < accepter_id.length; a++) {
 		if (a == accepter_id.length - 1) {
 			jsonString += '"' + accepter_id[a] + '"]}';
@@ -129,7 +134,6 @@ function jsonStr(status, topic_id, message_id, sender_id, nickname, message, tim
 			jsonString += '"' + accepter_id[a] + '",';
 		}
 	}
-	console.log("=================>"+jsonString);
 	return jsonString;
 }
 
