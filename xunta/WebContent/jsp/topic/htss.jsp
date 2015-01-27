@@ -43,7 +43,7 @@ tr:hover{
 		</tr>
 		<c:forEach items="${requestScope.topicList }" var="topic">
 		<c:if test="${topic.userId!=sessionScope.user.id }">
-		<tr class="searched_topic_item" topicId="${topic.topicId }">
+		<tr class="searched_topic_item" topicId="${topic.topicId }" >
 			<td class="topic_publisher" value="${topic.userName }">${topic.userName }</td>
 			<td>
 				<img src="${pageContext.request.contextPath }/jsp/topic/images/1.jpg" style="width:48px;height:48px;">
@@ -60,13 +60,19 @@ tr:hover{
 	</table>
 </div>
 
-
 <script src="${pageContext.request.contextPath }/assets/javascripts/jquery-1.10.2.js"></script>
 <script src="${pageContext.request.contextPath }/jsp/topic/js/navbar.js"></script>
+<script src="${pageContext.request.contextPath }/jsp/topic/js/websocket.js"></script>
 <script>
 
-	var flag = false;//标识聊天窗口是否加载
 	
+	var flag = false;//标识聊天窗口是否加载
+	var topicIdArray = new Array();//话题列表的话题容器
+	//定义查询topicIdArray是否存在某个话题Id的方法
+	function check_topic_is_exist_in_topicList(topicId)
+	{
+		return topicIdArray.indexOf(topicId);//1:存在 ,-1:不存在
+	}
 	$(".searched_topic_item").click(function(event){
 		//拿到topicId==>查询topic,话题下的用户列表
 		var topicId = $(this).attr("topicId");
@@ -79,11 +85,29 @@ tr:hover{
 			$.post("${pageContext.request.contextPath}/servlet/topic_service",{cmd:"joinTopic",topicId:topicId,userId:userId},function(result,state){
 				$("body").append(result);
 			});
+			topicIdArray.push(topicId);
 			flag =true;
 		}
-		else
+		else//窗口已经加载
 		{
+			if(check_topic_is_exist_in_topicList(topicId)==1)//话题存在
+			{
+				return;
+			}
+			else{
+				//话题不存在,将话题添加到话题列表
+/* 				 <li topicId="${requestScope.topic.topicId}">
+	                 <div class="head">
+	                     <img src="http://tp3.sinaimg.cn/1298064414/50/5617529344/1">
+	                 </div>
+	                 <p class=topic_name>话题：${requestScope.topic.topicName }</p>
+           		  </li> */
+           		var li_node = document.createElement(li);
+           		li_node.setAttribute("topicId");
+			}
 			console.log("聊天窗口已加载");
+			//添加点击的话题到话题列表
+			//获取点击的话题id:
 			showWebimPage();
 		}
 	});
@@ -94,6 +118,8 @@ tr:hover{
 		webim_page.style.display = "block";
 		bar_message.style.display = "none";
 	}
+	
+	
 </script>
 </body>
 </html>

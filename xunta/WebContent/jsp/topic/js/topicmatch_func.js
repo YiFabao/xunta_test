@@ -79,7 +79,6 @@ function searchTopicContent(topicId)
    }
 }
 
-
 //查询话题下的联系人列表
 function searchTopicMemberList(topicId)
 {

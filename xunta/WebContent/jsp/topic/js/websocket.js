@@ -30,7 +30,7 @@ function onAppPause() { //运行环境从前台切换到后台事件
 
 function websocketEvent(userId) {
 	//可以做一个连接中的效果,如果连接成功,触发onpen方法在取消连接中效果,如果10秒中没连接上会触发checkWebSocketState方法的状态,显示当前网络状态
-	ws = new WebSocket('ws://aigine.eicp.net:21280/WebSocket/ws/websocket?userId='+userId);
+	ws = new WebSocket('ws://aigine.eicp.net:21280/WebSocket/WebSocketServlet?userId='+userId);
 	checkWebSocketState();
 	//连接服务器成功触发该事件
 	ws.onopen = function(event) {
@@ -69,7 +69,7 @@ function websocketEvent(userId) {
 				}
 			}
 		}else if(status == "1"){
-			ws.send(event.data.replace("\"status\":\"1\"","\"status\":\"3\""));
+			ws.send(event.data.replace("\"status\":\"1\"","\"status\":\"2\""));
 			//聊天信息
 	/*		var msg = json.msg;
 			alert("收到服务器发来的消息 : "+msg);*/
@@ -96,10 +96,9 @@ function websocketEvent(userId) {
  * @param msg 消息内容
  * @param time 2014-12-1 12:00:01
  */
-function sendMsg(status,topic_id,message_id,sender_id,nickname,message,time,accepter_id){
-	console.log("sendMsg方法accepter:"+accepter);
+function sendMsg(topic_id,message_id,sender_id,nickname,message,time,accepter_id){
 	//发送消息后可以做一个发送中的动画效果,发送成功后,会触发 onmessage中的status==2,表明发送消息成功,取消动画效果,如果在10秒钟还没有发送成功,会触发 if条件表达式,显示消息发送失败
-	var msg = jsonStr(status,topic_id,message_id,sender_id,nickname,encodeURIComponent(message),time,accepter_id);
+	var msg = jsonStr(1,topic_id,message_id,sender_id,nickname,encodeURIComponent(message),time,accepter_id);
 	msgArray.unshift(msg); //将消息添加到数组,监听状态
 	ws.send(msg);
 	setTimeout(function() {
@@ -116,9 +115,10 @@ function heartbeat() {
 	ws.send('{"status" : "-1","msg" : "ping"}');
 }
 //广播该用户进入聊天窗口
-function broadcast(user_id,topic_id) {
-	ws.send('{"status" : "3","userId" : "'+user_id+'","topicId":"'+topic_id+'"}');//用户打开聊天框
-}
+/*function broadcast(user_id,topic_id) {
+	console.log("调用广播方法........");
+	ws.send('{"status" : "3","userId" : "'+user_id+'","topicId":"'+topic_id+'"}');//用户打开聊天框"",""
+}*/
 
 function jsonStr(status, topic_id, message_id, sender_id, nickname, message, time,accepter_id) {
 	var jsonString = '{"status":"' + status + '","topicId":"' + topic_id + '","messageId":"' + message_id + '","senderId":"' + sender_id + '","nickname":" ' + nickname + '","message":"' + message + '","time":"' + time + '","accepterIds": [';
@@ -129,6 +129,7 @@ function jsonStr(status, topic_id, message_id, sender_id, nickname, message, tim
 			jsonString += '"' + accepter_id[a] + '",';
 		}
 	}
+	console.log("=================>"+jsonString);
 	return jsonString;
 }
 
