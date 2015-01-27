@@ -72,7 +72,7 @@ tr:hover{
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath }/jsp/topic/css/chat_box.css">
 
-<div class="webim_page" style="display:block" id="webim_page">
+<div class="webim_page" style="display:none" id="webim_page">
     <div class="people_list">
         <div class="search webim_search">
             <span class="search_s">
@@ -85,26 +85,8 @@ tr:hover{
         </div>
         <div class="topic_group_list">
            <ul>
-              <li class="active" topic_id="1">
-                  <div class="head">
-                      <img src="http://tp3.sinaimg.cn/1298064414/50/5617529344/1">
-                  </div>
-                  <p class=topic_name>话题：上海哪好玩啊</p>
-              </li>
-              <li topic_id="2">
-                  <div class="head">
-                      <img src="http://tp3.sinaimg.cn/1298064414/50/5617529344/1">
-                  </div>
-                  <p class=topic_name>话题:杭州谁去？</p>
-              </li>
-              <li topic_id="3">
-                  <div class="head">
-                      <img src="http://tp3.sinaimg.cn/1298064414/50/5617529344/1">
-                  </div>
-                  <p class=topic_name>话题:过年回哪？</p>
-              </li>
           </ul>
-      </div>
+      	</div>
     </div>
     <div class="dialogue_box" boxId = "1" style ="display:none">
         <div class="private_dialogue_body" topicId="${requestScope.topic.topicId}" msg_count="0">
@@ -125,7 +107,7 @@ tr:hover{
 				</ul>        		
             </div>
             <!-- 联系人图像 -->
-            <div class="contacts">
+            <div class="contacts"> 
             	参与人：
 	            <ul>
 	            	<c:forEach items="${requestScope.memberList }" var="member">
@@ -141,94 +123,6 @@ tr:hover{
                <div id="mainBox" style="overflow:auto">
                     <div id="content">
                         <div class="msg_bubble_list">
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-							<div>aaa</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="private_send_box">
-            <div class="sendbox_area">
-                <textarea class="msg_input" placeholder="按回车键发送信息"></textarea>
-            </div>
-        </div>
-    </div>
-    <div class="dialogue_box" boxId = "3" style="display:none">
-        <div class="private_dialogue_body" topicId="${requestScope.topic.topicId}" msg_count="0">
-            <div class="header">
-				<ul>
-					<li class="people_logo">
-						<img src="${pageContext.request.contextPath}/jsp/topic/images/1.jpg" title="张三">
-					</li>
-					<li class="xunta_username">
-						${requestScope.publisher.xunta_username }
-					</li>
-					<li class="topicName">
-						话题:${requestScope.topic.topicName }
-					</li>
-					<li>
-						<input type="button" value=" X " class="btn_exit">
-					</li>
-				</ul>        		
-            </div>
-            <!-- 联系人图像 -->
-            <div class="contacts">
-            	参与人：
-	            <ul>
-	            	<c:forEach items="${requestScope.memberList }" var="member">
-	            	<li>
-						<button userId = ${member.id } class="userId"> ${member.xunta_username}</button>
-						<%-- <img src="${pageContext.request.contextPath}/jsp/topic/images/1.jpg" title="张三"> --%>
-					</li>
-	            	</c:forEach>
-	
-				</ul>
-            </div>
-            <div class="msg_bubble">
-               <div id="mainBox">
-                    <div id="content">
-                        <div class="msg_bubble_list">
-							聊天框3
                         </div>
                     </div>
                 </div>
@@ -299,8 +193,7 @@ tr:hover{
 			        	//发送消息需要传的参数，话题ID,消息id,发送人id,联系人id数组,消息,时间,发送人昵称
 			        	//1.话题id 上面已经获取
 			        	//2获取联系人　id[]
-			        	var div_contacts_node = document.getElementsByClassName("contacts")[0];
-			        	var userIds = div_contacts_node.getElementsByClassName("userId");
+			        	var userIds = $(dialogueBox).find("div.contacts li button");
 			        	var contacts=new Array();
 			        	for(var i=0;i<userIds.length;i++)
 			        	{
@@ -325,6 +218,8 @@ tr:hover{
 			        	sendMsg(topicId,msgId,fromUserId,fromUserName,msg.toString().trim(),contacts); 
 			        	//清空聊天框 
 			        	this.value ="";
+			        	
+			        	//广播告诉其他联系人,该用户上线了
 			        }
    				});
 			});
@@ -374,7 +269,7 @@ tr:hover{
 	
 	//获取　boxId ＝topicId 的div.dialogue_box节点　
 	function getDialogueByBoxId(topicId){
-		console.log($("div.dialogue_box[boxId="+topicId+"]"));
+		//console.log($("div.dialogue_box[boxId="+topicId+"]"));
 		return $("div.dialogue_box[boxId="+topicId+"]")[0];//转原生javascript对象
 	}
 	//获取话题列表节点  topic_id =topicId
@@ -389,14 +284,19 @@ tr:hover{
 		//列改话题列表的显示状态
 		var topic_group_li_toshow = getTopic_group_li_byTopicId(topicId);
 		topic_group_li_toshow.setAttribute("class","active");
-        active_li_node.setAttribute("class","");
-        active_li_node=topic_group_li_toshow;//更改激活的选项
+		if(active_li_node!=null)
+		{
+			active_li_node.setAttribute("class","");
+		}
+      	  active_li_node=topic_group_li_toshow;//更改激活的选项
 		//更改聊天框的显示状态
 		 var dialogue_box_toshow = getDialogueByBoxId(topicId);
   
 	     $(active_dialogueBox).hide();//隐藏前面已经显示的框　
 	     active_dialogueBox = dialogue_box_toshow;//切换当前活跃窗口
 	     $(active_dialogueBox).show();
+		
+        
 	}
 	
 	contactsShowStyle();//初始化就要调用，给列表添加初始化状态
@@ -435,9 +335,12 @@ tr:hover{
         //点击事件
         li_node.addEventListener("click",function(){
   		  	 this.setAttribute("class","active");
+  		  	 if(active_li_node!=null)
+  		  	{
              active_li_node.setAttribute("class","");
+  		  	}
           	 active_li_node=this;//更改激活的选项
-          	 console.log(active_li_node);
+          	 //console.log(active_li_node);
              //获取点击dom节点的 topicId属性值,将当显示的框隐藏,显示对应的topicId的右半聊天框,
              var topicId = $(active_li_node).attr("topic_id");
              var dialogue_box_toshow = getDialogueByBoxId(topicId);
@@ -482,10 +385,10 @@ tr:hover{
 			//计算鼠标点击的坐票
 			var mouse_x = e.clientX;
 			var mouse_y = e.clientY;
-			console.log(mouse_x+"  "+mouse_y);
+			//console.log(mouse_x+"  "+mouse_y);
 			//计算聊天框的左顶点坐标
 			var webim_page_position = getPositionOnScreen(webim_page);
-			console.log(webim_page_position.x +"  "+webim_page_position.y);
+			//console.log(webim_page_position.x +"  "+webim_page_position.y);
 			//如果鼠标点击的地方在聊天窗口之外就隐藏聊天框，显示消息框
 			if(!(mouse_x>webim_page_position.x&&mouse_y>webim_page_position.y))
 			{
@@ -515,22 +418,29 @@ tr:hover{
 	 
 	//创建消息处理函数
 	   	window.webimHandle=function(json){
-	   	  console.log("接收到的消息："+json.msg);
+	   		/**
+		   		key:status=====>value:1
+				key:topicId=====>value:DEC38294FCADEDFFA835C1D04D2DA2E1
+				key:messageId=====>value:21422350893108
+				key:senderId=====>value:2
+				key:nickname=====>value: oliver
+				key:message=====>value:%E4%B8%8A%E6%B5%B7
+				key:accepterIds=====>value:1,2
+				key:dateTime=====>value:2015-01-27 17:27:38
+				key:date=====>value:20150127
+				key:time=====>value:172738
+	   		*/
 	   	  //获取对应topicId 的窗口
-	   	  var msg_bubble_list_node=document.getElementsByClassName("msg_bubble_list")[0];
-	   	  var li_node=document.createElement("li");
 	   	  var msgStr="";
 	   	  var topicId=json.topicId;
 	   	  
 	   	  var dialogueBox =getDialogueByBoxId(topicId);
-	   	 /*  //消息要发送到指定的topicId窗口上
-	   	  var private_dialogue_body = document.getElementsByClassName("private_dialogue_body")[0];
-	   	  var chatTopicId=private_dialogue_body.getAttribute("topicId");
-	   	  if(topicId!=chatTopicId)
+	   	  if(dialogueBox==null)
 	   	  {
-	   		  console.log("不是当前话题的消息");
-	   		  return;
+	   		  return ;
 	   	  }
+	   	  console.log(dialogueBox);
+	   	  var  msg_box = dialogueBox.getElementsByClassName("msg_bubble_list")[0];
 	   	  console.log(json);
 	   	  //解析json
 	  	  var msgId=json.msgId;
@@ -542,13 +452,10 @@ tr:hover{
 	   	  //构造html
 	   	  msgStr="<p>"+nickname+"<br/>"+sender+"<br/>"+msg+"<br/>"+time+"</p>";
 	   	  msgStr+="<hr/>";
+	   	  var li_node=document.createElement("li");
 	   	  li_node.innerHTML=msgStr;
-	   	  msg_bubble_list_node.appendChild(li_node);
+	   	  msg_box.appendChild(li_node);
 	   	  //滚动条置底 */
-	   	  
-
-
-
 	   	};
 	   	
 	    //websocket状态发生变化时触发
