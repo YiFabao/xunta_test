@@ -448,9 +448,9 @@ tr:hover{
 	   	  var sender=json.senderId;
 	   	  var accepter=json.accepterIds;
 	   	  var msg = decodeURIComponent(json.message);
-	   	  var time = json.time;
+	   	  var dateTime = json.dateTime;
 	   	  //构造html
-	   	  msgStr="<p>"+nickname+"<br/>"+sender+"<br/>"+msg+"<br/>"+time+"</p>";
+	   	  msgStr="<p>发送人:"+nickname+"<br/>"+msg+"<br/>"+dateTime+"</p>";
 	   	  msgStr+="<hr/>";
 	   	  var li_node=document.createElement("li");
 	   	  li_node.innerHTML=msgStr;
