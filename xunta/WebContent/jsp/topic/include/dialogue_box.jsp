@@ -2,7 +2,7 @@
     pageEncoding="utf-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<div class="dialogue_box" boxId = "${requestScope.topic.topicId }" style ="display:none">
+<div class="dialogue_box" boxId = "${requestScope.topic.topicId }" style ="display:none,overflow:auto">
         <div class="private_dialogue_body" topicId="${requestScope.topic.topicId}" msg_count="0">
             <div class="header">
 				<ul>
@@ -34,8 +34,8 @@
 				</ul>
             </div>
             <div class="msg_bubble">
-               <div id="mainBox">
-                    <div id="content">
+               <div class="mainBox">
+                    <div class="content">
                         <div class="msg_bubble_list">
 							${requestScope.publisher.xunta_username }的话题聊天框							
                         </div>

@@ -250,14 +250,14 @@ span.exit:hover{
 	height:460px;
 }
 
-#mainBox {
+.mainBox {
 	width: 600px;
 	height:455px;
 	position:relative;
-	overflow: hidden;
+	overflow:auto;
 }
 
-#content {
+.content {
 	position: absolute;
 	left: 0;
 	top: 0;

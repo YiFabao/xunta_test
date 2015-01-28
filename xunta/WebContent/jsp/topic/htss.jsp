@@ -120,8 +120,8 @@ tr:hover{
 				</ul>
             </div>
             <div class="msg_bubble">
-               <div id="mainBox" style="overflow:auto">
-                    <div id="content">
+               <div class="mainBox">
+                    <div class="content">
                         <div class="msg_bubble_list">
                         </div>
                     </div>
@@ -218,7 +218,6 @@ tr:hover{
 			        	sendMsg(topicId,msgId,fromUserId,fromUserName,msg.toString().trim(),contacts); 
 			        	//清空聊天框 
 			        	this.value ="";
-			        	
 			        	//广播告诉其他联系人,该用户上线了
 			        }
    				});
@@ -455,7 +454,10 @@ tr:hover{
 	   	  var li_node=document.createElement("li");
 	   	  li_node.innerHTML=msgStr;
 	   	  msg_box.appendChild(li_node);
-	   	  //滚动条置底 */
+	   	  
+	   	  //div.mainBox 滚动条置底  滚动,注意获取的是对应聊天框的滚动条
+	   	  var mainBoxNode = $(dialogueBox).find("div.mainBox:first-child")[0];
+	   	  setBottom(mainBoxNode);	 
 	   	};
 	   	
 	    //websocket状态发生变化时触发
