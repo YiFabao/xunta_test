@@ -138,9 +138,9 @@ tr:hover{
 
 <div class="msgAlert" id="bar_message" style="display:none">你有4条私信</div>
 
+<script src="${pageContext.request.contextPath }/jsp/topic/js/websocket.js"></script>
 <script src="${pageContext.request.contextPath }/assets/javascripts/jquery-1.10.2.js"></script>
 <script src="${pageContext.request.contextPath }/jsp/topic/js/navbar.js"></script>
-<script src="${pageContext.request.contextPath }/jsp/topic/js/websocket.js"></script>
 <script>
 
 	//看一下聊天框切换的效果
@@ -477,6 +477,9 @@ tr:hover{
 	   	
 	  //创建websocket
 		createWebsocketConnect("${sessionScope.user.id}");
+	  
+	  //获取未读消息数
+	  
 </script>
 </body>
 </html>

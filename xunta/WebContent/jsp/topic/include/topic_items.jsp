@@ -33,17 +33,17 @@
 			<th>最后活跃时间</th>
 		</tr>
 		<c:forEach items="${pageScope.topicList }" var="topic">
-		<tr>
-			<td>${topic.userName }</td>
+		<tr class="history_topic_item" topicId="${topic.topicId }">
+			<td >${topic.userName }</td>
 			<td>
 				<img src="${pageContext.request.contextPath }/jsp/topic/images/1.jpg" style="width:48px;height:48px;">
 			</td>
-			<td>${topic.topicName }</td>
+			<td class="topic_name" value="${topic.topicName }">${topic.topicName }</td>
 			<td width="400px">
 				${topic.topicContent }
 			</td>
-			<td>${topic.join_people_num }</td>
-			<td>${topic.createTime }</td>
+			<td class="topic_joinPeople_num">${topic.join_people_num }</td>
+			<td class="topic_createTime">${topic.createTime }</td>
 			<td>${topic.lastUpdateTime }</td>
 		</tr>
 		</c:forEach>
