@@ -15,7 +15,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import so.xunta.entity.User;
 import so.xunta.topic.entity.MatchedTopic;
+import so.xunta.topic.entity.MessageAlert;
 import so.xunta.topic.entity.Topic;
 import so.xunta.topic.model.TopicManager;
 import so.xunta.topic.model.TopicModel;
@@ -54,10 +56,71 @@ public class TopicService extends HttpServlet {
 		case "joinTopic":
 			joinTopic(request,response);
 			break;
+		case "invite":
+			invite(request,response);
+			break;
+		case "msgalert" :
+			//显示我的消息
+			showMyMessage(request,response);
+			break;
 		case "exit":
 			exit(request,response);
 			break;
 		}
+	}
+
+	//别人邀请我时，会显示我的消息
+	private void showMyMessage(HttpServletRequest request, HttpServletResponse response) {
+		User  user = (User)request.getSession().getAttribute("user");
+		if(user==null){
+			try {
+				request.getRequestDispatcher("/jsp/xunta_user/login.jsp").forward(request, response);
+			} catch (ServletException | IOException e) {
+				e.printStackTrace();
+			}
+		}
+		long userId = user.id;//获取用户id
+		
+		List<MessageAlert> messageAlertList=topicManager.searchMyMessage(userId+"");
+		topicManager.updateMessageAlertToAlreadyRead(userId+"");
+		request.setAttribute("messageAlertList", messageAlertList);
+		try {
+			request.getRequestDispatcher("/jsp/topic/myMessage.jsp").forward(request, response);
+		} catch (ServletException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void invite(HttpServletRequest request, HttpServletResponse response) {
+		//获取请求参数
+		String userId = request.getParameter("userId");
+		String userName = request.getParameter("userName");
+		String to_userId = request.getParameter("to_userId");
+		String topicId = request.getParameter("topicId");
+		String topicContent = request.getParameter("topicContent");
+		
+		System.out.println("userId:"+userId);
+		System.out.println("userName:"+userName);
+		System.out.println("to_userId:"+to_userId);
+		System.out.println("topicId:"+topicId);
+		System.out.println("topicContent:"+topicContent);
+		
+		MessageAlert messageAlert = new MessageAlert(to_userId,userName,userId, topicId, topicContent,DateTimeUtils.getCurrentTimeStr());
+		
+		try {
+			topicManager.addMessageAlert(messageAlert);
+			response.getWriter().write("ok");
+		} catch (IOException e) {
+			try {
+				response.getWriter().write("failure");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
+		
 	}
 
 	//退出登录
