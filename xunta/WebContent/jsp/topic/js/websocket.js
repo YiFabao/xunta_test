@@ -83,12 +83,18 @@ function websocketEvent(userId) {
 			if(window.receiveBroadcast){
 				receiveBroadcast(json);//接收广播消息  fabao.yi
 			}
-		}else if(status == "4"){
-			console.log('4');
+		}else if(status == "4")	{
+			if(json.unreadMessage == "null"){
+				//没有未读消息
+			}else{
+				//有未读消息
+				console.log(json.unreadMessage);
+			}
+		}else if(status == "5")	{
+			//触发此事件说明修改消息未读状态成功
+			json.userId;
+			json.topicId;
 		}
-		
-		
-		
 	}
 }
 /**
@@ -120,11 +126,23 @@ function heartbeat() {
 	ws.send('{"status" : "-1","msg" : "ping"}');
 }
 //广播该用户进入聊天窗口
-/*function broadcast(user_id,topic_id) {
+function broadcast(user_id,topic_id) {
 	console.log("调用广播方法........");
 	ws.send('{"status" : "3","userId" : "'+user_id+'","topicId":"'+topic_id+'"}');//用户打开聊天框"",""
-}*/
-
+}
+//获取未读消息
+function getUnreadMessage(userId){
+	ws.send('{"status" : "4","userId" : "'+userId+'"}');
+}
+//设置消息读取状态
+function setMsgReadStatus(userId,topicId){
+	ws.send('{"status" : "5","userId" : "'+userId+'","topicId" : "'+topicId+'"}');
+}
+//邀请好友
+function inviteFriend(inviteIds, inviteMsg){
+	//inviteIds is jsonArray
+	ws.send('{"status" : "6","inviteIds" : "'+inviteIds+'","inviteMsg" : "'+inviteMsg+'"}');
+}
 function jsonStr(status, topic_id, message_id, sender_id, nickname, message,accepter_id) {
 	var jsonString = '{"status":"' + status + '","topicId":"' + topic_id + '","messageId":"' + message_id + '","senderId":"' + sender_id + '","nickname":" ' + nickname + '","message":"' + message + '","accepterIds": [';
 	for (var a = 0; a < accepter_id.length; a++) {
