@@ -1,74 +1,33 @@
-<%@page import="so.xunta.topic.entity.Topic"%>
-<%@page import="java.util.List"%>
-<%@page import="so.xunta.topic.model.impl.TopicManagerImpl"%>
-<%@page import="so.xunta.topic.model.TopicManager"%>
-<%@ page language="java" contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>话题搜索</title>
-<!-- 网页头样式 -->
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/jsp/topic/css/navbar.css">
-<style>
-.matched_topic{
-	width:1024px;
-	margin:auto;
-}
-tr:hover{
-	cursor:pointer;
-}
-tr:hover{
-	background-color:orange;
-}
-.msgAlert{
-		width:200px;
-		height:48px;
-		border-radius:4px;
-		border:1px solid #ccc;
-		box-shadow: 1px 1px 1px rgba(0,0,0,0.15);
-		position:fixed;
-		bottom:5px;
-		right:5px;
-	}
-</style>
-</head>
-<body>
-	<jsp:include page="include/navbar.jsp"></jsp:include>
-	<div align="center">
-		<h1>搜索结果</h1>
-	</div><br>
-	<hr>
-	<div id="topic_recommend_item" align="center">
-	<table border="1" cellspacing="0" color="#ccc">
-		<tr>
-			<th>话题发起人</th>
-			<th>发起人图像</th>
-			<th>话题</th>
-			<th>话题描述</th>
-			<th>参与人数</th>
-			<th>话题发起时间</th>
-		</tr>
-		<c:forEach items="${requestScope.topicList }" var="topic">
-		<c:if test="${topic.userId!=sessionScope.user.id }">
-		<tr class="searched_topic_item" topicId="${topic.topicId }" >
-			<td class="topic_publisher" value="${topic.userName }">${topic.userName }</td>
-			<td>
-				<img src="${pageContext.request.contextPath }/jsp/topic/images/1.jpg" style="width:48px;height:48px;">
-			</td>
-			<td class="topic_name" value="${topic.topicName }">${topic.topicName }</td>
-			<td width="400px" class="topic_content" value="${topic.topicContent }">
-				${topic.topicContent }
-			</td>
-			<td class="topic_joinPeople_num">${topic.join_people_num }</td>
-			<td class="topic_createTime">${topic.createTime }</td>
-		</tr>
-		</c:if>
-		</c:forEach>
-	</table>
-</div>
+
+<button class="chat" topicId = "DEC38294FCADEDFFA835C1D04D2DA2E1">聊天</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath }/jsp/topic/css/chat_box.css">
 
@@ -136,8 +95,7 @@ tr:hover{
     </div>
 </div>
 
-<div class="msgAlert" id="bar_message" style="display:none">你有4条私信</div>
-
+<div class="msgAlert" id="bar_message" style="display:block">你有4条私信</div>
 <script src="${pageContext.request.contextPath }/jsp/topic/js/websocket.js"></script>
 <script src="${pageContext.request.contextPath }/assets/javascripts/jquery-1.10.2.js"></script>
 <script src="${pageContext.request.contextPath }/jsp/topic/js/navbar.js"></script>
@@ -154,82 +112,77 @@ tr:hover{
 		}
 	}
 
-	$(".searched_topic_item").click(function(event){
+	//元素定义 .chat 并设置一个属性 topicId==>用户点击该元素触发聊天
+	$(".chat").click(function(event){
 		//拿到topicId==>查询topic,话题下的用户列表
 		var topicId = $(this).attr("topicId");
-		var topicName = $(this).find("td.topic_name").attr("value");//这个改一下，不依赖于页面值
-		var imgSrc = $(this).find("img").attr("src");
+		//通过topicId 获取 {topicId:"ad023424s",topicName:"张三",logoUrl:"/user/logo/1.jpg"}
+		$.post("${pageContext.request.contextPath}/servlet/topic_service",{
+			cmd:"getTopicByTopicId",
+			topicId:topicId
+		},function(res,status){
+			var topicName = res.topicName;
+			var imgSrc = res.logoUrl;
+			console.log("话题名:"+topicName);
+			console.log("logoUrl:"+imgSrc);
+			//触发聊天事件
+			startChat(topicId,topicName,imgSrc);
+		});
+	});
+	
+	//开始聊天
+	function startChat(topicId,topicName,imgSrc){
 		//拿到自己的id==>查询自己
 		var userId ="${sessionScope.user.id}";
-		//查看当前话题下的聊天窗口是否存在
+		//查看当前话题下的聊天窗口是否存在,根据topicId
 		if(check_topic_is_exist_in_topicList(topicId))//话题存在
 		{
-			console.log("聊天窗口已经存在，只做一下切换显示");
+			console.log("聊天窗口已经存在，只做一下切换显示,显示聊天框，隐藏消息提示框");
 			changeShowState(topicId);
 		}
 		else{
 			//添加话题列表项
 			addTopicItemOnTopicList(topicId,topicName,imgSrc);
 			console.log("聊天窗口不存在,需发发送请求显示聊天窗口");
-			$.post("${pageContext.request.contextPath}/servlet/topic_service",{cmd:"joinTopic",topicId:topicId,userId:userId},function(result,state){
+			//获取聊天框 通过传递参数 topicId,userId
+			doPostTogetDialogueBox(topicId,userId);
+			//请求到窗口后，将对应的topicId 添加到topicIdArray中
+			topicIdArray.push(topicId);
+			//console.log(topicIdArray);
+		}
+		showWebimPage();//显示聊天框 
+	}
+	
+	//获取聊天框  通过传递参数 topicId,userId,获取的聊天框要添加事件
+	function doPostTogetDialogueBox(topicId,userId){
+		$.post("${pageContext.request.contextPath}/servlet/topic_service",{
+			cmd:"joinTopic",
+			topicId:topicId,
+			userId:userId
+			},
+			function(result,state){
 				$("#webim_page").append(result);
 				//切换显示
 				changeShowState(topicId);
 				//添加退出按钮点击事件
 				var dialogueBox = getDialogueByBoxId(topicId);
-				$(dialogueBox).find("input.btn_exit").click(function(e){
-					var webim_page = document.getElementById("webim_page");
-					var bar_message = document.getElementById("bar_message");
-					webim_page.style.display = "none";
-					bar_message.style.display = "block";
-				});
-				//添加发送消息事件
-				//监听webim消息输入框
-				console.log($(dialogueBox).find("textarea.msg_input"));
-   				$(dialogueBox).find("textarea.msg_input").keydown(function(event){
-   			        if(event.keyCode==13)
-			        {
-   			        	
-			        	//发送消息需要传的参数，话题ID,消息id,发送人id,联系人id数组,消息,时间,发送人昵称
-			        	//1.话题id 上面已经获取
-			        	//2获取联系人　id[]
-			        	var userIds = $(dialogueBox).find("div.contacts li button");
-			        	var contacts=new Array();
-			        	for(var i=0;i<userIds.length;i++)
-			        	{
-			        		var userId_node=userIds[i];
-			        		contacts.push(userId_node.getAttribute("userId"));
-			        	}
-			        	//3消息 
-			        	var msg=this.value;
-			        	//4发送人id
-			        	var fromUserId ="${sessionScope.user.id}";
-			        	//5发送人昵称
-			        	var fromUserName = "${sessionScope.user.xunta_username}";
-			        	//7 消息id
-			        	var msgId = fromUserId+""+new Date().getTime();
-			        	
-			        	console.log("话题id:"+topicId);
-			        	console.log("发送人id:"+fromUserId);
-			        	console.log("发送人昵称:"+fromUserName);
-			        	console.log("消息:"+msg);
-			        	console.log("消息id:"+msgId);
-			        	console.log("联系人:"+contacts);
-			        	sendMsg(topicId,msgId,fromUserId,fromUserName,msg.toString().trim(),contacts); 
-			        	//清空聊天框 
-			        	this.value ="";
-			        	//广播告诉其他联系人,该用户上线了
-			        }
-   				});
+				//给指定的dialogueBox 添加退出按钮点击处理事件
+				addEventlisteneron_btn_exit(dialogueBox);
+				//添加发送消息事件，监听webim消息输入框
+				addEventListenerOnMsgInputBox(dialogueBox);
 			});
-			//请求到窗口后，将对应的topicId 添加到topicIdArray中
-			topicIdArray.push(topicId);
-			//console.log(topicIdArray);
-			
-		}
-		showWebimPage();//显示聊天框
-	});
+	};
 
+	//给指定的dialogueBox 添加退出按钮点击处理事件
+	function addEventlisteneron_btn_exit(dialogueBox){
+		$(dialogueBox).find("input.btn_exit").click(function(e){
+			var webim_page = document.getElementById("webim_page");
+			var bar_message = document.getElementById("bar_message");
+			webim_page.style.display = "none";
+			bar_message.style.display = "block";
+		});
+	}
+	
 	//创建话题列表的子元素项，并添加到父节点，点击话题时产生
 	function addTopicItemOnTopicList(topicId,topicName,imgSrc){
 		var li_node = document.createElement("li");
@@ -255,9 +208,57 @@ tr:hover{
 		
 		//添加事件
 		addEventlistenerOn_li_node(li_node);
+	};
+	
+	
+	//消息输入框监听事件函数，调用则添加事件
+	function  addEventListenerOnMsgInputBox(dialogueBox){
+		console.log($(dialogueBox).find("textarea.msg_input"));
+		$(dialogueBox).find("textarea.msg_input").keydown(function(event){
+	        if(event.keyCode==13)
+	        {
+		        	
+	        	//发送消息需要传的参数，话题ID,消息id,发送人id,联系人id数组,消息,时间,发送人昵称
+	        	//1.话题id 上面已经获取
+	        	//2获取联系人　id[]
+	        	//获取连系人的id 数组
+	        	var contactsIdArray = getContactsArray(dialogueBox);
+	        	//3消息 
+	        	var msg=this.value;
+	        	//4发送人id
+	        	var fromUserId ="${sessionScope.user.id}";
+	        	//5发送人昵称
+	        	var fromUserName = "${sessionScope.user.xunta_username}";
+	        	//7 消息id
+	        	var msgId = fromUserId+""+new Date().getTime();
+	        	
+	        	console.log("话题id:"+topicId);
+	        	console.log("发送人id:"+fromUserId);
+	        	console.log("发送人昵称:"+fromUserName);
+	        	console.log("消息:"+msg);
+	        	console.log("消息id:"+msgId);
+	        	console.log("联系人:"+contacts);
+	        	sendMsg(topicId,msgId,fromUserId,fromUserName,msg.toString().trim(),contactsIdArray); 
+	        	//清空聊天框 
+	        	this.value ="";
+	        	//广播告诉其他联系人,该用户上线了
+	        }
+		});
+	};
+	
+	//获取联系人id数组
+	function getContactsArray(dialogueBox){
+		var userIds = $(dialogueBox).find("div.contacts li button");
+    	var contacts=new Array();
+    	for(var i=0;i<userIds.length;i++)
+    	{
+    		var userId_node=userIds[i];
+    		contacts.push(userId_node.getAttribute("userId"));
+    	}
+    	return contacts;
 	}
 	
-	
+	//显示消息聊天框，隐藏消息提示框
 	function showWebimPage()
 	{
 		var bar_message = document.getElementById("bar_message");
@@ -275,6 +276,7 @@ tr:hover{
 		function getTopic_group_li_byTopicId(topicId){
 		return $("div.topic_group_list ul li[topic_id="+topicId+"]")[0];//转原生javascript对象
 	}
+	
 	//话题列表，鼠标上移和点击选中的切换效果
 	var active_li_node=null;
 	var active_dialogueBox=null;
@@ -294,8 +296,6 @@ tr:hover{
 	     $(active_dialogueBox).hide();//隐藏前面已经显示的框　
 	     active_dialogueBox = dialogue_box_toshow;//切换当前活跃窗口
 	     $(active_dialogueBox).show();
-		
-        
 	}
 	
 	contactsShowStyle();//初始化就要调用，给列表添加初始化状态
@@ -320,6 +320,7 @@ tr:hover{
 	       addEventlistenerOn_li_node(li_node);
 	    } 
 	}
+	
 	//给创建的话题列表项添加事件
 	function addEventlistenerOn_li_node (li_node){
 		 //添加事件
@@ -481,5 +482,3 @@ tr:hover{
 	  //获取未读消息数
 	  
 </script>
-</body>
-</html>

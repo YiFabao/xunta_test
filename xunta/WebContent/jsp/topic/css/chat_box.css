@@ -2,7 +2,16 @@
 	margin:0px;
 	padding:0px;
 }
-
+.msgAlert{
+		width:200px;
+		height:48px;
+		border-radius:4px;
+		border:1px solid #ccc;
+		box-shadow: 1px 1px 1px rgba(0,0,0,0.15);
+		position:fixed;
+		bottom:5px;
+		right:5px;
+	}
 .webim_page{
 	width:801px;
 	height:600px;

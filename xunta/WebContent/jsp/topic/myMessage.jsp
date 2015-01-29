@@ -73,6 +73,8 @@
 			</ul>
 		</c:if>
 	</c:forEach>
+	
+	<script src="${pageContext.request.contextPath }/assets/javascripts/jquery-1.10.2.js"></script>
 	<script type="text/javascript">
 			window.mydomain="http://"+document.domain+":21280/xunta/";
 			var btn_y = document.getElementById("y");
@@ -96,26 +98,22 @@
 			        topicId:topicId,
 			        userId:'${sessionScope.user.id}',
 			        userName:'${sessionScope.user.xunta_username}',
-			        cmd:'agreeToJoinTopic'
+			        cmd:'joinTopic'
 			    };
-			    doRequestUsingPOST("servlet/topic?"+toDomString(parameters),mycallback);
-			    var to_remove_node_ul =  e.target.parentNode.parentNode;
-			    var ul_node =document.body.removeChild(to_remove_node_ul);
-			  //以下是callback函数的定义
-			    function mycallback(){
-			        if(xmlHttp.readyState==4)
-			        {
-			            if(xmlHttp.status==200)
-			            {
-			            	
-			            }
-			            else{
-			                console.log("添加话题下的新成员，请求没有成功响应:"+xmlHttp.status);
-			            }
-			        }
-			    }
-			}
-			
+				
+				$.post("${pageContext.request.contextPath}/servlet/topic_service",parameters,function(res,status){
+					if(status=="success")
+					{
+						//同意成功后，删除该消息？因为没必要了
+						 var to_remove_node_ul =  e.target.parentNode.parentNode;
+						 var ul_node =document.body.removeChild(to_remove_node_ul);
+					}
+					else{
+						console.log("同意邀请失败");
+					}
+				});
+			};
+
 			function notAgreeToJoinTopic(e)
 			{
 				var pid = e.target.getAttribute("topic_pid");
@@ -124,70 +122,17 @@
 			        id:pid,
 			        cmd:'notAgreeToJoinTopic'
 			    };
-			    doRequestUsingPOST("servlet/topic?"+toDomString(parameters),mycallback);
-			    //将当前的消息删除
-			    var to_remove_node_ul =  e.target.parentNode.parentNode;
-			    var ul_node =document.body.removeChild(to_remove_node_ul);
-			  //以下是callback函数的定义
-			    function mycallback(){
-			        if(xmlHttp.readyState==4)
-			        {
-			            if(xmlHttp.status==200)
-			            {
-			            	
-			            }
-			            else{
-			                console.log("添加话题下的新成员，请求没有成功响应:"+xmlHttp.status);
-			            }
-			        }
-			    }
-			}
+				
+				$.post("${pageContext.request.contextPath}/servlet/topic_service",parameters,function(res,status){
+					if(status=="success")
+					{
+						//将当前的消息删除
+					    var to_remove_node_ul =  e.target.parentNode.parentNode;
+					    var ul_node =document.body.removeChild(to_remove_node_ul);
+					}
+				});
+			};
 			
-			
-			
-			//{name:"张三",mytopic:"话题"}==>name=张三&mytopic=话题==>并url编码，以便给xhr传参
-			function toDomString(json){
-			    var domString="";
-			    for(var p in json)//p为json对象里的属性名
-			    {
-			        if(domString=="")
-			        {
-			            domString+=(p+"="+json[p]);
-			        }
-			        else{
-			            domString+="&"+p+"="+json[p];
-			        }
-			    }
-			    return encodeURI(domString);
-			}
-
-
-			var xmlHttp=null;//声明一个XHR对象
-			//创建一个XHR对象
-			function createXMLHttpRequest() {
-			  if (window.ActiveXObject) {
-			      xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-			  } else {
-			      if (window.XMLHttpRequest) {
-			          xmlHttp = new XMLHttpRequest();
-			      }
-			  }
-			}
-			//向服务端发起异步请求:GET（入口函数）,callback为回调函数名称
-			function doRequestUsingPOST(url, callback) {
-				if(xmlHttp==null)
-			  {
-			      createXMLHttpRequest();//创建xhr
-			  }
-			  if(xmlHttp.readyState!=0) {
-			      xmlHttp.abort();//初始化
-			  }
-			  xmlHttp.onreadystatechange = callback;
-			  xmlHttp.open("POST",window.mydomain+url + "&timeStamp=" + new Date().getTime(),false);//true表示异步,false表示同步
-			  xmlHttp.send(null);
-			}
-
-	
 	</script>
 </body>
 </html>

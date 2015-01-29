@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
 import so.xunta.entity.User;
 import so.xunta.topic.entity.MatchedTopic;
 import so.xunta.topic.entity.MessageAlert;
@@ -38,7 +39,6 @@ public class TopicService extends HttpServlet {
 	private TopicModel topicModel = new TopicModelImpl();
     public TopicService() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -63,10 +63,61 @@ public class TopicService extends HttpServlet {
 			//显示我的消息
 			showMyMessage(request,response);
 			break;
+		case "notAgreeToJoinTopic":
+			notAgreeToJoinTopic(request,response);
+			break;
+		case "getTopicByTopicId":
+			getTopicByTopicId(request,response);
+			break;
 		case "exit":
 			exit(request,response);
 			break;
 		}
+	}
+
+	private void getTopicByTopicId(HttpServletRequest request, HttpServletResponse response) {
+		String topicId = request.getParameter("topicId");
+		if(topicId==null||"".equals(topicId))
+		{
+			return;
+		}
+		response.setContentType("text/json; charset=UTF-8");
+		Topic topic = topicManager.findTopicByTopicId(topicId);
+		if(topic ==null)
+		{
+			try {
+				response.getWriter().write("");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else
+		{
+			String topicName = topic.getTopicName();
+			String logoUrl = topic.getLogo_url();
+			JSONObject datajson=new JSONObject();
+			datajson.put("topicName",topicName);
+			datajson.put("logoUrl",logoUrl);
+			datajson.put("topicId",topicId);
+			try {
+				response.getWriter().write(datajson.toString());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	//用户不同意参与话题
+	private void notAgreeToJoinTopic(HttpServletRequest request, HttpServletResponse response) {
+		//获取 消息的主键id
+		String id_str = request.getParameter("id");
+		if(id_str==null||"".equals(id_str))return;
+		
+		int id = Integer.parseInt(id_str);
+		
+		//将消息改为已处理
+		topicManager.updateMessageAlertToAlreadyHandle(id);
 	}
 
 	//别人邀请我时，会显示我的消息
@@ -119,8 +170,6 @@ public class TopicService extends HttpServlet {
 				e1.printStackTrace();
 			}
 		}
-		
-		
 	}
 
 	//退出登录
@@ -129,10 +178,8 @@ public class TopicService extends HttpServlet {
 		try {
 			request.getRequestDispatcher("/jsp/xunta_user/login.jsp").forward(request, response);
 		} catch (ServletException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
