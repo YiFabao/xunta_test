@@ -53,7 +53,7 @@ tr:hover{
 		</tr>
 		<c:forEach items="${requestScope.topicList }" var="topic">
 		<c:if test="${topic.userId!=sessionScope.user.id }">
-		<tr class="searched_topic_item" topicId="${topic.topicId }" >
+		<tr class="searched_topic_item chat" topicId="${topic.topicId }" >
 			<td class="topic_publisher" value="${topic.userName }">${topic.userName }</td>
 			<td>
 				<img src="${pageContext.request.contextPath }/jsp/topic/images/1.jpg" style="width:48px;height:48px;">
@@ -69,6 +69,7 @@ tr:hover{
 		</c:forEach>
 	</table>
 </div>
+
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath }/jsp/topic/css/chat_box.css">
 
@@ -113,7 +114,7 @@ tr:hover{
 	            	<c:forEach items="${requestScope.memberList }" var="member">
 	            	<li>
 						<button userId = ${member.id } class="userId"> ${member.xunta_username}</button>
-						<%-- <img src="${pageContext.request.contextPath}/jsp/topic/images/1.jpg" title="张三"> --%>
+						<img src="${pageContext.request.contextPath}/jsp/topic/images/1.jpg" title="张三">
 					</li>
 	            	</c:forEach>
 	
