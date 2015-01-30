@@ -168,9 +168,9 @@
 		var currentMsgCount = $(dialogueBox).find("div.private_dialogue_body").attr("msg_count");
 		console.log("获取历史消息数 注释掉了，在chat.jsp 169行");
 		//请求服务器获取历史消息
-		//getHistoryMessage(topicId,currentMsgCount);//调用binbin的接口,无返回值，有一个回调函数，数据获取在回调函数中，具体的数据显示在那个回调函数中做
-		//console.log("当前的历史消息数："+currentMsgCount+"  话题id:"+topicId);
-		//console.log("显示历史消息 showHistoryMessages");
+		getHistoryMessage(topicId,currentMsgCount);//调用binbin的接口,无返回值，有一个回调函数，数据获取在回调函数中，具体的数据显示在那个回调函数中做
+		console.log("当前的历史消息数："+currentMsgCount+"  话题id:"+topicId);
+		console.log("显示历史消息 showHistoryMessages");
 	};
 	
 	
@@ -481,7 +481,7 @@
 	   	    else if(state="no"){
 	   	        msgManagerReady=false;
 	   	        console.log("websocket异常");
-	   	        //console.log("重新创建websocket");
+	   	       //console.log("重新创建websocket");
 	   	       // setTimeout(createWebsocketConnect("${sessionScope.user.id}"),1000);
 	   	    }
 	   	};  
