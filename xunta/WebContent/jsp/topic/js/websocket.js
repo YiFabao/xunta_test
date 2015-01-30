@@ -201,8 +201,8 @@ function getHistoryMessage2(topicId,count){
            {
                console.log("请求成功响应");
                var historyMessage = xmlHttp.responseText;
+               alert(historyMessage);
                ret_msgs = JSON.parse(historyMessage);
-               alert(ret_msgs);
                console.log("赋值在前:"+ret_msgs);
            }
            else{
