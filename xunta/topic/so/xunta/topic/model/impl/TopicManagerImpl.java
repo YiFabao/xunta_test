@@ -788,5 +788,16 @@ public class TopicManagerImpl implements TopicManager {
 		return memberIds;
 	}
 
+	@Override
+	public List<Topic> getTopicListByTopicIdList(List<String> topicIdList) {
+		Session session = HibernateUtils.openSession();
+		String hql = "from Topic as t where t.topicId in (:topicIdList)";
+		org.hibernate.Query query = session.createQuery(hql);
+		query.setParameterList("topicIdList",topicIdList);
+		List<Topic> topicList = query.list();
+		session.close();
+		return topicList;
+	}
+
 
 }

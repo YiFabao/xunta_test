@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import so.xunta.entity.User;
 import so.xunta.topic.entity.MatchedTopic;
@@ -70,9 +71,49 @@ public class TopicService extends HttpServlet {
 		case "getTopicByTopicId":
 			getTopicByTopicId(request,response);
 			break;
+		case "getTopicListByTopicIdArray":
+			getTopicListByTopicIdArray(request,response);
+			break;
 		case "exit":
 			exit(request,response);
 			break;
+		}
+	}
+
+	@SuppressWarnings("unused")
+	private void getTopicListByTopicIdArray(HttpServletRequest request, HttpServletResponse response) {
+		String topicIdArray = request.getParameter("topicIdArray");
+		if(topicIdArray==null||"".equals(topicIdArray.trim())){return;}
+		System.out.println(topicIdArray);
+		List<String> topicIdList = new ArrayList<String>();
+		String[] topicIds =topicIdArray.split(",");
+		for(String topicId:topicIds)
+		{
+			System.out.println(topicId);
+			topicIdList.add(topicId);
+		}
+		List<Topic> topicList = topicManager.getTopicListByTopicIdList(topicIdList);
+		System.out.println("数："+topicList.size());
+		JSONArray topicArray = new JSONArray();
+		for(Topic t:topicList)
+		{
+			JSONObject topicJSONObj = new JSONObject();
+			topicJSONObj.put("topicId",t.topicId);
+			topicJSONObj.put("userId",t.userId);
+			topicJSONObj.put("userName",t.userName);
+			topicJSONObj.put("topicName",t.topicName);
+			topicJSONObj.put("topicContent",t.topicContent);
+			topicJSONObj.put("logo_url",t.logo_url);
+			topicArray.add(topicJSONObj);
+			System.out.println(t.topicContent);
+		}
+		response.setContentType("text/json");
+		response.setCharacterEncoding("utf-8");
+		try {
+			response.getWriter().write(topicArray.toString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

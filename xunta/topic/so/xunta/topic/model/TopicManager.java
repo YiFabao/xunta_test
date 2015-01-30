@@ -62,6 +62,9 @@ public interface TopicManager {
 	public Topic findTopicByTopicId(String topicId);
 	//根据topicId 查询出List<topicMemberId>
 	public List<String> findMemberIdsByTopicId(String topicId);
+	
+	//根据List<topicId> 查询 List<Topic>
+	public List<Topic> getTopicListByTopicIdList(List<String> topicIdList);
 
 
 }

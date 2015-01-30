@@ -14,6 +14,21 @@ import so.xunta.topic.model.impl.TopicManagerImpl;
 
 public class TopicManagerImplTest {
 	@Test
+	public void testgetTopicListByTopicIdList(){
+		List<String> topicIdList = new ArrayList<>();
+		topicIdList.add("DEC38294FCADEDFFA835C1D04D2DA2E1");
+		topicIdList.add("A39517B49B8ADED2B8D3634834D301EB");
+		topicIdList.add("A0971F53688530FB460D2430FDE2D854");
+		TopicManager topicManager = new TopicManagerImpl();
+		List<Topic> topics =topicManager.getTopicListByTopicIdList(topicIdList);
+		for(Topic t:topics)
+		{
+			System.out.println(t.topicContent);
+		}
+		
+	}
+	
+	@Test
 	public void searhMyJoinTopic()
 	{
 		TopicManager topicManager = new TopicManagerImpl();

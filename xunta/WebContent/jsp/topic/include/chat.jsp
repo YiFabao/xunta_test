@@ -65,7 +65,7 @@
     </div>
 </div>
 
-<div class="msgAlert" id="bar_message" style="display:block">
+<div class="msgAlert" id="bar_message" style="display:none">
 	未读消息数:<span id="number">4</span>
 </div>
 <script src="${pageContext.request.contextPath }/jsp/topic/js/websocket.js"></script>
@@ -543,18 +543,48 @@
 	  //获取未读消息数的回调函数 消息未读数//有消息就是{topicId:num,topicId2:num2...},没有消息就是{"status":"none"}
 	  window.unreadMessagesNum=function(json){
 		  var sum_unreadNum =0;
+		  var topicid_num =new Object();
  	        for(var key in json)
  	        {
  	        	if(key!="status")
  	        	{
  	        		sum_unreadNum+=parseInt(json[key]);
+ 	        		topicid_num[key]=json[key];
  	        	}
- 	        	console.log(key +"  ==>"+json[key]);
+ 	        	//console.log(key +"  ==>"+json[key]);
+ 	        	//console.log(topic_num);
  	        }
- 	        console.log("消息总数为:"+sum_unreadNum);
- 	       changeMessageAlertState(sum_unreadNum);
+ 	        //console.log("消息总数为:"+sum_unreadNum);
+ 	      	changeMessageAlertState(sum_unreadNum);
+ 	       	initChatBox(sum_unreadNum,topicid_num);
 	  };
 	  
+	  //初始化聊天框
+	  function initChatBox(sum_unreadNum,topicid_num){
+		  console.log("初始化聊天框");
+		 console.log(sum_unreadNum+"   "+topicid_num);
+		 var topicArray = new Array();
+		for(var i in topicid_num)
+		{
+			 console.log(i);
+			 topicArray.push(i);
+		}
+		console.log(topicArray);
+		getTopicListByTopicIdArray(topicArray.toString());
+	  }
+	  
+	  //通过topicId数组，请求对应的TopicList
+	  function getTopicListByTopicIdArray(topicArray)
+	  {
+		  $.post("${pageContext.request.contextPath}/servlet/topic_service",{
+			  cmd:"getTopicListByTopicIdArray",
+			  topicIdArray:topicArray
+		  },function(res,status){
+			  console.log(res);
+		  });
+	  }
+	  
+	  //改变消息聊天框的消息数
 	  function  changeMessageAlertState(unReadMessageNum)
 	  {
 		  $("#number").empty();
