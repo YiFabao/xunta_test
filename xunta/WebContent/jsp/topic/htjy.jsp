@@ -26,7 +26,6 @@
 	<button id="myjoin_btn">我参与的话题</button>
 </div><br>
 <hr>
-<button class="chat" topicId = "A00B376E9ACD91A4C1D61322B56CC333" onclick="chat(this)">测试</button>
 <div id="hostoryTopic_container"></div>
 <!--我发起的话题列表 -->
 <!--我参与的话题列表-->

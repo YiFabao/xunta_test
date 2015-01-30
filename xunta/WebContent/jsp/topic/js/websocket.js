@@ -120,15 +120,18 @@ function sendMsg(topic_id,message_id,sender_id,nickname,message,accepter_id){
 function heartbeat() {
 	ws.send('{"status" : "-1","msg" : "ping"}');
 }
+
 //广播该用户进入聊天窗口
 function broadcast(user_id,topic_id) {
 	ws.send('{"status" : "3","userId" : "'+user_id+'","topicId":"'+topic_id+'"}');//用户打开聊天框"",""
 }
+
 //邀请好友
 function inviteFriend(inviteIds, inviteMsg){
 	//inviteIds is jsonArray
 	ws.send('{"status" : "4","inviteIds" : "'+inviteIds+'","inviteMsg" : "'+inviteMsg+'"}');
 }
+
 //未读消息
 function getUnreadMessageNum(topic_id,accepter_id){
 	ws.send('{"status" : "5","topicId" : "'+topic_id+'","accepterId" : "'+accepter_id+'"}');
@@ -144,7 +147,6 @@ function jsonStr(status, topic_id, message_id, sender_id, nickname, message,acce
 	}
 	return jsonString;
 }
-
 
 function checkWebSocketState() {
 	/*setTimeout(function() {
@@ -181,9 +183,31 @@ function getHistoryMessage(topicId,count){
    };
 	 console.log(" get history message");
 	 $.post("http://aigine.eicp.net:21280/WebSocket/TopicHistoryMessage",parameters,function(res,status){
-		 //console.log(res);
+		 if(window.historyMessageHandle)
+		 {
+			 historyMessageHandle(res);
+		 }
 	 });
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function getHistoryMessage2(topicId,count){
 	var ret_msgs = null;

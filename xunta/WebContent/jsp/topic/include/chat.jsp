@@ -68,7 +68,9 @@
     </div>
 </div>
 
-<div class="msgAlert" id="bar_message" style="display:block">你有4条私信</div>
+<div class="msgAlert" id="bar_message" style="display:block">
+	未读消息数:<span id="number">4</span>
+</div>
 <script src="${pageContext.request.contextPath }/jsp/topic/js/websocket.js"></script>
 <script>
 
@@ -444,12 +446,12 @@
 	   	  }
 	   	  console.log(dialogueBox);
 	   	  var  msg_box = dialogueBox.getElementsByClassName("msg_bubble_list")[0];
-	   	  console.log(json);
+	   	  //console.log(json);
 	   	  //解析json
 	  	  var msgId=json.msgId;
 	   	  var nickname=json.nickname;
-	   	  var sender=json.senderId;
-	   	  var accepter=json.accepterIds;
+	   	  //var sender=json.senderId;
+	   	  //var accepter=json.accepterIds;
 	   	  var msg = decodeURIComponent(json.message);
 	   	  var dateTime = json.dateTime;
 	   	  //构造html
@@ -477,6 +479,9 @@
 	   	    {
 	   	        msgManagerReady=true;
 	   	        console.log("websocket创建成功");
+	   	        //获取未读消息数======================================>未读消息数
+	   	        var unReadMessageNum = getUnreadMessageNum(topic_id, accepter_id)//12;
+	   	        changeMessageAlertState(unReadMessageNum);
 	   	    }
 	   	    else if(state="no"){
 	   	        msgManagerReady=false;
@@ -486,9 +491,28 @@
 	   	    }
 	   	};  
 	   	
-	  //创建websocket
-		createWebsocketConnect("${sessionScope.user.id}");
+	  //显示历史消息的回调函数
+	  window.historyMessageHandle = function(res){
+		console.log(res);
+		for(var key in res)
+		{
+			//console.log(res[key]);
+/* 			var value = res[key];
+			var nickname = value.nickname;
+			var dateTime = value.dateTime;
+			var msg = value.msg; */
+			var value = res[key];
+			webimHandle(value);
+		}
+	  };
 	  
-	  //获取未读消息数
+	  function  changeMessageAlertState(unReadMessageNum)
+	  {
+		  $("#number").empty();
+		  $("#number").append(unReadMessageNum);
+	  }
+	   	
+	  //创建websocket
+	  createWebsocketConnect("${sessionScope.user.id}");
 	  
 </script>
