@@ -177,7 +177,20 @@ function getHistoryMessage(topicId,count){
 	 var parameters={
        topicId:topicId,
        biginIndex:count,
-       endIndex:count+20
+       endIndex:parseInt(count)+20
+   };
+	 console.log(" get history message");
+	 $.post("http://aigine.eicp.net:21280/WebSocket/TopicHistoryMessage",parameters,function(res,status){
+		 //console.log(res);
+	 });
+};
+
+function getHistoryMessage2(topicId,count){
+	var ret_msgs = null;
+	 var parameters={
+       topicId:topicId,
+       biginIndex:count,
+       endIndex:parseInt(count)+20
    };
    doRequestUsingPOST_fang("http://aigine.eicp.net:21280/WebSocket/TopicHistoryMessage?"+toDomString_fang(parameters),function(){
 
@@ -189,7 +202,8 @@ function getHistoryMessage(topicId,count){
                console.log("请求成功响应");
                var historyMessage = xmlHttp.responseText;
                ret_msgs = JSON.parse(historyMessage);
-               //console.log("赋值在前:"+ret_msgs);
+               alert(ret_msgs);
+               console.log("赋值在前:"+ret_msgs);
            }
            else{
                console.log("请求没有成功响应:"+xmlHttp.status);
