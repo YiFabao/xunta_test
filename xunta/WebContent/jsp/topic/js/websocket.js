@@ -133,8 +133,8 @@ function inviteFriend(inviteIds, inviteMsg){
 }
 
 //未读消息
-function getUnreadMessageNum(topic_id,accepter_id){
-	ws.send('{"status" : "5","topicId" : "'+topic_id+'","accepterId" : "'+accepter_id+'"}');
+function getUnreadMessageNum(accepter_id){
+	ws.send('{"status" : "5","accepterId" : "'+accepter_id+'"}');
 }
 function jsonStr(status, topic_id, message_id, sender_id, nickname, message,accepter_id) {
 	var jsonString = '{"status":"' + status + '","topicId":"' + topic_id + '","messageId":"' + message_id + '","senderId":"' + sender_id + '","nickname":" ' + nickname + '","message":"' + message + '","accepterIds": [';
