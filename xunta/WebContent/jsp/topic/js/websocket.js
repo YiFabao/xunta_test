@@ -83,17 +83,12 @@ function websocketEvent(userId) {
 			if(window.receiveBroadcast){
 				receiveBroadcast(json);//接收广播消息  fabao.yi
 			}
-		}else if(status == "4")	{
-			if(json.unreadMessage == "null"){
-				//没有未读消息
-			}else{
-				//有未读消息
-				console.log(json.unreadMessage);
-			}
-		}else if(status == "5")	{
-			//触发此事件说明修改消息未读状态成功
-			json.userId;
-			json.topicId;
+		}else if(status == "4"){
+			//好友邀请
+			alert(json.inviteMsg);
+		}else if(status == "5"){
+			//消息未读数
+			alert(json.unreadNum);
 		}
 	}
 }
@@ -127,21 +122,16 @@ function heartbeat() {
 }
 //广播该用户进入聊天窗口
 function broadcast(user_id,topic_id) {
-	console.log("调用广播方法........");
 	ws.send('{"status" : "3","userId" : "'+user_id+'","topicId":"'+topic_id+'"}');//用户打开聊天框"",""
-}
-//获取未读消息
-function getUnreadMessage(userId){
-	ws.send('{"status" : "4","userId" : "'+userId+'"}');
-}
-//设置消息读取状态
-function setMsgReadStatus(userId,topicId){
-	ws.send('{"status" : "5","userId" : "'+userId+'","topicId" : "'+topicId+'"}');
 }
 //邀请好友
 function inviteFriend(inviteIds, inviteMsg){
 	//inviteIds is jsonArray
-	ws.send('{"status" : "6","inviteIds" : "'+inviteIds+'","inviteMsg" : "'+inviteMsg+'"}');
+	ws.send('{"status" : "4","inviteIds" : "'+inviteIds+'","inviteMsg" : "'+inviteMsg+'"}');
+}
+//未读消息
+function getUnreadMessageNum(topic_id,accepter_id){
+	ws.send('{"status" : "5","topicId" : "'+topic_id+'","accepterId" : "'+accepter_id+'"}');
 }
 function jsonStr(status, topic_id, message_id, sender_id, nickname, message,accepter_id) {
 	var jsonString = '{"status":"' + status + '","topicId":"' + topic_id + '","messageId":"' + message_id + '","senderId":"' + sender_id + '","nickname":" ' + nickname + '","message":"' + message + '","accepterIds": [';
@@ -189,7 +179,7 @@ function getHistoryMessage(topicId,count){
        biginIndex:count,
        endIndex:count+20
    };
-   doRequestUsingPOST_fang("http://localhost:3306/WebSocket/TopicHistoryMessage?"+toDomString_fang(parameters),function(){
+   doRequestUsingPOST_fang("http://aigine.eicp.net:21280/WebSocket/TopicHistoryMessage?"+toDomString_fang(parameters),function(){
 
        if(xmlHttp.readyState==4)
        {
