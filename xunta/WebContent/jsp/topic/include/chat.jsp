@@ -2,33 +2,6 @@
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 
-<button class="chat" topicId = "DEC38294FCADEDFFA835C1D04D2DA2E1">聊天</button>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath }/jsp/topic/css/chat_box.css">
 
 <div class="webim_page" style="display:none" id="webim_page">
@@ -97,8 +70,6 @@
 
 <div class="msgAlert" id="bar_message" style="display:block">你有4条私信</div>
 <script src="${pageContext.request.contextPath }/jsp/topic/js/websocket.js"></script>
-<script src="${pageContext.request.contextPath }/assets/javascripts/jquery-1.10.2.js"></script>
-<script src="${pageContext.request.contextPath }/jsp/topic/js/navbar.js"></script>
 <script>
 
 	//看一下聊天框切换的效果
@@ -112,7 +83,22 @@
 		}
 	}
 
-	//元素定义 .chat 并设置一个属性 topicId==>用户点击该元素触发聊天
+	function chat(obj){
+		var topicId = $(obj).attr("topicId");
+		//通过topicId 获取 {topicId:"ad023424s",topicName:"张三",logoUrl:"/user/logo/1.jpg"}
+		$.post("${pageContext.request.contextPath}/servlet/topic_service",{
+			cmd:"getTopicByTopicId",
+			topicId:topicId
+		},function(res,status){
+			var topicName = res.topicName;
+			var imgSrc = res.logoUrl;
+			console.log("话题名:"+topicName);
+			console.log("logoUrl:"+imgSrc);
+			//触发聊天事件
+			startChat(topicId,topicName,imgSrc);
+		});
+	}
+	/* //元素定义 .chat 并设置一个属性 topicId==>用户点击该元素触发聊天
 	$(".chat").click(function(event){
 		//拿到topicId==>查询topic,话题下的用户列表
 		var topicId = $(this).attr("topicId");
@@ -128,7 +114,7 @@
 			//触发聊天事件
 			startChat(topicId,topicName,imgSrc);
 		});
-	});
+	}); */
 	
 	//开始聊天
 	function startChat(topicId,topicName,imgSrc){
@@ -170,9 +156,23 @@
 				addEventlisteneron_btn_exit(dialogueBox);
 				//添加发送消息事件，监听webim消息输入框
 				addEventListenerOnMsgInputBox(dialogueBox);
+				//显示历史消息
+				showHistoryMessages(dialogueBox);
 			});
 	};
-
+	//在聊天框显示历史消息
+	function showHistoryMessages(dialogueBox){
+		//获取对应topicId 的聊天框的历史消息数
+		console.log(dialogueBox);
+		var topicId = $(dialogueBox).find("div.private_dialogue_body").attr("topicId");
+		var currentMsgCount = $(dialogueBox).find("div.private_dialogue_body").attr("msg_count");
+		//请求服务器获取历史消息
+		getHistoryMessage(topicId,currentMsgCount);//调用binbin的接口,无返回值，有一个回调函数，数据获取在回调函数中，具体的数据显示在那个回调函数中做
+		console.log("当前的历史消息数："+currentMsgCount+"  话题id:"+topicId);
+		console.log("显示历史消息 showHistoryMessages");
+	};
+	
+	
 	//给指定的dialogueBox 添加退出按钮点击处理事件
 	function addEventlisteneron_btn_exit(dialogueBox){
 		$(dialogueBox).find("input.btn_exit").click(function(e){
@@ -201,7 +201,7 @@
 		div_node.setAttribute("class","head");
 		img_node.setAttribute("src",imgSrc);
 		p_node.setAttribute("class","topic_name");
-		p_node.innerHTML =topicName;
+		p_node.innerHTML ="话题:"+topicName;
 		
 		//将li_node 添加到	div.topic_group_list ul下
 		$("div.topic_group_list ul").append(li_node);
@@ -460,6 +460,13 @@
 	   	  var mainBoxNode = $(dialogueBox).find("div.mainBox:first-child")[0];
 	   	  setBottom(mainBoxNode);	 
 	   	};
+	   	
+	   	//历史消息回调函数
+	   	window.chatBoxHistoryMsg=function(json)
+	   	{
+	   		//在消息框显示历史消息
+	   		webimHandle(json);
+	   	}
 	   	
 	    //websocket状态发生变化时触发
 	   	window.webimStateChange=function(state){

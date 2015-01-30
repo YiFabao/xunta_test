@@ -2,15 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
-<!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>发起话题</title>
-</head>
 <!-- 网页头样式 -->
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/jsp/topic/css/navbar.css">
 <style>
 	.matched_topic{
 		width:1024px;
@@ -34,8 +26,6 @@
 		background: orange;
 	}
 </style>
-<body>
-	<jsp:include page="include/navbar.jsp"></jsp:include>
 	<h1 align="center">发起话题</h1>
 	<form action="<%=request.getContextPath() %>/servlet/topic_service?cmd=fqht" method="post" id="form1">
 		<input type="hidden" name="userId" value="${sessionScope.user.id }">
@@ -109,154 +99,146 @@
 		</c:if>
 		</c:forEach>
 	</c:if>
-	
-	
-	<script src="${pageContext.request.contextPath }/assets/javascripts/jquery-1.10.2.js"></script>
-	<script src="${pageContext.request.contextPath }/jsp/topic/js/navbar.js"></script>
-	<script src="${pageContext.request.contextPath }/jsp/topic/js/fqht.js"></script>
-	<script>
-		
-		var topic_items = document.getElementsByClassName("topic_item");
-		for(var i=0;i<topic_items.length;i++)
-		{
-			var topic_item = topic_items[i];
-			topic_item.addEventListener("click",function(e){
-				if(e.target.getAttribute("type")=="button"){return;}//如果点击的是btn_invite 则不是执行的显示放大的操作
-				var mouse_x = e.clientX;
-				var mouse_y = e.clientY;
-				//判断是否存在hover_box
+
+<script>
+	var topic_items = document.getElementsByClassName("topic_item");
+	for(var i=0;i<topic_items.length;i++)
+	{
+		var topic_item = topic_items[i];
+		topic_item.addEventListener("click",function(e){
+			if(e.target.getAttribute("type")=="button"){return;}//如果点击的是btn_invite 则不是执行的显示放大的操作
+			var mouse_x = e.clientX;
+			var mouse_y = e.clientY;
+			//判断是否存在hover_box
+			var hover_box = document.getElementsByClassName("hover_box")[0];
+			if(hover_box)
+			{
+				console.log("移除");
+				$(".hover_box").get(0).remove();
+			}
+			
+			var topicName = $("#myTopic").attr("topicName");
+			var myTopicContent = $("#myTopic").attr("topicContent");
+			var currentUserId = $(this).attr("userId");
+			console.log(myTopicContent);
+			console.log(currentUserId);
+			console.log(topicName);
+			$.post("${pageContext.request.contextPath }/jsp/topic/include/hover.jsp",{userId:currentUserId,topicName:topicName,topicContent:myTopicContent},function(res){
+				
+				$("body").append(res);//添加悬浮框
+				
+				//给放大的悬浮框添加邀请按钮事件
+				$("div.hover_box input.btn_invite").click(function(event){
+					console.log("放大的事件的邀请信息");
+					//var to_userId =$(this).attr(userId);//被邀请人的userId
+					var userId = "${sessionScope.user.id}";//邀请人的userId
+					var userName = "${sessionScope.user.xunta_username}";//邀请人的userId
+					var to_userId =this.getAttribute("userId");//被邀请人的userId
+					var topicId = $("#myTopic").attr("topicId");
+					var topicContent =$("#myTopic").attr("topicContent");
+					
+					console.log("userId:"+userId);
+					console.log("userName:"+userName);
+					console.log("to_userId:"+to_userId);
+					console.log("topicId:"+topicId);
+					console.log("topicContent:"+topicContent);
+					
+					$.post("${pageContext.request.contextPath}/servlet/topic_service",{
+						cmd:"invite",
+						topicId:topicId,
+						userId:userId,
+						userName:userName,
+						topicContent:topicContent,
+						to_userId:to_userId
+						},
+						function(res,status){
+							console.log("邀请状态:"+status+"===>"+res);
+							if(status=="success"&&res=="ok")
+							{
+								alert("邀请成功!!!  别人同意后，在顶部导航栏会看到消息提醒");
+							}
+							else{
+								alert("邀请失败，再试一次");
+							}
+					});
+					
+				});
+				
+				//获取悬浮框的高度和宽度
 				var hover_box = document.getElementsByClassName("hover_box")[0];
-				if(hover_box)
+				hover_box.style.display="block";//显示
+				//定位
+				var hover_box_width = hover_box.clientWidth;
+				var hover_box_height = hover_box.clientHeight;
+				if(mouse_x - 0.5*hover_box_width<0)
 				{
-					console.log("移除");
-					$(".hover_box").get(0).remove();
+					hover_box.style.left="0px";
+				}else if(mouse_x+0.5*hover_box>document.body.clientWidth)
+				{
+					hover_box.style.right=document.body.clientWidth+"px";
+				}
+				else{
+					hover_box.style.left = (mouse_x - 0.5*hover_box_width)+"px";
 				}
 				
-				var topicName = $("#myTopic").attr("topicName");
-				var myTopicContent = $("#myTopic").attr("topicContent");
-				var currentUserId = $(this).attr("userId");
-				console.log(myTopicContent);
-				console.log(currentUserId);
-				console.log(topicName);
-				$.post("${pageContext.request.contextPath }/jsp/topic/include/hover.jsp",{userId:currentUserId,topicName:topicName,topicContent:myTopicContent},function(res){
-					
-					$("body").append(res);//添加悬浮框
-					
-					//给放大的悬浮框添加邀请按钮事件
-					$("div.hover_box input.btn_invite").click(function(event){
-						console.log("放大的事件的邀请信息");
-						//var to_userId =$(this).attr(userId);//被邀请人的userId
-						var userId = "${sessionScope.user.id}";//邀请人的userId
-						var userName = "${sessionScope.user.xunta_username}";//邀请人的userId
-						var to_userId =this.getAttribute("userId");//被邀请人的userId
-						var topicId = $("#myTopic").attr("topicId");
-						var topicContent =$("#myTopic").attr("topicContent");
-						
-						console.log("userId:"+userId);
-						console.log("userName:"+userName);
-						console.log("to_userId:"+to_userId);
-						console.log("topicId:"+topicId);
-						console.log("topicContent:"+topicContent);
-						
-						$.post("${pageContext.request.contextPath}/servlet/topic_service",{
-							cmd:"invite",
-							topicId:topicId,
-							userId:userId,
-							userName:userName,
-							topicContent:topicContent,
-							to_userId:to_userId
-							},
-							function(res,status){
-								console.log("邀请状态:"+status+"===>"+res);
-								if(status=="success"&&res=="ok")
-								{
-									alert("邀请成功!!!  别人同意后，在顶部导航栏会看到消息提醒");
-								}
-								else{
-									alert("邀请失败，再试一次");
-								}
-						});
-						
-					});
-					
-					//获取悬浮框的高度和宽度
+				if(mouse_y - 0.5*hover_box_height<0)
+				{
+					hover_box.style.top="0px";
+				}
+				else{
+					hover_box.style.top = (mouse_y - 0.5*hover_box_height)+"px";
+				}
+				
+				//点击退出按钮事件
+				var btn_exit = document.getElementById("btn_exit");
+				btn_exit.addEventListener("click",function(){
 					var hover_box = document.getElementsByClassName("hover_box")[0];
-					hover_box.style.display="block";//显示
-					//定位
-					var hover_box_width = hover_box.clientWidth;
-					var hover_box_height = hover_box.clientHeight;
-					if(mouse_x - 0.5*hover_box_width<0)
-					{
-						hover_box.style.left="0px";
-					}else if(mouse_x+0.5*hover_box>document.body.clientWidth)
-					{
-						hover_box.style.right=document.body.clientWidth+"px";
-					}
-					else{
-						hover_box.style.left = (mouse_x - 0.5*hover_box_width)+"px";
-					}
-					
-					if(mouse_y - 0.5*hover_box_height<0)
-					{
-						hover_box.style.top="0px";
-					}
-					else{
-						hover_box.style.top = (mouse_y - 0.5*hover_box_height)+"px";
-					}
-					
-					//点击退出按钮事件
-					var btn_exit = document.getElementById("btn_exit");
-					btn_exit.addEventListener("click",function(){
-						var hover_box = document.getElementsByClassName("hover_box")[0];
-						hover_box.style.display = "none";
-						$(".hover_box").get(0).remove();
-					});
+					hover_box.style.display = "none";
+					$(".hover_box").get(0).remove();
 				});
 			});
-		} 
-		
-		
-		$(".btn_invite").click(function(event){
-			console.log("用户点击邀请");
-			//获取需要的参数
-			//邀请人userId
-			//邀请人的userName
-			//被邀请人的userId
-			//邀请人的topicId
-			//邀请人的话题内容
-			var userId = "${sessionScope.user.id}";//邀请人的userId
-			var userName = "${sessionScope.user.xunta_username}";//邀请人的userId
-			var to_userId =this.getAttribute("userId");//被邀请人的userId
-			var topicId = $("#myTopic").attr("topicId");
-			var topicContent =$("#myTopic").attr("topicContent");
-			
-			console.log("userId:"+userId);
-			console.log("userName:"+userName);
-			console.log("to_userId:"+to_userId);
-			console.log("topicId:"+topicId);
-			console.log("topicContent:"+topicContent);
-			
-			$.post("${pageContext.request.contextPath}/servlet/topic_service",{
-				cmd:"invite",
-				topicId:topicId,
-				userId:userId,
-				userName:userName,
-				topicContent:topicContent,
-				to_userId:to_userId
-				},
-				function(res,status){
-					console.log("邀请状态:"+status+"===>"+res);
-					if(status=="success"&&res=="ok")
-					{
-						alert("邀请成功!!!   别人同意后，在顶部导航栏会看到消息提醒");
-					}
-					else{
-						alert("邀请失败，再试一次");
-					}
-			});
-			
 		});
-	</script>
+	} 
 	
-</body>
-</html>
+	
+	$(".btn_invite").click(function(event){
+		console.log("用户点击邀请");
+		//获取需要的参数
+		//邀请人userId
+		//邀请人的userName
+		//被邀请人的userId
+		//邀请人的topicId
+		//邀请人的话题内容
+		var userId = "${sessionScope.user.id}";//邀请人的userId
+		var userName = "${sessionScope.user.xunta_username}";//邀请人的userId
+		var to_userId =this.getAttribute("userId");//被邀请人的userId
+		var topicId = $("#myTopic").attr("topicId");
+		var topicContent =$("#myTopic").attr("topicContent");
+		
+		console.log("userId:"+userId);
+		console.log("userName:"+userName);
+		console.log("to_userId:"+to_userId);
+		console.log("topicId:"+topicId);
+		console.log("topicContent:"+topicContent);
+		
+		$.post("${pageContext.request.contextPath}/servlet/topic_service",{
+			cmd:"invite",
+			topicId:topicId,
+			userId:userId,
+			userName:userName,
+			topicContent:topicContent,
+			to_userId:to_userId
+			},
+			function(res,status){
+				console.log("邀请状态:"+status+"===>"+res);
+				if(status=="success"&&res=="ok")
+				{
+					alert("邀请成功!!!   别人同意后，在顶部导航栏会看到消息提醒");
+				}
+				else{
+					alert("邀请失败，再试一次");
+				}
+		});
+		
+	});
+</script>

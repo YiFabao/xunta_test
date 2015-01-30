@@ -33,7 +33,7 @@
 			<th>最后活跃时间</th>
 		</tr>
 		<c:forEach items="${pageScope.topicList }" var="topic">
-		<tr class="history_topic_item" topicId="${topic.topicId }">
+		<tr class="history_topic_item" topicId="${topic.topicId }" onclick="chat(this)">
 			<td >${topic.userName }</td>
 			<td>
 				<img src="${pageContext.request.contextPath }/jsp/topic/images/1.jpg" style="width:48px;height:48px;">

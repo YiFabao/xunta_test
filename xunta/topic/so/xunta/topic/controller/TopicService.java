@@ -2,6 +2,7 @@ package so.xunta.topic.controller;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -201,11 +202,7 @@ public class TopicService extends HttpServlet {
 
 	private void htss(HttpServletRequest request, HttpServletResponse response) {
 			String searchWord = request.getParameter("search_word");
-			try {
-				searchWord=new String(searchWord.getBytes("ISO-8859-1"),"utf-8");
-			} catch (UnsupportedEncodingException e1) {
-				e1.printStackTrace();
-			}
+			searchWord =URLDecoder.decode(searchWord);
 			System.out.println("话题搜索");
 			System.out.println(searchWord);
 			//搜索话题
@@ -219,7 +216,6 @@ public class TopicService extends HttpServlet {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		
 	}
 
 	private void fqht(HttpServletRequest request, HttpServletResponse response) {
