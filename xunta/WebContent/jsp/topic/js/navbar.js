@@ -47,6 +47,7 @@ $(".recommendTopic").click(function(event){
 		console.log($("#container_all")[0]);
 	});
 });
+
 //用户点击发起话题
 $(".writeTopic").click(function(event){
 	console.log("用户点击发起话题");
@@ -57,6 +58,7 @@ $(".writeTopic").click(function(event){
 		$("#container_all").append(res);
 	});
 });
+
 //用户点击话题记忆
 $(".historicalTopic").click(function(event){
 	console.log("户点击话题记忆");
@@ -65,6 +67,7 @@ $(".historicalTopic").click(function(event){
 		$("#container_all").append(res);
 	});
 });
+
 //用户点击消息提醒
 $(".message").click(function(event){
 	console.log("用户点击消息提醒");

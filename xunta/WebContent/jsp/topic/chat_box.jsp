@@ -152,6 +152,7 @@
  	//监听webim消息输入框
    	var msg_input_node=document.getElementsByClassName("msg_input")[0];
    	msg_input_node.addEventListener("keyup",function(){
+   		console.log("aaaa");
         if(event.keyCode==13)
         {
         	//发送消息需要传的参数，话题ID,消息id,发送人id,联系人id数组,消息,时间,发送人昵称
@@ -186,7 +187,7 @@
         	console.log("消息id:"+msgId);
         	console.log("联系人:"+contacts);
         	sendMsg(topicId,msgId,fromUserId,fromUserName,msg.toString().trim(),datetime,contacts);
-        }
+        } 
     });
    	
   //创建消息处理函数

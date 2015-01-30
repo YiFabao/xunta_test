@@ -166,10 +166,11 @@
 		console.log(dialogueBox);
 		var topicId = $(dialogueBox).find("div.private_dialogue_body").attr("topicId");
 		var currentMsgCount = $(dialogueBox).find("div.private_dialogue_body").attr("msg_count");
+		console.log("获取历史消息数 注释掉了，在chat.jsp 169行");
 		//请求服务器获取历史消息
-		getHistoryMessage(topicId,currentMsgCount);//调用binbin的接口,无返回值，有一个回调函数，数据获取在回调函数中，具体的数据显示在那个回调函数中做
-		console.log("当前的历史消息数："+currentMsgCount+"  话题id:"+topicId);
-		console.log("显示历史消息 showHistoryMessages");
+		//getHistoryMessage(topicId,currentMsgCount);//调用binbin的接口,无返回值，有一个回调函数，数据获取在回调函数中，具体的数据显示在那个回调函数中做
+		//console.log("当前的历史消息数："+currentMsgCount+"  话题id:"+topicId);
+		//console.log("显示历史消息 showHistoryMessages");
 	};
 	
 	
@@ -217,7 +218,7 @@
 		$(dialogueBox).find("textarea.msg_input").keydown(function(event){
 	        if(event.keyCode==13)
 	        {
-		        	
+		        
 	        	//发送消息需要传的参数，话题ID,消息id,发送人id,联系人id数组,消息,时间,发送人昵称
 	        	//1.话题id 上面已经获取
 	        	//2获取联系人　id[]
@@ -229,6 +230,8 @@
 	        	var fromUserId ="${sessionScope.user.id}";
 	        	//5发送人昵称
 	        	var fromUserName = "${sessionScope.user.xunta_username}";
+	        	//6 topicId
+	        	var topicId = $(dialogueBox).attr("boxId");
 	        	//7 消息id
 	        	var msgId = fromUserId+""+new Date().getTime();
 	        	
@@ -237,7 +240,7 @@
 	        	console.log("发送人昵称:"+fromUserName);
 	        	console.log("消息:"+msg);
 	        	console.log("消息id:"+msgId);
-	        	console.log("联系人:"+contacts);
+	        	console.log("联系人:"+contactsIdArray);
 	        	sendMsg(topicId,msgId,fromUserId,fromUserName,msg.toString().trim(),contactsIdArray); 
 	        	//清空聊天框 
 	        	this.value ="";
@@ -285,7 +288,7 @@
 		//列改话题列表的显示状态
 		var topic_group_li_toshow = getTopic_group_li_byTopicId(topicId);
 		topic_group_li_toshow.setAttribute("class","active");
-		if(active_li_node!=null)
+		if(active_li_node!=null&&active_li_node!=topic_group_li_toshow)
 		{
 			active_li_node.setAttribute("class","");
 		}
