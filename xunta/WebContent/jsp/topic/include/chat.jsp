@@ -581,13 +581,16 @@
 	  //获取未读消息数的回调函数 消息未读数//有消息就是{topicId:num,topicId2:num2...},没有消息就是{"status":"none"}
 	  window.unreadMessagesNum=function(json){
 		  var sum_unreadNum =0;
-		  var topicid_num =new Object();
+		  var topicid_num =new Object();//收集num>0的topicId
  	        for(var key in json)
  	        {
  	        	if(key!="status")
  	        	{
  	        		sum_unreadNum+=parseInt(json[key]);
- 	        		topicid_num[key]=json[key];
+ 	        		if(json[key]>0)
+ 	        		{
+ 	        			topicid_num[key]=json[key];
+ 	        		}
  	        	}
  	        	//console.log(key +"  ==>"+json[key]);
  	        	//console.log(topic_num);
@@ -625,11 +628,13 @@
 	  
 	  //初始化有未读消息的话题列表
 	  function initTopicGroupList(topicArray,topicid_num){
+		  
 		  for(var i=0;i<topicArray.length;i++){
+			  
 			  var topicObj = topicArray[i];
 			  var topicId = topicObj.topicId;
 			  var topicName = topicObj.topicName;
-			  var imgSrc = topic.logo_url;
+			  var imgSrc = topicObj.logo_url;
 			  var unreadMsgNum = topicid_num[topicId];
 			  addTopicItemOnTopicList(topicId,topicName,imgSrc,unreadMsgNum)
 		  }
