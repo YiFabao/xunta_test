@@ -62,7 +62,7 @@ public class Login extends HttpServlet {
 				System.out.println("添加cookie成功");
 	
 			}
-			response.sendRedirect(request.getContextPath()+"/jsp/topic/fqht.jsp");
+			response.sendRedirect(request.getContextPath()+"/jsp/topic/index.jsp");
 		}
 		
 	}
