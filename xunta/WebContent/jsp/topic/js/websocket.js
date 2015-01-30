@@ -87,8 +87,13 @@ function websocketEvent(userId) {
 			//好友邀请
 			alert(json.inviteMsg);
 		}else if(status == "5"){
-			//消息未读数
-			alert(json.unreadNum);
+			//消息未读数//有消息就是{topicId:num,topicId2:num2...},没有消息就是{"status":"none"}
+			if(window.unreadMessagesNum)
+			{
+				console.log("获取到未读消息:"+json);
+				unreadMessagesNum(json);
+			}
+			//alert(json.unreadNum);
 		}
 	}
 }
@@ -180,9 +185,9 @@ function getHistoryMessage(topicId,count){
        topicId:topicId,
        biginIndex:count,
        endIndex:parseInt(count)+20
-   };
-	 console.log(" get history message");
+	 };
 	 $.post("http://aigine.eicp.net:21280/WebSocket/TopicHistoryMessage",parameters,function(res,status){
+		 console.log("status:"+status);
 		 if(window.historyMessageHandle)
 		 {
 			 historyMessageHandle(res);

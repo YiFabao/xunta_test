@@ -103,6 +103,7 @@
 	transition: background-color 300ms;
 
 }
+
 .search .search_s{
 	position:relative;
 	display: inline-block;
@@ -122,7 +123,7 @@
 	left:2px;
 }
 p.topic_name{
-	width:130px;
+	width:100px;
 	height:40px;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -137,6 +138,21 @@ p.topic_name{
 	line-height:40px;
 	padding:0 5px;
 	font-family: 'Arial','Microsoft YaHei';
+}
+.W_new_count {
+	min-width: 18px;
+	_width: 18px;
+	height: 13px;
+	line-height: 14px;
+	text-align: center;
+	display: inline-block;
+	padding: 0 2px;
+	background: #fa7d3c;
+	color: #fff;
+	border-radius: 3px;
+	position:relative;
+	margin-top:14px;
+	float:left;
 }
 
 

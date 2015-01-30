@@ -4,6 +4,7 @@
 <!-- 这就是一个顶级容器，唯一不变的就是聊天框，其他任何元素都通过js获取更换 -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath }/jsp/topic/css/chat_box.css">
 </head>
 <body>
 <!-- 导航栏 -->
@@ -15,7 +16,6 @@
 <script src="${pageContext.request.contextPath }/assets/javascripts/jquery-1.10.2.js"></script>
 <script src="${pageContext.request.contextPath }/jsp/topic/js/include_chat.js"></script>
 <script src="${pageContext.request.contextPath }/jsp/topic/js/navbar.js"></script>
-<script src="${pageContext.request.contextPath }/jsp/topic/js/fqht.js"></script>
 <script>
 
 	//默认显示 话题记忆

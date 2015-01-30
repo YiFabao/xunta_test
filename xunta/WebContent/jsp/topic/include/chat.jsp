@@ -2,8 +2,6 @@
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath }/jsp/topic/css/chat_box.css">
-
 <div class="webim_page" style="display:none" id="webim_page">
     <div class="people_list">
         <div class="search webim_search">
@@ -16,8 +14,7 @@
             </span>
         </div>
         <div class="topic_group_list">
-           <ul>
-          </ul>
+           <ul></ul>
       	</div>
     </div>
     <div class="dialogue_box" boxId = "1" style ="display:none">
@@ -73,7 +70,8 @@
 </div>
 <script src="${pageContext.request.contextPath }/jsp/topic/js/websocket.js"></script>
 <script>
-
+	//创建websocket
+	createWebsocketConnect("${sessionScope.user.id}");
 	//看一下聊天框切换的效果
 	var topicIdArray = new Array();//话题列表的话题容器
 	//定义查询topicIdArray是否存在某个话题Id的方法
@@ -165,7 +163,7 @@
 	//在聊天框显示历史消息
 	function showHistoryMessages(dialogueBox){
 		//获取对应topicId 的聊天框的历史消息数
-		console.log(dialogueBox);
+		//console.log(dialogueBox);
 		var topicId = $(dialogueBox).find("div.private_dialogue_body").attr("topicId");
 		var currentMsgCount = $(dialogueBox).find("div.private_dialogue_body").attr("msg_count");
 		//console.log("获取历史消息数 注释掉了，在chat.jsp 169行");
@@ -193,8 +191,20 @@
 		var img_node = document.createElement("img");
 		var p_node = document.createElement("p");
 		
+		var count_node = document.createElement("div");
+		var em_node = document.createElement("em");
+		em_node.setAttribute("class","W_new_count");
+		em_node.setAttribute("topicId",topicId);
+		em_node.innerHTML="1";
+		em_node.setAttribute("num",0);
+		em_node.style.display="none";
+		count_node.appendChild(em_node);
+		
+	    // <div class="number W_fr"><em class="W_new_count">1</em></div>
+		
 		li_node.appendChild(div_node);
 		li_node.appendChild(p_node);
+		li_node.appendChild(count_node);
 		
 		div_node.appendChild(img_node);
 		
@@ -204,7 +214,8 @@
 		div_node.setAttribute("class","head");
 		img_node.setAttribute("src",imgSrc);
 		p_node.setAttribute("class","topic_name");
-		p_node.innerHTML ="话题:"+topicName;
+		p_node.setAttribute("title",topicName);
+		p_node.innerHTML ="#"+topicName;
 		
 		//将li_node 添加到	div.topic_group_list ul下
 		$("div.topic_group_list ul").append(li_node);
@@ -297,11 +308,30 @@
       	  active_li_node=topic_group_li_toshow;//更改激活的选项
 		//更改聊天框的显示状态
 		 var dialogue_box_toshow = getDialogueByBoxId(topicId);
-  
+      	  
+  		 //显示了相应的话题聊天框，那么其未读消息数就应该去掉
+  		 deleteUnreadMessageNum(topicId);
+  		 
 	     $(active_dialogueBox).hide();//隐藏前面已经显示的框　
 	     active_dialogueBox = dialogue_box_toshow;//切换当前活跃窗口
 	     $(active_dialogueBox).show();
 	}
+	
+	//将对应话题列表的未读消息数属性设置为0，并将其隐藏，若再出现，则重新设置其数值，并显示
+	function deleteUnreadMessageNum(topicId)
+	{
+		console.log("删除红框框");
+		var w_new_count_em_node = getW_new_countByTopicId(topicId);
+		console.log(w_new_count_em_node);
+		w_new_count_em_node.setAttribute("num",0);
+		w_new_count_em_node.style.display="none";
+	}
+	
+	//获取对应topicId 的未读消息红框框　
+	function getW_new_countByTopicId(topicId){
+		var W_new_count_em_node=$("em.W_new_count[topicId="+topicId+"]")[0];
+		return W_new_count_em_node;
+	};
 	
 	contactsShowStyle();//初始化就要调用，给列表添加初始化状态
 	function contactsShowStyle(){
@@ -340,6 +370,10 @@
         //点击事件
         li_node.addEventListener("click",function(){
   		  	 this.setAttribute("class","active");
+  		  	 //去除显示的未读消息数，并在总未读消息数上减去该数字
+  		  	 $(this).find(".W_new_count").attr("num",0);
+  		  	 $(this).find(".W_new_count").css("display","none");//===========================================================>todo
+  		  	 
   		  	 if(active_li_node!=null)
   		  	{
              active_li_node.setAttribute("class","");
@@ -480,8 +514,8 @@
 	   	        msgManagerReady=true;
 	   	        console.log("websocket创建成功");
 	   	        //获取未读消息数======================================>未读消息数
-	   	        var unReadMessageNum = getUnreadMessageNum(topic_id, accepter_id)//12;
-	   	        changeMessageAlertState(unReadMessageNum);
+	   	        console.log("开始获取未读消息");
+	   	        getUnreadMessageNum("${sessionScope.user.id}");//调用方法后，需要在回调函数中接收数据
 	   	    }
 	   	    else if(state="no"){
 	   	        msgManagerReady=false;
@@ -506,13 +540,26 @@
 		}
 	  };
 	  
+	  //获取未读消息数的回调函数 消息未读数//有消息就是{topicId:num,topicId2:num2...},没有消息就是{"status":"none"}
+	  window.unreadMessagesNum=function(json){
+		  var sum_unreadNum =0;
+ 	        for(var key in json)
+ 	        {
+ 	        	if(key!="status")
+ 	        	{
+ 	        		sum_unreadNum+=parseInt(json[key]);
+ 	        	}
+ 	        	console.log(key +"  ==>"+json[key]);
+ 	        }
+ 	        console.log("消息总数为:"+sum_unreadNum);
+ 	       changeMessageAlertState(sum_unreadNum);
+	  };
+	  
 	  function  changeMessageAlertState(unReadMessageNum)
 	  {
 		  $("#number").empty();
 		  $("#number").append(unReadMessageNum);
 	  }
 	   	
-	  //创建websocket
-	  createWebsocketConnect("${sessionScope.user.id}");
 	  
 </script>
