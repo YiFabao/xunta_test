@@ -224,6 +224,44 @@
 		addEventlistenerOn_li_node(li_node);
 	};
 	
+	function addTopicItemOnTopicList(topicId,topicName,imgSrc,unreadMsgNum){
+		var li_node = document.createElement("li");
+		var div_node = document.createElement("div");
+		var img_node = document.createElement("img");
+		var p_node = document.createElement("p");
+		
+		var count_node = document.createElement("div");
+		var em_node = document.createElement("em");
+		em_node.setAttribute("class","W_new_count");
+		em_node.setAttribute("topicId",topicId);
+		em_node.innerHTML=unreadMsgNum;
+		em_node.setAttribute("num",unreadMsgNum);
+		em_node.style.display="block";
+		count_node.appendChild(em_node);
+		
+	    // <div class="number W_fr"><em class="W_new_count">1</em></div>
+		
+		li_node.appendChild(div_node);
+		li_node.appendChild(p_node);
+		li_node.appendChild(count_node);
+		
+		div_node.appendChild(img_node);
+		
+		//设置属性
+		li_node.setAttribute("class","");
+		li_node.setAttribute("topic_id",topicId);
+		div_node.setAttribute("class","head");
+		img_node.setAttribute("src",imgSrc);
+		p_node.setAttribute("class","topic_name");
+		p_node.setAttribute("title",topicName);
+		p_node.innerHTML ="#"+topicName;
+		
+		//将li_node 添加到	div.topic_group_list ul下
+		$("div.topic_group_list ul").append(li_node);
+		
+		//添加事件
+		addEventlistenerOn_li_node(li_node);
+	};
 	
 	//消息输入框监听事件函数，调用则添加事件
 	function  addEventListenerOnMsgInputBox(dialogueBox){
@@ -570,18 +608,31 @@
 			 topicArray.push(i);
 		}
 		console.log(topicArray);
-		getTopicListByTopicIdArray(topicArray.toString());
+		getTopicListByTopicIdArray(topicArray.toString(),topicid_num);
 	  }
 	  
 	  //通过topicId数组，请求对应的TopicList
-	  function getTopicListByTopicIdArray(topicArray)
+	  function getTopicListByTopicIdArray(topicArray,topicid_num)
 	  {
 		  $.post("${pageContext.request.contextPath}/servlet/topic_service",{
 			  cmd:"getTopicListByTopicIdArray",
 			  topicIdArray:topicArray
 		  },function(res,status){
-			  console.log(res);
+			  //获取到的是一个数组 每个数组里有一个对象
+			 initTopicGroupList(topicArray,topicid_num)
 		  });
+	  }
+	  
+	  //初始化有未读消息的话题列表
+	  function initTopicGroupList(topicArray,topicid_num){
+		  for(var i=0;i<topicArray.length;i++){
+			  var topicObj = topicArray[i];
+			  var topicId = topicObj.topicId;
+			  var topicName = topicObj.topicName;
+			  var imgSrc = topic.logo_url;
+			  var unreadMsgNum = topicid_num[topicId];
+			  addTopicItemOnTopicList(topicId,topicName,imgSrc,unreadMsgNum)
+		  }
 	  }
 	  
 	  //改变消息聊天框的消息数
