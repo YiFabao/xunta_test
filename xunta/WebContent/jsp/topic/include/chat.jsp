@@ -66,7 +66,7 @@
 </div>
 
 <div class="msgAlert" id="bar_message" style="display:none">
-	未读消息数:<span id="number">4</span>
+	未读消息数:<span id="number" totalNum="0">0</span>
 </div>
 <script src="${pageContext.request.contextPath }/jsp/topic/js/websocket.js"></script>
 <script>
@@ -125,6 +125,18 @@
 		{
 			console.log("聊天窗口已经存在，只做一下切换显示,显示聊天框，隐藏消息提示框");
 			changeShowState(topicId);
+
+		
+			/* //改变总的未读消息数
+			var readNum = getTopicItemAboutUnreadMsgByTopicId(topicId);
+			console.log("点击话题记忆：topicId:"+topicId);
+			console.log("对应的未读消息数为："+readNum);
+			console.log("减少");
+			minusReadMsgNumFromTotalUnreadMsgNum(readNum);
+			
+			//将点击的话题所对应的未读消息提示数清空
+			clearW_new_countByTopicId(topicId); */
+			changeMsgNumByTopicId(topicId);//改变消息数的显示　，改变总的未读消息数量，清空对应话题的消息数
 		}
 		else{
 			//添加话题列表项
@@ -184,7 +196,7 @@
 		});
 	}
 	
-	//创建话题列表的子元素项，并添加到父节点，点击话题时产生
+	//创建话题列表的子元素项，并添加到父节点，点击话题时产生,
 	function addTopicItemOnTopicList(topicId,topicName,imgSrc){
 		var li_node = document.createElement("li");
 		var div_node = document.createElement("div");
@@ -195,9 +207,9 @@
 		var em_node = document.createElement("em");
 		em_node.setAttribute("class","W_new_count");
 		em_node.setAttribute("topicId",topicId);
-		em_node.innerHTML="1";
+		em_node.innerHTML="0";
 		em_node.setAttribute("num",0);
-		em_node.style.display="none";
+		em_node.style.display="none";//因为是点击话题时产生的，所以默认是不显示的
 		count_node.appendChild(em_node);
 		
 	    // <div class="number W_fr"><em class="W_new_count">1</em></div>
@@ -224,7 +236,8 @@
 		addEventlistenerOn_li_node(li_node);
 	};
 	
-	function addTopicItemOnTopicList(topicId,topicName,imgSrc,unreadMsgNum){
+	//带4个参数的添加话题表表，这个方法是在用户刚登录的时候，要获取未读消息时调用
+	function addTopicItemOnTopicList_program4(topicId,topicName,imgSrc,unreadMsgNum){
 		var li_node = document.createElement("li");
 		var div_node = document.createElement("div");
 		var img_node = document.createElement("img");
@@ -258,7 +271,7 @@
 		
 		//将li_node 添加到	div.topic_group_list ul下
 		$("div.topic_group_list ul").append(li_node);
-		
+		console.log(li_node);
 		//添加事件
 		addEventlistenerOn_li_node(li_node);
 	};
@@ -269,7 +282,6 @@
 		$(dialogueBox).find("textarea.msg_input").keydown(function(event){
 	        if(event.keyCode==13)
 	        {
-		        
 	        	//发送消息需要传的参数，话题ID,消息id,发送人id,联系人id数组,消息,时间,发送人昵称
 	        	//1.话题id 上面已经获取
 	        	//2获取联系人　id[]
@@ -327,7 +339,7 @@
 		return $("div.dialogue_box[boxId="+topicId+"]")[0];//转原生javascript对象
 	}
 	//获取话题列表节点  topic_id =topicId
-		function getTopic_group_li_byTopicId(topicId){
+	function getTopic_group_li_byTopicId(topicId){
 		return $("div.topic_group_list ul li[topic_id="+topicId+"]")[0];//转原生javascript对象
 	}
 	
@@ -339,6 +351,7 @@
 		//列改话题列表的显示状态
 		var topic_group_li_toshow = getTopic_group_li_byTopicId(topicId);
 		topic_group_li_toshow.setAttribute("class","active");
+		console.log("打印当前的列表："+topicId);
 		if(active_li_node!=null&&active_li_node!=topic_group_li_toshow)
 		{
 			active_li_node.setAttribute("class","");
@@ -347,23 +360,11 @@
 		//更改聊天框的显示状态
 		 var dialogue_box_toshow = getDialogueByBoxId(topicId);
       	  
-  		 //显示了相应的话题聊天框，那么其未读消息数就应该去掉
-  		 deleteUnreadMessageNum(topicId);
-  		 
 	     $(active_dialogueBox).hide();//隐藏前面已经显示的框　
 	     active_dialogueBox = dialogue_box_toshow;//切换当前活跃窗口
 	     $(active_dialogueBox).show();
 	}
 	
-	//将对应话题列表的未读消息数属性设置为0，并将其隐藏，若再出现，则重新设置其数值，并显示
-	function deleteUnreadMessageNum(topicId)
-	{
-		console.log("删除红框框");
-		var w_new_count_em_node = getW_new_countByTopicId(topicId);
-		console.log(w_new_count_em_node);
-		w_new_count_em_node.setAttribute("num",0);
-		w_new_count_em_node.style.display="none";
-	}
 	
 	//获取对应topicId 的未读消息红框框　
 	function getW_new_countByTopicId(topicId){
@@ -408,24 +409,65 @@
         //点击事件
         li_node.addEventListener("click",function(){
   		  	 this.setAttribute("class","active");
-  		  	 //去除显示的未读消息数，并在总未读消息数上减去该数字
-  		  	 $(this).find(".W_new_count").attr("num",0);
-  		  	 $(this).find(".W_new_count").css("display","none");//===========================================================>todo
-  		  	 
-  		  	 if(active_li_node!=null)
-  		  	{
-             active_li_node.setAttribute("class","");
-  		  	}
+  		  	 if(active_li_node!=null){
+  		  		 active_li_node.setAttribute("class","");
+  		     }
           	 active_li_node=this;//更改激活的选项
           	 //console.log(active_li_node);
              //获取点击dom节点的 topicId属性值,将当显示的框隐藏,显示对应的topicId的右半聊天框,
              var topicId = $(active_li_node).attr("topic_id");
+             
+         	changeMsgNumByTopicId(topicId);//改变消息数的显示
+/*              //改变总的未读消息数
+             var topicItemUnreadMsgNum = getTopicItemAboutUnreadMsgByTopicId(topicId);
+             minusReadMsgNumFromTotalUnreadMsgNum(topicItemUnreadMsgNum);
+             
+             //清除对该话题下未读消息数的提示,用户点击未读消息去除显示的未读消息数
+             clearW_new_countByTopicId(topicId); */
+             
+             //聊天窗口切换
              var dialogue_box_toshow = getDialogueByBoxId(topicId);
              $(active_dialogueBox).hide();//隐藏前面已经显示的框　
              active_dialogueBox = dialogue_box_toshow;//切换当前活跃窗口
              $(active_dialogueBox).show();
         });
 	}
+	
+	//获取某个话题列表项的未读消息数
+	function getTopicItemAboutUnreadMsgByTopicId(topicId){
+		 var em_W_new_count = getW_new_countByTopicId(topicId);
+		 var numStr = $(em_W_new_count).attr("num");
+		 console.log("numstr:"+numStr);
+		 return parseInt(numStr);
+	};
+	
+	//将放题列表的未读消息数置0并隐藏
+	function clearW_new_countByTopicId(topicId)
+	{
+		 var em_W_new_count = getW_new_countByTopicId(topicId);
+		 $(em_W_new_count).attr("num",0);
+		 $(em_W_new_count).css("display","none");
+	};
+	
+	//未读消息数清零时，总未读消息减少相应的数
+	function minusReadMsgNumFromTotalUnreadMsgNum(readNum)
+	{
+		//获取当前的总未读消息数
+		var totalUnreadMsgNum = getTotalUnReadMsgNum();
+		console.log("当前的总未坊消息数是:"+totalUnreadMsgNum);
+		//－1
+		console.log("totalUnreadMsgNum:"+totalUnreadMsgNum+"====>"+"readNum:"+readNum);
+		totalUnreadMsgNum = totalUnreadMsgNum-readNum;
+		changeMessageAlertState(totalUnreadMsgNum);
+	}
+	
+	//===================test
+/* 	console.log("总的未读消息数：");
+	console.log(getTotalUnReadMsgNum());
+	console.log("减少5");
+	minusReadMsgNumFromTotalUnreadMsgNum(5);
+	console.log("减少后的数目:"+getTotalUnReadMsgNum()); */
+	
 	
 	//滚动条置底
 	function setBottom(mainBox_node)
@@ -442,12 +484,39 @@
 		bar_message.style.display = "block";
 	}
 	//消息提示框的点击事件监听
+	var firstClicktBar_message=true;
 	var bar_message = document.getElementById("bar_message");
 	bar_message.addEventListener("click",function(event){
 		this.style.display = "none";
 		var webim_page = document.getElementById("webim_page");
 		webim_page.style.display = "block";
+		if(firstClicktBar_message) //第一次点击bar_message,则要默认显示第一个话题聊天框
+		{
+			if(topicIdArray.length>1)
+			{
+				changeShowState(topicIdArray[0]);
+			}
+		}
+		//将处于active状态的话题项显示的未读数清空
+		var active_topicItem_topicId = getTopicIdByActiveTopicListItem();
+		changeMsgNumByTopicId(active_topicItem_topicId);
 	});
+	
+	//改变消息数的显示,总数减少，对应话题的清空
+	function changeMsgNumByTopicId(topicId)
+	{
+		var readNum =getTopicItemAboutUnreadMsgByTopicId(topicId); //
+		clearW_new_countByTopicId(topicId);
+		//将总数减少
+		minusReadMsgNumFromTotalUnreadMsgNum(readNum);
+	}
+	
+	//获取处于active状态节点的topicId
+	function getTopicIdByActiveTopicListItem()
+	{
+		var topicId = $("div.topic_group_list ul li[class=active]").attr("topic_id");
+		return topicId;
+	}
 	
 
 	//话题列表的点击事件
@@ -514,6 +583,7 @@
 	   	  var dialogueBox =getDialogueByBoxId(topicId);
 	   	  if(dialogueBox==null)
 	   	  {
+	   		  //如果topicId对应的窗口没有加载，则创建话题列表,加载对应的聊天窗口
 	   		  return ;
 	   	  }
 	   	  console.log(dialogueBox);
@@ -535,14 +605,72 @@
 	   	  
 	   	  //div.mainBox 滚动条置底  滚动,注意获取的是对应聊天框的滚动条
 	   	  var mainBoxNode = $(dialogueBox).find("div.mainBox:first-child")[0];
-	   	  setBottom(mainBoxNode);	 
+	   	  setBottom(mainBoxNode);	
+	   	  if(isDialogueBoxHidden())
+	   	  {
+	   		  //处于隐藏状态下的逻辑
+	   		  console.log("test隐藏状态");
+	   		  //1.总的消息数+1
+	   		  var totalUnreadMsgNum = getTotalUnReadMsgNum();
+	   		  changeMessageAlertState(totalUnreadMsgNum+1);
+	   		  //2.对应话题的消息数+1,并显示数字
+	   		  var W_new_count_node = getW_new_countByTopicId(topicId);
+	   		  var curr_num=getTopicItemAboutUnreadMsgByTopicId(topicId);
+	   		  
+	   		  changeW_new_count_unreadMsgNum(topicId,curr_num+1);//改变红块显示的数目　
+	   	  }
+	   	  else{
+	   		  //不处于隐藏状态下的逻辑
+	   		  //判断当前的来的消息对应的topicId聊天窗口是否处于活动状态
+	   		  var isActive = isTopicItemActive(topicId);
+	   		  if(isActive){
+	   			  //处于活动态的逻辑
+	   			  console.log("处于活动态==>Todo");
+	   			  //不做任何处理
+	   		  }else{
+	   			  //不处于活动状态的逻辑
+	   			 console.log("不处于活动态==>");
+	   			 //2.对应话题的消息数+1,并显示数字
+		   		 var W_new_count_node = getW_new_countByTopicId(topicId);
+		   		 var curr_num=getTopicItemAboutUnreadMsgByTopicId(topicId);
+		   		  
+		   		 changeW_new_count_unreadMsgNum(topicId,curr_num+1);//改变红块显示的数目　
+	   		  }
+	   	  }
 	   	};
+	   	
+	   	//判断当前的来的消息对应的聊天窗口是否处于活动状态 根据topicId,true:为活动状态,false:为不活动状态
+	   	function isTopicItemActive(topicId)
+	   	{
+	   		var topicItem = getTopic_group_li_byTopicId(topicId);
+	   		if(topicItem.getAttribute("class")=="active"){
+	   			return true;
+	   		}
+	   		else{
+	   			return false;
+	   		}
+	   	}
+	   	
+	   	
+	   	//判断聊天窗口是否在隐藏状态,true为隐藏，false为显示
+	   	function isDialogueBoxHidden()
+	   	{
+	   		if($("#webim_page").css("display")=="none")
+	   		{
+	   			return true;	
+	   		}
+	   		else{
+	   			return false;
+	   		}
+	   	}
 	   	
 	   	//历史消息回调函数
 	   	window.chatBoxHistoryMsg=function(json)
 	   	{
+	   		json.reverse();
+	   		console.log("历史消息");
 	   		//在消息框显示历史消息
-	   		webimHandle(json);
+	   		//webimHandle(json);
 	   	}
 	   	
 	    //websocket状态发生变化时触发
@@ -578,74 +706,137 @@
 		}
 	  };
 	  
-	  //获取未读消息数的回调函数 消息未读数//有消息就是{topicId:num,topicId2:num2...},没有消息就是{"status":"none"}
-	  window.unreadMessagesNum=function(json){
-		  var sum_unreadNum =0;
-		  var topicid_num =new Object();//收集num>0的topicId
- 	        for(var key in json)
- 	        {
- 	        	if(key!="status")
- 	        	{
- 	        		sum_unreadNum+=parseInt(json[key]);
- 	        		if(json[key]>0)
- 	        		{
- 	        			topicid_num[key]=json[key];
- 	        		}
- 	        	}
- 	        	//console.log(key +"  ==>"+json[key]);
- 	        	//console.log(topic_num);
- 	        }
- 	        //console.log("消息总数为:"+sum_unreadNum);
- 	      	changeMessageAlertState(sum_unreadNum);
- 	       	initChatBox(sum_unreadNum,topicid_num);
+
+	  //获取未读消息数的回调函数 消息未读数//有消息就是{topicId:num,topicId2:num2...},没有消息就是{"status":5,"status":"none"},此处有问题
+	  window.unreadMessagesNum2=function(json){
+		 	var sum_unreadNum =0;//统计统的未读消息数
+	        for(var key in json)
+	        {
+	        	if(key!="status")
+	        	{
+	        		if(json[key]>0)
+	        		{
+		        		sum_unreadNum+=parseInt(json[key]);
+	        		}
+	        		else{
+	        			delete json[key];//移除未读消息为0的元素
+	        		}
+	        	}
+	        	else{
+	        		delete json[key];//移除不为topicId:messageUnReadNum的元素
+	        	}
+	        }
+		 	//打印总的未读消息数
+		 	console.log("总的未读消息:"+sum_unreadNum);
+		 	//打印过滤后的json,应只包含topicId:>0的未读消息数
+		 	console.log("========打印过滤后的json,应只包含topicId:>0的未读消息数============");
+		 	for(var topicId in json){
+		 		console.log(topicId+"==>"+json[topicId]);
+		 	}
+		 	changeMessageAlertState(sum_unreadNum);//将消息提示框的未读消息改为sum_unreadNum
+		 	//如果总的未读消息大于0要显示消息提示框
+		 	if(sum_unreadNum>0)
+		 	{
+		 		console.log("总的未读消息数是否大于0:"+sum_unreadNum);
+		 		showBarMessage();
+		 	}
+ 	       	initChatBox(json);//初始化含有未读消息的话题列表
 	  };
+	  //测试
+	  var json_topicIdKey_unreadMsgNumValueon={"DEC38294FCADEDFFA835C1D04D2DA2E1":2,
+			 									"A0971F53688530FB460D2430FDE2D854":8,
+			 									"E2932F0051462FC3D6E9C7C06101FA72":10,
+												  status:5,
+												  "topicId":0};
+	  unreadMessagesNum2(json_topicIdKey_unreadMsgNumValueon);
 	  
+
 	  //初始化聊天框
-	  function initChatBox(sum_unreadNum,topicid_num){
-		  console.log("初始化聊天框");
-		 console.log(sum_unreadNum+"   "+topicid_num);
-		 var topicArray = new Array();
-		for(var i in topicid_num)
-		{
-			 console.log(i);
-			 topicArray.push(i);
-		}
-		console.log(topicArray);
-		getTopicListByTopicIdArray(topicArray.toString(),topicid_num);
+	  function initChatBox(json_topicIdKey_unreadMsgNumValue){
+			console.log("初始化聊天框");
+			getTopicListByTopicIdArray(json_topicIdKey_unreadMsgNumValueon);
 	  }
 	  
-	  //通过topicId数组，请求对应的TopicList
-	  function getTopicListByTopicIdArray(topicArray,topicid_num)
+
+	  //获取对象的键,以数组返回
+	  function getKeys(json)
 	  {
+		  var keysArray = new Array();
+		  for(var key in json)
+		  {
+			  keysArray.push(key);
+		  }
+		  return keysArray;
+	  }
+	/*   var json_topicIdKey_unreadMsgNumValue={topicId1:2,topicId2:3,topicId3:4};
+	  var keys = getKeys(json_topicIdKey_unreadMsgNumValue);
+	  console.log("获取到的键名数组：");
+	  console.log(keys); */
+	  
+	  //通过topicId数组，请求对应的TopicList
+	  function getTopicListByTopicIdArray(json_topicIdKey_unreadMsgNumValueon)
+	  {
+		  var topicIdArray = getKeys(json_topicIdKey_unreadMsgNumValueon);
+		  //需要初始化的tpicId数组内容:
+		  console.log("需要初始化的tpicId数组内容:");
+		  console.log(topicIdArray);
+		  //post
 		  $.post("${pageContext.request.contextPath}/servlet/topic_service",{
 			  cmd:"getTopicListByTopicIdArray",
-			  topicIdArray:topicArray
+			  topicIdArray:topicIdArray.toString()
 		  },function(res,status){
+			  console.log("获取到的topicList:");
+			  console.log(res);
+			  var topicArray = res;
 			  //获取到的是一个数组 每个数组里有一个对象
-			 initTopicGroupList(topicArray,topicid_num)
+			 initTopicGroupList(topicArray,json_topicIdKey_unreadMsgNumValueon)
 		  });
 	  }
 	  
 	  //初始化有未读消息的话题列表
-	  function initTopicGroupList(topicArray,topicid_num){
+	  function initTopicGroupList(topicArray,json_topicIdKey_unreadMsgNumValueon){
 		  
 		  for(var i=0;i<topicArray.length;i++){
-			  
 			  var topicObj = topicArray[i];
+			  
 			  var topicId = topicObj.topicId;
+		
 			  var topicName = topicObj.topicName;
 			  var imgSrc = topicObj.logo_url;
-			  var unreadMsgNum = topicid_num[topicId];
-			  addTopicItemOnTopicList(topicId,topicName,imgSrc,unreadMsgNum)
+			  var unreadMsgNum = json_topicIdKey_unreadMsgNumValueon[topicId];
+			  console.log("topicId:"+topicId);
+			  console.log("topicName:"+topicName);
+			  console.log("imgSrc:"+imgSrc);
+			  console.log("unreadMsgNum:"+unreadMsgNum);
+			  
+			  addTopicItemOnTopicList_program4(topicId,topicName,imgSrc,unreadMsgNum);//添加话题列表
+			  //获取聊天框 通过传递参数 topicId,userId
+			  var userId ="${sessionScope.user.id}";
+			  doPostTogetDialogueBox(topicId,userId);
+			  //将话题Id放到全局tipicIdArray数组中
+			  topicIdArray.push(topicId);
 		  }
 	  }
 	  
 	  //改变消息聊天框的消息数
 	  function  changeMessageAlertState(unReadMessageNum)
 	  {
+		  $("#number").attr("totalNum",unReadMessageNum);
 		  $("#number").empty();
 		  $("#number").append(unReadMessageNum);
 	  }
-	   	
+	  //改变红框框的显示数　
+	  function changeW_new_count_unreadMsgNum(topicId,num)
+	  {
+		  var W_new_count_node = getW_new_countByTopicId(topicId);
+		  W_new_count_node.setAttribute("num",num);
+		  W_new_count_node.style.display = "block";
+		  W_new_count_node.innerHTML=num;
+	  }
+	  // 获取当前的总未读消息数
+	  function getTotalUnReadMsgNum()
+	  {
+		  return parseInt($("#number").attr("totalNum"));
+	  }
 	  
 </script>

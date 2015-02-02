@@ -90,7 +90,6 @@ function websocketEvent(userId) {
 			//消息未读数//有消息就是{topicId:num,topicId2:num2...},没有消息就是{"status":"none"}
 			if(window.unreadMessagesNum)
 			{
-				console.log("获取到未读消息:"+json);
 				unreadMessagesNum(json);
 			}
 			//alert(json.unreadNum);
