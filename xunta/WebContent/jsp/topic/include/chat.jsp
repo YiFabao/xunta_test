@@ -759,6 +759,7 @@
 			var value = res[key];
 			showOneMessageContent(value);
 		}
+		showBarMessage();
 	  };
 	  
 	  //在聊天框里显示历史消息
