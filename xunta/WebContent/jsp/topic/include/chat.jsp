@@ -172,6 +172,28 @@
 				showHistoryMessages(dialogueBox);
 			});
 	};
+	//获取聊天框，但不马上显示
+	function doPostTogetDialogueBoxNotShowImmediately(topicId,userId){
+		$.post("${pageContext.request.contextPath}/servlet/topic_service",{
+			cmd:"joinTopic",
+			topicId:topicId,
+			userId:userId
+			},
+			function(result,state){
+				$("#webim_page").append(result);
+		/* 		//切换显示
+				changeShowState(topicId); */
+				//添加退出按钮点击事件
+				var dialogueBox = getDialogueByBoxId(topicId);
+				//给指定的dialogueBox 添加退出按钮点击处理事件
+				addEventlisteneron_btn_exit(dialogueBox);
+				//添加发送消息事件，监听webim消息输入框
+				addEventListenerOnMsgInputBox(dialogueBox);
+				//显示历史消息
+				showHistoryMessages(dialogueBox);
+			});
+	};
+	
 	//在聊天框显示历史消息
 	function showHistoryMessages(dialogueBox){
 		//获取对应topicId 的聊天框的历史消息数
@@ -417,6 +439,15 @@
              //获取点击dom节点的 topicId属性值,将当显示的框隐藏,显示对应的topicId的右半聊天框,
              var topicId = $(active_li_node).attr("topic_id");
              
+		   	  //div.mainBox 滚动条置底  滚动,注意获取的是对应聊天框的滚动条
+/*               console.log("滚动条置底");
+		   	  var dialogueBox = getDialogueByBoxId(topicId);
+		   	  var mainBoxNode = $(dialogueBox).find("div.mainBox:first-child")[0];
+		   	 
+		   	  
+		   	  setBottom(mainBoxNode);   */           
+             
+             
          	changeMsgNumByTopicId(topicId);//改变消息数的显示
 /*              //改变总的未读消息数
              var topicItemUnreadMsgNum = getTopicItemAboutUnreadMsgByTopicId(topicId);
@@ -472,6 +503,7 @@
 	//滚动条置底
 	function setBottom(mainBox_node)
 	{
+		console.log("滚动条的高度:"+mainBox_node.scrollHeight);
 		mainBox_node.scrollTop = mainBox_node.scrollHeight;
 	}
 	
@@ -583,61 +615,92 @@
 	   	  var dialogueBox =getDialogueByBoxId(topicId);
 	   	  if(dialogueBox==null)
 	   	  {
-	   		  //如果topicId对应的窗口没有加载，则创建话题列表,加载对应的聊天窗口
-	   		  return ;
-	   	  }
-	   	  console.log(dialogueBox);
-	   	  var  msg_box = dialogueBox.getElementsByClassName("msg_bubble_list")[0];
-	   	  //console.log(json);
-	   	  //解析json
-	  	  var msgId=json.msgId;
-	   	  var nickname=json.nickname;
-	   	  //var sender=json.senderId;
-	   	  //var accepter=json.accepterIds;
-	   	  var msg = decodeURIComponent(json.message);
-	   	  var dateTime = json.dateTime;
-	   	  //构造html
-	   	  msgStr="<p>发送人:"+nickname+"<br/>"+msg+"<br/>"+dateTime+"</p>";
-	   	  msgStr+="<hr/>";
-	   	  var li_node=document.createElement("li");
-	   	  li_node.innerHTML=msgStr;
-	   	  msg_box.appendChild(li_node);
-	   	  
-	   	  //div.mainBox 滚动条置底  滚动,注意获取的是对应聊天框的滚动条
-	   	  var mainBoxNode = $(dialogueBox).find("div.mainBox:first-child")[0];
-	   	  setBottom(mainBoxNode);	
-	   	  if(isDialogueBoxHidden())
-	   	  {
-	   		  //处于隐藏状态下的逻辑
-	   		  console.log("test隐藏状态");
-	   		  //1.总的消息数+1
-	   		  var totalUnreadMsgNum = getTotalUnReadMsgNum();
-	   		  changeMessageAlertState(totalUnreadMsgNum+1);
-	   		  //2.对应话题的消息数+1,并显示数字
-	   		  var W_new_count_node = getW_new_countByTopicId(topicId);
-	   		  var curr_num=getTopicItemAboutUnreadMsgByTopicId(topicId);
-	   		  
-	   		  changeW_new_count_unreadMsgNum(topicId,curr_num+1);//改变红块显示的数目　
-	   	  }
-	   	  else{
-	   		  //不处于隐藏状态下的逻辑
-	   		  //判断当前的来的消息对应的topicId聊天窗口是否处于活动状态
-	   		  var isActive = isTopicItemActive(topicId);
-	   		  if(isActive){
-	   			  //处于活动态的逻辑
-	   			  console.log("处于活动态==>Todo");
-	   			  //不做任何处理
-	   		  }else{
-	   			  //不处于活动状态的逻辑
-	   			 console.log("不处于活动态==>");
-	   			 //2.对应话题的消息数+1,并显示数字
-		   		 var W_new_count_node = getW_new_countByTopicId(topicId);
-		   		 var curr_num=getTopicItemAboutUnreadMsgByTopicId(topicId);
+			console.log("发送过来的消息，没有相应的窗口");
+		
+			handleDialogueIsNull(topicId);	//如果topicId对应的窗口没有加载，则创建话题列表,加载对应的聊天窗口
+			
+	   	  }else{
+	   		  //console.log(dialogueBox);
+	   		  addMsgContetntIntoDialogueBox(dialogueBox,json);//往消息框里添加一条消息内容
+		   	  
+		   	  if(isDialogueBoxHidden())
+		   	  {
+		   		  //处于隐藏状态下的逻辑
+		   		  console.log("test隐藏状态");
+		   		  //1.总的消息数+1
+		   		  var totalUnreadMsgNum = getTotalUnReadMsgNum();
+		   		  changeMessageAlertState(totalUnreadMsgNum+1);
+		   		  //2.对应话题的消息数+1,并显示数字
+		   		  var W_new_count_node = getW_new_countByTopicId(topicId);
+		   		  var curr_num=getTopicItemAboutUnreadMsgByTopicId(topicId);
 		   		  
-		   		 changeW_new_count_unreadMsgNum(topicId,curr_num+1);//改变红块显示的数目　
-	   		  }
+		   		  changeW_new_count_unreadMsgNum(topicId,curr_num+1);//改变红块显示的数目　
+		   	  }
+		   	  else{
+		   		  //不处于隐藏状态下的逻辑
+		   		  //判断当前的来的消息对应的topicId聊天窗口是否处于活动状态
+		   		  var isActive = isTopicItemActive(topicId);
+		   		  if(isActive){
+		   			  //处于活动态的逻辑
+		   			  console.log("处于活动态==>Todo");
+		   			  //不做任何处理
+		   		  }else{
+		   			  //不处于活动状态的逻辑
+		   			 console.log("不处于活动态==>");
+		   			 //2.对应话题的消息数+1,并显示数字
+			   		 var W_new_count_node = getW_new_countByTopicId(topicId);
+			   		 var curr_num=getTopicItemAboutUnreadMsgByTopicId(topicId);
+			   		 changeW_new_count_unreadMsgNum(topicId,curr_num+1);//改变红块显示的数目　
+		   		  }
+		   	  }
 	   	  }
 	   	};
+	   	
+	   	//消息过来，但对应的聊天框为空，此时创建
+	   	function handleDialogueIsNull(topicId)
+	   	{
+	   		  //根据topicId获取对应的Topic
+	   		  $.post("${pageContext.request.contextPath}/servlet/topic_service",{
+					cmd:"getTopicByTopicId",
+					topicId:topicId
+				},function(res,status){
+					var topicName = res.topicName;
+					var imgSrc = res.logoUrl;
+					console.log("话题名:"+topicName);
+					console.log("logoUrl:"+imgSrc);
+					addTopicItemOnTopicList_program4(topicId,topicName,imgSrc,1);//添加话题列表
+				   //获取聊天框 通过传递参数 topicId,userId
+				    var userId ="${sessionScope.user.id}";
+				    doPostTogetDialogueBoxNotShowImmediately(topicId,userId);
+				    //将话题Id放到全局tipicIdArray数组中
+				    topicIdArray.push(topicId);
+				});
+	   	}
+	   	
+	   	//往消息框里添加一条消息内容
+	   	function addMsgContetntIntoDialogueBox(dialogueBox,json)
+	   	{
+	   		 var  msg_box = dialogueBox.getElementsByClassName("msg_bubble_list")[0];
+	   		 //console.log(json);
+		   	  //解析json
+		  	  var msgId=json.msgId;
+		   	  var nickname=json.nickname;
+		   	  //var sender=json.senderId;
+		   	  //var accepter=json.accepterIds;
+		   	  var msg = decodeURIComponent(json.message);
+		   	  var dateTime = json.dateTime;
+		   	  //构造html
+		   	  msgStr="<p>发送人:"+nickname+"<br/>"+msg+"<br/>"+dateTime+"</p>";
+		   	  msgStr+="<hr/>";
+		   	  var li_node=document.createElement("li");
+		   	  li_node.innerHTML=msgStr;
+		   	  msg_box.appendChild(li_node);
+		   	  
+		   	  //div.mainBox 滚动条置底  滚动,注意获取的是对应聊天框的滚动条
+		   	  var mainBoxNode = $(dialogueBox).find("div.mainBox:first-child")[0];
+		   	  setBottom(mainBoxNode);	
+		   	  
+	   	}
 	   	
 	   	//判断当前的来的消息对应的聊天窗口是否处于活动状态 根据topicId,true:为活动状态,false:为不活动状态
 	   	function isTopicItemActive(topicId)
@@ -664,14 +727,6 @@
 	   		}
 	   	}
 	   	
-	   	//历史消息回调函数
-	   	window.chatBoxHistoryMsg=function(json)
-	   	{
-	   		json.reverse();
-	   		console.log("历史消息");
-	   		//在消息框显示历史消息
-	   		//webimHandle(json);
-	   	}
 	   	
 	    //websocket状态发生变化时触发
 	   	window.webimStateChange=function(state){
@@ -702,13 +757,21 @@
 			var dateTime = value.dateTime;
 			var msg = value.msg; */
 			var value = res[key];
-			webimHandle(value);
+			showOneMessageContent(value);
 		}
 	  };
 	  
+	  //在聊天框里显示历史消息
+	  function showOneMessageContent(jsonMsg)
+	  {
+		  var topicId=jsonMsg.topicId;
+		  var dialogueBox =getDialogueByBoxId(topicId);//获得相应的聊天框
+		  addMsgContetntIntoDialogueBox(dialogueBox,jsonMsg);//往消息框里添加一条消息内容		  
+	  }
+	  
 
 	  //获取未读消息数的回调函数 消息未读数//有消息就是{topicId:num,topicId2:num2...},没有消息就是{"status":5,"status":"none"},此处有问题
-	  window.unreadMessagesNum2=function(json){
+	  window.unreadMessagesNum=function(json){
 		 	var sum_unreadNum =0;//统计统的未读消息数
 	        for(var key in json)
 	        {
@@ -742,19 +805,19 @@
 		 	}
  	       	initChatBox(json);//初始化含有未读消息的话题列表
 	  };
-	  //测试
+/* 	  //测试
 	  var json_topicIdKey_unreadMsgNumValueon={"DEC38294FCADEDFFA835C1D04D2DA2E1":2,
 			 									"A0971F53688530FB460D2430FDE2D854":8,
 			 									"E2932F0051462FC3D6E9C7C06101FA72":10,
 												  status:5,
 												  "topicId":0};
-	  unreadMessagesNum2(json_topicIdKey_unreadMsgNumValueon);
+	  unreadMessagesNum2(json_topicIdKey_unreadMsgNumValueon); */
 	  
 
 	  //初始化聊天框
 	  function initChatBox(json_topicIdKey_unreadMsgNumValue){
 			console.log("初始化聊天框");
-			getTopicListByTopicIdArray(json_topicIdKey_unreadMsgNumValueon);
+			getTopicListByTopicIdArray(json_topicIdKey_unreadMsgNumValue);
 	  }
 	  
 
