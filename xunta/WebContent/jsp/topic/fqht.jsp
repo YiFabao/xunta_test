@@ -243,13 +243,34 @@
 	});
 	
 	$("#btn_publish").click(function(){
+		
 		var topic_name = $("#topic_name").val();
 		var topic_content = $("#topic_content").val();
-		if(topic_name==""||topic_content=="")
+		var userId ="${sessionScope.user.id}";
+		var userName ="${sessionScope.user.xunta_username}";
+		var userLogoUrl =$("input[name=userLogoUrl]").val();
+		console.log("topic_name:"+topic_name);
+		console.log("topic_content:"+topic_content);
+		console.log("userId:"+userId);
+		console.log("userName:"+userName);
+		console.log("userLogoUrl:"+userLogoUrl);
+		
+		if(topic_name=="")
 		{
 			alert("话题　及　话题描述不能为空");
 			return;
 		}
-		$("#form1").submit();
+		var parameters={
+				userId:userId,
+				userName:userName,
+				userLogoUrl:userLogoUrl,
+				topicName:topic_name,
+				topicContent:topic_content
+		};
+		$.post("${pageContext.request.contextPath}/servlet/topic_service?cmd=fqht",parameters,function(res,status){
+			$("#container_all").empty();
+			$("#container_all").append(res);
+		});
+		//$("#form1").submit();
 	});
 </script>
