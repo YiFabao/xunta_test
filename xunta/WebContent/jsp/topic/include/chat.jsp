@@ -759,7 +759,7 @@
 			var value = res[key];
 			showOneMessageContent(value);
 		}
-		showBarMessage();
+		//showBarMessage();
 	  };
 	  
 	  //在聊天框里显示历史消息
@@ -799,11 +799,11 @@
 		 	}
 		 	changeMessageAlertState(sum_unreadNum);//将消息提示框的未读消息改为sum_unreadNum
 		 	//如果总的未读消息大于0要显示消息提示框
-		 	if(sum_unreadNum>0)
-		 	{
-		 		console.log("总的未读消息数是否大于0:"+sum_unreadNum);
+		 	//if(sum_unreadNum>0)
+		 	//{
+		 		//console.log("总的未读消息数是否大于0:"+sum_unreadNum);
 		 		showBarMessage();
-		 	}
+		 	//}
  	       	initChatBox(json);//初始化含有未读消息的话题列表
 	  };
 /* 	  //测试
