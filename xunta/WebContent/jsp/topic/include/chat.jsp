@@ -652,7 +652,7 @@
 		function checkUserIdExistInTopicGroupList(userId)
 		{
 			var userid_btn = $("div.contacts ul li button[userid="+userId+"]");
-			console.log(userid_btn);
+			console.log(userid_btn[0]);
 			if(userid_btn[0]){
 				return true;
 			}
