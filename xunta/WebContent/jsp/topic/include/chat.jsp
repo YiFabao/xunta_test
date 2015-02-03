@@ -161,6 +161,7 @@
 			},
 			function(result,state){
 				$("#webim_page").append(result);
+				console.log("broadcast:"+userId+"===>"+topicId);
 				broadcast(userId, topicId);//用户参与聊天，发送广播
 				//切换显示
 				changeShowState(topicId);
@@ -605,6 +606,8 @@
 			console.log("用户上线"+json.userId+"   "+json.topicId);
 			//查询当前对应的话题窗口有没有打开
 			var flag=checkUserIdExistInTopicGroupList(json.userId);
+			alert("aaaaaaaaaa");
+			console.log("flag:"+flag);
 			if(!flag){
 				//var nickname = searchUser(json.userId);
 				$.post("${pageContext.request.contextPath}/servlet/topic_service",{
@@ -650,6 +653,7 @@
 		function checkUserIdExistInTopicGroupList(userId)
 		{
 			var userid_btn = $("div.contacts ul li button[userid="+userId+"]");
+			console.log(userid_btn);
 			if(userid_btn[0]){
 				return true;
 			}
