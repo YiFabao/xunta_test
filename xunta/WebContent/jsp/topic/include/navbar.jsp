@@ -35,6 +35,9 @@
                         <li><a href="${pageContext.request.contextPath}/servlet/topic_service?cmd=exit" class="signOut">更换账号</a></li>
                     </ul>
                 </li>
+                <li style="float:left;position:relative;top:19px">
+                	<button style="background-color:orange" id="topic_request_msg_num"> 未读消息:<em id="topic_invite_msg_num" num="">0</em>&nbsp;&nbsp;</button>
+                </li>
             </ul>
         </div>
     </div>

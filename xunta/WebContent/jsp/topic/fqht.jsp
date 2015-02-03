@@ -232,6 +232,8 @@
 				console.log("邀请状态:"+status+"===>"+res);
 				if(status=="success"&&res=="ok")
 				{
+					//ws通知邀请人
+					inviteFriend("["+to_userId+"]", "TOPIC_INVITE");
 					alert("邀请成功!!!   别人同意后，在顶部导航栏会看到消息提醒");
 				}
 				else{

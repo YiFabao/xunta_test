@@ -870,20 +870,22 @@
 		 	//}
  	       	initChatBox(json);//初始化含有未读消息的话题列表
 	  };
-/* 	  //测试
-	  var json_topicIdKey_unreadMsgNumValueon={"DEC38294FCADEDFFA835C1D04D2DA2E1":2,
-			 									"A0971F53688530FB460D2430FDE2D854":8,
-			 									"E2932F0051462FC3D6E9C7C06101FA72":10,
-												  status:5,
-												  "topicId":0};
-	  unreadMessagesNum2(json_topicIdKey_unreadMsgNumValueon); */
-	  
 
+
+	  window.receiveTopicInviteRequestMsg = function(msg)
+	  {
+		  //这里处理关于邀请话题的请求
+		  //msg == "TOPIC_INVITE"==>邀请,做一系列的事
+		  
+		  //msg == "TOPIC_INVITE_RESPONSE"==>同意
+	  };
+	  
+	  
 	  //初始化聊天框
 	  function initChatBox(json_topicIdKey_unreadMsgNumValue){
 			console.log("初始化聊天框");
 			getTopicListByTopicIdArray(json_topicIdKey_unreadMsgNumValue);
-	  }
+	  };
 	  
 
 	  //获取对象的键,以数组返回
@@ -895,7 +897,7 @@
 			  keysArray.push(key);
 		  }
 		  return keysArray;
-	  }
+	  };
 	/*   var json_topicIdKey_unreadMsgNumValue={topicId1:2,topicId2:3,topicId3:4};
 	  var keys = getKeys(json_topicIdKey_unreadMsgNumValue);
 	  console.log("获取到的键名数组：");
@@ -919,7 +921,7 @@
 			  //获取到的是一个数组 每个数组里有一个对象
 			 initTopicGroupList(topicArray,json_topicIdKey_unreadMsgNumValueon)
 		  });
-	  }
+	  };
 	  
 	  //初始化有未读消息的话题列表
 	  function initTopicGroupList(topicArray,json_topicIdKey_unreadMsgNumValueon){
@@ -944,7 +946,7 @@
 			  //将话题Id放到全局tipicIdArray数组中
 			  topicIdArray.push(topicId);
 		  }
-	  }
+	  };
 	  
 	  //改变消息聊天框的消息数
 	  function  changeMessageAlertState(unReadMessageNum)
@@ -960,11 +962,29 @@
 		  W_new_count_node.setAttribute("num",num);
 		  W_new_count_node.style.display = "block";
 		  W_new_count_node.innerHTML=num;
-	  }
+	  };
 	  // 获取当前的总未读消息数
 	  function getTotalUnReadMsgNum()
 	  {
 		  return parseInt($("#number").attr("totalNum"));
-	  }
+	  };
+	  
+	  //获取话题邀请相关的请求提示消息
+	  function getTopicInviteRequestMsgNum(){
+		 var parameters={
+		        authorId:"${sessionScope.user.id}",
+		        cmd:'searchUnreadMsgNum'
+			 };
+		 $.post("${pageContext.request.contextPath}/servlet/topic_service",parameters,function(res,status){
+			 console.log("未读消息数："+res.num);
+			 changeTopicInviteRequestMsgNum(res.num);
+		 });
+	  };
+	  
+	  function changeTopicInviteRequestMsgNum(num){
+			 $("#topic_invite_msg_num").attr("num",num);
+			 $("#topic_invite_msg_num").empty();
+			 $("#topic_invite_msg_num").append(num);
+	  };
 	  
 </script>

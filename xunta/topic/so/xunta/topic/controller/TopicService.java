@@ -77,9 +77,26 @@ public class TopicService extends HttpServlet {
 		case "searchnicknameByUserId":
 			searchnicknameByUserId(request,response);
 			break;
+		case "searchUnreadMsgNum":
+			searchUnreadMsgNum(request,response);
+			break;
 		case "exit":
 			exit(request,response);
 			break;
+		}
+	}
+
+	private void searchUnreadMsgNum(HttpServletRequest request, HttpServletResponse response) {
+		String authorId=request.getParameter("authorId");
+		long num=topicManager.searchNotReadmessageNum(authorId);
+		try {
+			response.setContentType("text/json");
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("num",num);
+			response.getWriter().write(jsonObj.toString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

@@ -86,7 +86,11 @@ function websocketEvent(userId) {
 			}
 		}else if(status == "4"){
 			//好友邀请
-			alert(json.inviteMsg);
+			if(window.receiveTopicInviteRequestMsg)
+			{
+				receiveTopicInviteRequestMsg(jsonn.inviteMsg);//接收话题邀请消息提示
+			}
+			//alert(json.inviteMsg);
 		}else if(status == "5"){
 			//消息未读数//有消息就是{topicId:num,topicId2:num2...},没有消息就是{"status":"none"}
 			if(window.unreadMessagesNum)
