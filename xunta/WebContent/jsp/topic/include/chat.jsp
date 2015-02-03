@@ -605,6 +605,11 @@
 			console.log("收到广播消息...");
 			console.log("用户上线"+json.userId+"   "+json.topicId);
 			//查询当前对应的话题窗口有没有打开
+			if(!getDialogueByBoxId(topicId)){
+				console.log("接收广播消息==>查询当查询当前对应的话题窗口是否已经加载==>未加载");
+				return;
+			}
+			//如果窗口对应的话题聊天窗口存在,那么查询在该聊天窗口下有没有该联系人
 			var flag=checkUserIdExistInTopicGroupList(json.userId,json.topicId);
 			console.log("flag:"+flag);
 			if(!flag){
