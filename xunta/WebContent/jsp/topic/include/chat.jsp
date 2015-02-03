@@ -605,7 +605,7 @@
 			console.log("收到广播消息...");
 			console.log("用户上线"+json.userId+"   "+json.topicId);
 			//查询当前对应的话题窗口有没有打开
-			var flag=checkUserIdExistInTopicGroupList(json.userId);
+			var flag=checkUserIdExistInTopicGroupList(json.userId,json.topicId);
 			console.log("flag:"+flag);
 			if(!flag){
 				//var nickname = searchUser(json.userId);
@@ -649,9 +649,11 @@
 		
 		
 		//查询联系人列表中是否存在某个userId
-		function checkUserIdExistInTopicGroupList(userId)
+		function checkUserIdExistInTopicGroupList(userId,topicId)
 		{
-			var userid_btn = $("div.contacts ul li button[userid="+userId+"]");
+			//获取topicId的聊天框
+			var dialogueBox = getDialogueByBoxId(topicId);
+			var userid_btn = $(dialogueBox).find("div.contacts ul li button[userid="+userId+"]");
 			console.log(userid_btn[0]);
 			if(userid_btn[0]){
 				return true;
