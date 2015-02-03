@@ -692,6 +692,9 @@
 			console.log("发送过来的消息，没有相应的窗口");
 		
 			handleDialogueIsNull(topicId);	//如果topicId对应的窗口没有加载，则创建话题列表,加载对应的聊天窗口
+			//总的消息数+1
+			var c_total_num = getTotalUnReadMsgNum();
+			changeMessageAlertState(c_total_num+1);
 			
 	   	  }else{
 	   		  //console.log(dialogueBox);
