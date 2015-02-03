@@ -622,6 +622,11 @@
 					};
 					console.log("添加联系人");
 					addContactor(contact);
+					//在消息框显示新用户进群
+					var dialogueBox = getDialogueByBoxId(json.topicId);
+					var dateTime = new Date().format("yyyy-MM-dd hh:mm:ss");
+					addMsgContetntIntoDialogueBoxAboutNewUserComeIn(dialogueBox,nickname,dateTime);
+					
 				});
 			}
 			else{
@@ -744,7 +749,7 @@
 				    //将话题Id放到全局tipicIdArray数组中
 				    topicIdArray.push(topicId);
 				});
-	   	}
+	   	};
 	   	
 	   	//往消息框里添加一条消息内容
 	   	function addMsgContetntIntoDialogueBox(dialogueBox,json)
@@ -768,7 +773,23 @@
 		   	  //div.mainBox 滚动条置底  滚动,注意获取的是对应聊天框的滚动条
 		   	  var mainBoxNode = $(dialogueBox).find("div.mainBox:first-child")[0];
 		   	  setBottom(mainBoxNode);	
-		   	  
+	   	};
+	   	
+	   	
+	   	//往消息框里显示一条新用户进群的通知消息
+	   	function addMsgContetntIntoDialogueBoxAboutNewUserComeIn(dialogueBox,nickname,dateTime){
+	   		console.log("新用户进话题组");
+	   	 var  msg_box = dialogueBox.getElementsByClassName("msg_bubble_list")[0];
+	   	  //构造html
+	   	  msgStr ="<p>"+nickname+"加入该话题组<br/></p>"+dateTime;
+	   	  msgStr+="<hr/>";
+	   	  var li_node=document.createElement("li");
+	   	  li_node.innerHTML=msgStr;
+	   	  msg_box.appendChild(li_node);
+	   	  
+	   	  //div.mainBox 滚动条置底  滚动,注意获取的是对应聊天框的滚动条
+	   	  var mainBoxNode = $(dialogueBox).find("div.mainBox:first-child")[0];
+	   	  setBottom(mainBoxNode);	
 	   	}
 	   	
 	   	//判断当前的来的消息对应的聊天窗口是否处于活动状态 根据topicId,true:为活动状态,false:为不活动状态
@@ -991,5 +1012,31 @@
 			 $("#topic_invite_msg_num").empty();
 			 $("#topic_invite_msg_num").append(num);
 	  };
+	  
+	  /**
+	   * 时间格式化函数
+	   * var current_datetime=new Date().format("yyyy-MM-dd hh:mm:ss");
+	   * @param format
+	   * @returns {*}
+	   */
+	  Date.prototype.format = function(format)
+	  {
+	      var o = {
+	          "M+" : this.getMonth()+1, //month
+	          "d+" : this.getDate(), //day
+	          "h+" : this.getHours(), //hour
+	          "m+" : this.getMinutes(), //minute
+	          "s+" : this.getSeconds(), //second
+	          "q+" : Math.floor((this.getMonth()+3)/3), //quarter
+	          "S" : this.getMilliseconds() //millisecond
+	      } //js格式化
+	      if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
+	          (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+	      for(var k in o)if(new RegExp("("+ k +")").test(format))
+	          format = format.replace(RegExp.$1,
+	              RegExp.$1.length==1 ? o[k] :
+	                  ("00"+ o[k]).substr((""+ o[k]).length));
+	      return format;
+	  }
 	  
 </script>
