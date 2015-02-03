@@ -162,7 +162,7 @@
 			function(result,state){
 				$("#webim_page").append(result);
 				console.log("broadcast:"+userId+"===>"+topicId);
-				broadcast(userId, topicId);//用户参与聊天，发送广播
+				broadcast("${sessionScope.user.id}", topicId);//用户参与聊天，发送广播
 				//切换显示
 				changeShowState(topicId);
 				//添加退出按钮点击事件
@@ -606,7 +606,6 @@
 			console.log("用户上线"+json.userId+"   "+json.topicId);
 			//查询当前对应的话题窗口有没有打开
 			var flag=checkUserIdExistInTopicGroupList(json.userId);
-			alert("aaaaaaaaaa");
 			console.log("flag:"+flag);
 			if(!flag){
 				//var nickname = searchUser(json.userId);
