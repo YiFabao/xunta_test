@@ -528,9 +528,12 @@
 		webim_page.style.display = "block";
 		if(firstClicktBar_message) //第一次点击bar_message,则要默认显示第一个话题聊天框
 		{
-			if(topicIdArray.length>1)
+			console.log("第一次点击bar_message");
+			console.log("topicIdArray的数组长度:"+topicIdArray.length+"  如果不大于等于1就不正常");
+			if(topicIdArray.length>=1)
 			{
 				changeShowState(topicIdArray[0]);
+				firstClicktBar_message=false;//只在当话题窗口加载至少有一个时才将其置为false,不然在没有窗口打开时，用户就点击bar_message就会出错了
 			}
 		}
 		//将处于active状态的话题项显示的未读数清空
