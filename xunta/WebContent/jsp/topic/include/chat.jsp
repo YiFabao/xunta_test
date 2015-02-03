@@ -902,7 +902,10 @@
 	  {
 		  //这里处理关于邀请话题的请求
 		  //msg == "TOPIC_INVITE"==>邀请,做一系列的事
-		  
+		  if(msg =="TOPIC_INVITE")
+		  {
+			  getTopicInviteRequestMsgNum();//从数据库查自己有多少条未读消息
+		  }
 		  //msg == "TOPIC_INVITE_RESPONSE"==>同意
 	  };
 	  

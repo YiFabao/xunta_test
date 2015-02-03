@@ -1,13 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>我的消息</title>
-</head>
-<body>
+
 	<h3>未读消息</h3>
 	<hr>
 	<c:forEach var="messageItem" items="${requestScope.messageAlertList}" >
@@ -76,7 +70,7 @@
 	
 	<script src="${pageContext.request.contextPath }/assets/javascripts/jquery-1.10.2.js"></script>
 	<script type="text/javascript">
-			window.mydomain="http://"+document.domain+":21280/xunta/";
+			//window.mydomain="http://"+document.domain+":21280/xunta/";
 			var btn_y = document.getElementById("y");
 			var btn_n = document.getElementById("n");
 			if(btn_y!=null){
@@ -107,6 +101,7 @@
 						//同意成功后，删除该消息？因为没必要了
 						 var to_remove_node_ul =  e.target.parentNode.parentNode;
 						 var ul_node =document.body.removeChild(to_remove_node_ul);
+						 //通知邀请人，
 					}
 					else{
 						console.log("同意邀请失败");
@@ -134,5 +129,3 @@
 			};
 			
 	</script>
-</body>
-</html>

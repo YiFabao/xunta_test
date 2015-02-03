@@ -88,7 +88,7 @@ function websocketEvent(userId) {
 			//好友邀请
 			if(window.receiveTopicInviteRequestMsg)
 			{
-				receiveTopicInviteRequestMsg(jsonn.inviteMsg);//接收话题邀请消息提示
+				receiveTopicInviteRequestMsg(json.inviteMsg);//接收话题邀请消息提示
 			}
 			//alert(json.inviteMsg);
 		}else if(status == "5"){

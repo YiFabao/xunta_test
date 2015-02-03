@@ -79,6 +79,17 @@ $(".message").click(function(event){
 	});
 });
 
+//点击未读消息
+$("#topic_request_msg_num").click(function(event){
+	console.log("用户点击未读消息");
+	$.post(contextPath+"/servlet/topic_service?cmd=msgalert",null,function(res,status){
+		//console.log(res);
+		$("#container_all").empty();
+		$("#container_all").append(res);
+		console.log($("#container_all")[0]);
+	});
+});
+
 function toDomString(json){
     var domString="";
     for(var p in json)//p为json对象里的属性名
