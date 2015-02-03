@@ -200,7 +200,6 @@
 		});
 	} 
 	
-	
 	$(".btn_invite").click(function(event){
 		console.log("用户点击邀请");
 		//获取需要的参数

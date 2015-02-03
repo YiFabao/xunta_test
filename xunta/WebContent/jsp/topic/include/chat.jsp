@@ -120,6 +120,7 @@
 	function startChat(topicId,topicName,imgSrc){
 		//拿到自己的id==>查询自己
 		var userId ="${sessionScope.user.id}";
+		
 		//查看当前话题下的聊天窗口是否存在,根据topicId
 		if(check_topic_is_exist_in_topicList(topicId))//话题存在
 		{
@@ -160,6 +161,7 @@
 			},
 			function(result,state){
 				$("#webim_page").append(result);
+				broadcast(userId, topicId);//用户参与聊天，发送广播
 				//切换显示
 				changeShowState(topicId);
 				//添加退出按钮点击事件
@@ -172,6 +174,8 @@
 				showHistoryMessages(dialogueBox);
 			});
 	};
+
+	
 	//获取聊天框，但不马上显示
 	function doPostTogetDialogueBoxNotShowImmediately(topicId,userId){
 		$.post("${pageContext.request.contextPath}/servlet/topic_service",{
@@ -329,7 +333,6 @@
 	        	sendMsg(topicId,msgId,fromUserId,fromUserName,msg.toString().trim(),contactsIdArray); 
 	        	//清空聊天框 
 	        	this.value ="";
-	        	//广播告诉其他联系人,该用户上线了
 	        }
 		});
 	};
@@ -593,8 +596,69 @@
 	            y:y
 	        }
 		}
-	 
-	//创建消息处理函数
+		
+	 	//测试var json ={userId:4,topicId:"DEC38294FCADEDFFA835C1D04D2DA2E1"};
+		//接收广播消息
+		window.receiveBroadcast = function(json)
+		{
+			console.log("收到广播消息...");
+			console.log("用户上线"+json.userId+"   "+json.topicId);
+			//查询当前对应的话题窗口有没有打开
+			var flag=checkUserIdExistInTopicGroupList(json.userId);
+			if(!flag){
+				//var nickname = searchUser(json.userId);
+				$.post("${pageContext.request.contextPath}/servlet/topic_service",{
+					cmd:"searchnicknameByUserId",
+					userId:json.userId
+				},function(res,status){
+					var nickname = res.nickname;
+					console.log(json.userId+"对应的昵称："+nickname);
+					var contact={
+							topic_id:json.topicId,
+							topic_memberId:json.userId,
+							topic_member_name:nickname
+					};
+					console.log("添加联系人");
+					addContactor(contact);
+				});
+			}
+			else{
+				console.log("联系人在列表中已经存在");
+			} 
+		}
+		
+		
+		
+		//添加联系人
+		function addContactor(contact)
+		{
+			var dialogueBox = getDialogueByBoxId(contact.topic_id);
+			var ul_node = $(dialogueBox).find("div.contacts ul")[0];
+			
+			var li_node =document.createElement("li");
+			var button_node = document.createElement("button");
+			button_node.setAttribute("userid",contact.topic_memberId);
+			button_node.setAttribute("class","userId");
+			button_node.innerHTML=contact.topic_member_name;
+			
+			li_node.appendChild(button_node);
+			ul_node.appendChild(li_node);
+		}
+		
+		
+		//查询联系人列表中是否存在某个userId
+		function checkUserIdExistInTopicGroupList(userId)
+		{
+			var userid_btn = $("div.contacts ul li button[userid="+userId+"]");
+			if(userid_btn[0]){
+				return true;
+			}
+			else{
+				return false;
+			};
+		}
+		
+		//创建消息处理函数
 	   	window.webimHandle=function(json){
 	   		/**
 		   		key:status=====>value:1

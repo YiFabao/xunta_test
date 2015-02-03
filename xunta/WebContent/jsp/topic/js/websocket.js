@@ -58,7 +58,7 @@ function websocketEvent(userId) {
 	ws.onerror = function(event) {}
 		//客户端接受到消息触发该事件
 	ws.onmessage = function(event) {
-		console.log(event.data);
+		console.log("消息："+event.data);
 		var json = JSON.parse(event.data);
 		var status = json.status;
 		console.log('status  :   '+status);
@@ -80,6 +80,7 @@ function websocketEvent(userId) {
 			}
 			//广播消息在此接收
 		}else if(status == "3"){
+			console.log("33333333333333333333333");
 			if(window.receiveBroadcast){
 				receiveBroadcast(json);//接收广播消息  fabao.yi
 			}

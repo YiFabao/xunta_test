@@ -74,10 +74,33 @@ public class TopicService extends HttpServlet {
 		case "getTopicListByTopicIdArray":
 			getTopicListByTopicIdArray(request,response);
 			break;
+		case "searchnicknameByUserId":
+			searchnicknameByUserId(request,response);
+			break;
 		case "exit":
 			exit(request,response);
 			break;
 		}
+	}
+
+	private void searchnicknameByUserId(HttpServletRequest request, HttpServletResponse response) {
+		//获取请求参数 userId
+		String userId = request.getParameter("userId");
+		String nickname = topicManager.searchNicknameByUserId(Integer.parseInt(userId));
+		JSONObject jsonObj=new JSONObject();
+		jsonObj.put("nickname",nickname);
+		System.out.println(nickname);
+		try {
+			response.setContentType("text/json");
+			response.getOutputStream().write(jsonObj.toString().getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	@SuppressWarnings("unused")
