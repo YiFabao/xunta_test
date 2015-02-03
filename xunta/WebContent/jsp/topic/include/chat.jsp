@@ -605,7 +605,7 @@
 			console.log("收到广播消息...");
 			console.log("用户上线"+json.userId+"   "+json.topicId);
 			//查询当前对应的话题窗口有没有打开
-			if(!getDialogueByBoxId(topicId)){
+			if(!getDialogueByBoxId(json.topicId)){
 				console.log("接收广播消息==>查询当查询当前对应的话题窗口是否已经加载==>未加载");
 				return;
 			}
