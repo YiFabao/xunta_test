@@ -1,9 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
-	<h3>未读消息</h3>
-	<hr>
 	<c:forEach var="messageItem" items="${requestScope.messageAlertList}" >
 		<c:if test="${messageItem.isRead==0}">
 			<ul>

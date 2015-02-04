@@ -27,7 +27,7 @@
 	}
 </style>
 	<h1 align="center">发起话题</h1>
-	<form action="<%=request.getContextPath() %>/servlet/topic_service?cmd=fqht" method="post" id="form1">
+	
 		<input type="hidden" name="userId" value="${sessionScope.user.id }">
 		<input type="hidden" name="userName" value="${sessionScope.user.xunta_username }">
 		<input type="hidden" name="userLogoUrl" value="/usrlogo/1.jpg">
@@ -46,7 +46,6 @@
 			</table>
 			<input id="btn_publish" type="button" value="发　布">
 		</div>
-	</form>
 	<hr/>
 	
 	<c:if test="${requestScope.myTopic!=null}">
@@ -99,7 +98,7 @@
 		</c:if>
 		</c:forEach>
 	</c:if>
-
+<script src="${pageContext.request.contextPath }/assets/javascripts/jquery-1.10.2.js"></script>
 <script>
 	var topic_items = document.getElementsByClassName("topic_item");
 	for(var i=0;i<topic_items.length;i++)
@@ -114,7 +113,7 @@
 			if(hover_box)
 			{
 				console.log("移除");
-				$(".hover_box").get(0).remove();
+				$(hover_box).remove();
 			}
 			
 			var topicName = $("#myTopic").attr("topicName");
@@ -155,6 +154,8 @@
 							console.log("邀请状态:"+status+"===>"+res);
 							if(status=="success"&&res=="ok")
 							{
+								//ws通知邀请人
+								inviteFriend("["+to_userId+"]", "TOPIC_INVITE");
 								alert("邀请成功!!!  别人同意后，在顶部导航栏会看到消息提醒");
 							}
 							else{
@@ -194,7 +195,7 @@
 				btn_exit.addEventListener("click",function(){
 					var hover_box = document.getElementsByClassName("hover_box")[0];
 					hover_box.style.display = "none";
-					$(".hover_box").get(0).remove();
+					$(hover_box).remove();
 				});
 			});
 		});
@@ -220,20 +221,26 @@
 		console.log("topicId:"+topicId);
 		console.log("topicContent:"+topicContent);
 		
-		$.post("${pageContext.request.contextPath}/servlet/topic_service",{
-			cmd:"invite",
-			topicId:topicId,
-			userId:userId,
-			userName:userName,
-			topicContent:topicContent,
-			to_userId:to_userId
-			},
+		var parameters = {
+				cmd:"invite",
+				topicId:topicId,
+				userId:userId,
+				userName:userName,
+				topicName:"${requestScope.myTopic.topicName }",
+				topicContent:topicContent,
+				to_userId:to_userId
+				};
+		$.post("${pageContext.request.contextPath}/servlet/topic_service",parameters,
 			function(res,status){
 				console.log("邀请状态:"+status+"===>"+res);
 				if(status=="success"&&res=="ok")
 				{
 					//ws通知邀请人
-					inviteFriend("["+to_userId+"]", "TOPIC_INVITE");
+					console.log(JSON.stringify(parameters).toString());
+					var parametersStr=JSON.stringify(parameters);
+					var regx = new RegExp("\"","g");
+					var jsonStr = parametersStr.replace(regx,"\'");
+					inviteFriend("["+to_userId+"]",jsonStr);
 					alert("邀请成功!!!   别人同意后，在顶部导航栏会看到消息提醒");
 				}
 				else{

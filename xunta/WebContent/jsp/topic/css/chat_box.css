@@ -282,7 +282,7 @@ span.exit:hover{
 	overflow:auto;
 }
 
-.content {
+.mainBox .content {
 	position: absolute;
 	left: 0;
 	top: 0;

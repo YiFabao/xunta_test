@@ -907,17 +907,48 @@
 		 	//}
  	       	initChatBox(json);//初始化含有未读消息的话题列表
 	  };
-
-
+	  
+	  //初始化导航栏的未读消息数
+	  $(document).ready(function(){
+		  console.log("用户刷新或初次登录，查询其导航栏的消息数,省略步骤1,2");
+		  getTopicInviteRequestMsgNum();//从数据库查自己有多少条未读消息
+	  });
+	  
 	  window.receiveTopicInviteRequestMsg = function(msg)
 	  {
 		  //这里处理关于邀请话题的请求
 		  //msg == "TOPIC_INVITE"==>邀请,做一系列的事
-		  if(msg =="TOPIC_INVITE")
+		  console.log("1.接收到一条邀请的推送消息:"+msg);
+		  console.log(msg);
+		  //将导航栏的未读消息数增加1
+		  addNavBarMsgAlertNumByOne();
+	 	  for(var key in msg)
 		  {
-			  getTopicInviteRequestMsgNum();//从数据库查自己有多少条未读消息
-		  }
+			  console.log(key+"==>"+msg[key]);
+		  } 
+ 		  if(msg.cmd =="invite")
+		  {
+ 			  //cmd==>invite
+ 			  //topicId==>5854BF71A2FEED4D28DD96E5E23930F5
+ 			  //userId==>3
+ 			  //userName==>test1
+ 			  //to_userId==>1
+ 			  //topicName==>上海哪好玩啊
+			  console.log("2.是话题邀请");
+			  //将邀请信息添加到消息框中
+			  addOneTopicInviteMsg(msg.userId,msg.userName,msg.topicName,msg.topicId);
+		  } 
 		  //msg == "TOPIC_INVITE_RESPONSE"==>同意
+		  if(msg.cmd=="agree_to_join_topic"){
+			  var userId = msg.userId;
+			  var userName = msg.userName;
+			  var topicId = msg.topicId;
+			  var topicName = msg.topicName;
+			  var sysmsg=userName+" 接受了参与话题 #"+topicName+"# 的邀请";
+			  console.log(sysmsg);
+			 //将系统消息添加到消息框里
+			  addOneSystemMsg(sysmsg);
+		  }
 	  };
 	  
 	  
@@ -1016,12 +1047,13 @@
 		        cmd:'searchUnreadMsgNum'
 			 };
 		 $.post("${pageContext.request.contextPath}/servlet/topic_service",parameters,function(res,status){
-			 console.log("未读消息数："+res.num);
+			 console.log("3.未读消息数："+res.num);
 			 changeTopicInviteRequestMsgNum(res.num);
 		 });
 	  };
 	  
 	  function changeTopicInviteRequestMsgNum(num){
+		  	 console.log("4.重新设置未读消息数");
 			 $("#topic_invite_msg_num").attr("num",num);
 			 $("#topic_invite_msg_num").empty();
 			 $("#topic_invite_msg_num").append(num);

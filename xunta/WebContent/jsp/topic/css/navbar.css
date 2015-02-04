@@ -47,8 +47,10 @@
 }
 
 .menu{
-	width:884px;
+	width:800px;
 	height:48px;
+
+	float:left;
 }
 
 .menu li{
@@ -140,6 +142,8 @@ li.top_profile
 .menu li:hover > a{
 	color:red;
 }
+
+
 .menu a.homePage{
 	background:url("images/homePage.png") no-repeat 6px;
 	background-size: 20px 20px;
