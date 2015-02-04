@@ -944,7 +944,7 @@
 			  var userName = msg.userName;
 			  var topicId = msg.topicId;
 			  var topicName = msg.topicName;
-			  var sysmsg=userName+" 接受了参与话题 #"+topicName+"# 的邀请";
+			  var sysmsg=userName+" 接受了参与话题 #"+topicName+"# 的邀请"+"<br/>"+new Date().format("yyyy-MM-dd hh:mm:ss");
 			  console.log(sysmsg);
 			 //将系统消息添加到消息框里
 			  addOneSystemMsg(sysmsg);

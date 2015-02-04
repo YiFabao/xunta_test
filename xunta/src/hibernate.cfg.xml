@@ -25,6 +25,7 @@
 		<mapping resource="so/xunta/topic/entity/TopicGroup.hbm.xml" />
 		<mapping resource="so/xunta/topic/entity/TopicHistory.hbm.xml" />
 		<mapping resource="so/xunta/topic/entity/MessageAlert.hbm.xml" />
+		<mapping resource="so/xunta/topic/entity/SysMessage.hbm.xml" />
 		
 	</session-factory>
 </hibernate-configuration>

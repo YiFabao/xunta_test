@@ -100,12 +100,12 @@ $(document).ready(function(){
 	  //初始化话题请求页页
 	  console.log("初始化话题请求消息提示...");
 	  $.post("include/topicRequest.jsp",null,function(res,status){
-		  $(".msg_tab .content ul li:first").append(res);
+		  //$(".msg_tab .content ul li:first").append(res);
 	  });
 	  //初始化系统消息
 	  console.log("初始化系统请求消息提示...");
 	  $.post("include/topicRequest.jsp",null,function(res,status){
-		  $(".msg_tab .content ul li:eq(1)").append(res);
+		  //$(".msg_tab .content ul li:eq(1)").append(res);
 	  });
 });
 
@@ -132,19 +132,21 @@ function addOneTopicInviteMsg(fromUserId,_fromNickName,topicName,topicId){
 	div_node.appendChild(button_agree);
 	div_node.appendChild(button_refuse);
 	
-	p_node.innerHTML=_fromNickName+" 邀请您参与话题  #"+topicName+"#";
+	p_node.innerHTML=_fromNickName+" 邀请您参与话题  #"+topicName+"#"+"<br/>"+new Date().format("yyyy-MM-dd hh:mm:ss");
 	button_agree.setAttribute("topicId",topicId);
 	
 	//=================================================同意和不同意后
 	$(button_agree).click(function(event){
 		console.log("点击同意事件");
 		//通知邀请人，已经同意其邀请
+		var current_datetime2=new Date().format("yyyy-MM-dd hh:mm:ss");
 		var parameters={
 				cmd:"agree_to_join_topic",
 				userId:currentUserId,
 				userName:currentUserName,
 				topicId:topicId,
-				topicName:topicName
+				topicName:topicName,
+				dateTime:current_datetime2
 		};
 		var parametersStr=JSON.stringify(parameters);
 		var regx = new RegExp("\"","g");
@@ -216,4 +218,30 @@ function toDomString(json){
         }
     }
     return encodeURI(domString);
+}
+
+/**
+ * 时间格式化函数
+ * var current_datetime=new Date().format("yyyy-MM-dd hh:mm:ss");
+ * @param format
+ * @returns {*}
+ */
+Date.prototype.format = function(format)
+{
+    var o = {
+        "M+" : this.getMonth()+1, //month
+        "d+" : this.getDate(), //day
+        "h+" : this.getHours(), //hour
+        "m+" : this.getMinutes(), //minute
+        "s+" : this.getSeconds(), //second
+        "q+" : Math.floor((this.getMonth()+3)/3), //quarter
+        "S" : this.getMilliseconds() //millisecond
+    } //js格式化
+    if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
+        (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+    for(var k in o)if(new RegExp("("+ k +")").test(format))
+        format = format.replace(RegExp.$1,
+            RegExp.$1.length==1 ? o[k] :
+                ("00"+ o[k]).substr((""+ o[k]).length));
+    return format;
 }
