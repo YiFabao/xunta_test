@@ -815,7 +815,6 @@
 	   		}
 	   	}
 	   	
-	   	
 	   	//判断聊天窗口是否在隐藏状态,true为隐藏，false为显示
 	   	function isDialogueBoxHidden()
 	   	{

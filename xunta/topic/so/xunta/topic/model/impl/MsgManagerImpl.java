@@ -149,8 +149,8 @@ public class MsgManagerImpl implements MsgManager{
 		Session session = HibernateUtils.openSession();
 		try {
 			session.beginTransaction();
-			String hql = "update TopicRequestMsg as msg set msg.isHandle=1 where msg.toUserId=?";
-			Query query = session.createQuery(hql).setString(1,toUserId);
+			String hql = "update TopicRequestMsg as msg set msg.isHandle='1' where msg.toUserId=?";
+			Query query = session.createQuery(hql).setString(0,toUserId);
 			query.executeUpdate();
 			session.getTransaction().commit();
 		} catch (RuntimeException e) {
