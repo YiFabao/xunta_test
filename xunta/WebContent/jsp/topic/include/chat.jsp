@@ -842,8 +842,8 @@
 	   	    else if(state="no"){
 	   	        msgManagerReady=false;
 	   	        console.log("websocket异常");
-	   	       //console.log("重新创建websocket");
-	   	       // setTimeout(createWebsocketConnect("${sessionScope.user.id}"),1000);
+	   	       console.log("3秒后重新创建websocket");
+	   	       setTimeout(createWebsocketConnect("${sessionScope.user.id}"),3000);
 	   	    }
 	   	};  
 	   	
