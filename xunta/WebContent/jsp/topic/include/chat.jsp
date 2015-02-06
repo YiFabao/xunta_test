@@ -536,9 +536,12 @@
 				firstClicktBar_message=false;//只在当话题窗口加载至少有一个时才将其置为false,不然在没有窗口打开时，用户就点击bar_message就会出错了
 			}
 		}
-		//将处于active状态的话题项显示的未读数清空
-		var active_topicItem_topicId = getTopicIdByActiveTopicListItem();
-		changeMsgNumByTopicId(active_topicItem_topicId);
+		if(topicIdArray.length>=1)
+		{
+			//将处于active状态的话题项显示的未读数清空
+			var active_topicItem_topicId = getTopicIdByActiveTopicListItem();
+			changeMsgNumByTopicId(active_topicItem_topicId);
+		}
 	});
 	
 	//改变消息数的显示,总数减少，对应话题的清空
