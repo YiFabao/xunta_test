@@ -20,8 +20,8 @@
 </div>
 <script src="${pageContext.request.contextPath }/assets/javascripts/jquery-1.10.2.js"></script>
 <script src="${pageContext.request.contextPath }/jsp/topic/js/nav_bar_msg_tab.js"></script>
-<script src="${pageContext.request.contextPath }/jsp/topic/js/include_chat.js"></script>
 <script src="${pageContext.request.contextPath }/jsp/topic/js/navbar.js"></script>
+<script src="${pageContext.request.contextPath }/jsp/topic/js/include_chat.js"></script>
 <script>
  	//默认显示 话题记忆
 	console.log("户点击话题记忆");
@@ -29,6 +29,7 @@
 		$("#container_all").empty();
 		$("#container_all").append(res);
 	});
+
 </script>
 </body>
 </html>

@@ -1,5 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:forEach var="msg" items="${requestScope.sysMsgList}">
    <div>
-	  <span>张三 接受了参与话题　#黄山哪好玩#　的邀请</span>
+	  <span>${msg.sysmsg }</span>
+	  <br>
+	  ${msg.dateTime }
    </div>
+</c:forEach>

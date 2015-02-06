@@ -506,7 +506,7 @@ public class TopicManagerImpl implements TopicManager {
 		try {
 			
 			session.beginTransaction();
-			String hql="select count(*) from MessageAlert m where m.authorId=? and m.isRead=0";
+			String hql="select count(*) from SysMessage m where m.toUserId=? and m.isHandle=0";
 			org.hibernate.Query query = session.createQuery(hql);
 			query.setString(0, authorId);
 			long num=(Long)query.uniqueResult();
@@ -797,6 +797,18 @@ public class TopicManagerImpl implements TopicManager {
 		List<Topic> topicList = query.list();
 		session.close();
 		return topicList;
+	}
+
+	@Override
+	public List<TopicHistory> findTopicHistoryByTopicId(List<String> topicIdList) {
+		Session session = HibernateUtils.openSession();
+		String hql = "from TopicHistory as t where t.topicId in (:topicIdList)";
+		org.hibernate.Query query = session.createQuery(hql);
+		query.setParameterList("topicIdList",topicIdList);
+		
+		List<TopicHistory> TopicHistoryList = query.list();
+		session.close();
+		return TopicHistoryList;
 	}
 
 

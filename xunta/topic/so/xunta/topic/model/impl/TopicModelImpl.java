@@ -1,7 +1,9 @@
 package so.xunta.topic.model.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import so.xunta.entity.User;
 import so.xunta.manager.UserManager;
 import so.xunta.manager.impl.UserManagerImpl;
+import so.xunta.topic.entity.MatchedPeopleDetail;
 import so.xunta.topic.entity.Topic;
 import so.xunta.topic.entity.TopicGroup;
 import so.xunta.topic.entity.TopicHistory;
@@ -65,6 +68,45 @@ public class TopicModelImpl implements TopicModel{
 		request.setAttribute("memberList",memberList);
 		
 	}
-	
-	
+
+	@Override
+	public List<MatchedPeopleDetail> matchedPeopleDetaiList(List<Topic> topicList) {
+		Map<String,MatchedPeopleDetail> matchedMap = new HashMap<String,MatchedPeopleDetail>();
+		//遍历每个topic
+		List<String> topicIdList =new ArrayList<String>();
+		for(Topic topic:topicList)
+		{
+			topicIdList.add(topic.topicId);
+		}
+		//获取与该话题id对应的话题历史
+		List<TopicHistory> topicHistoryList = topicManager.findTopicHistoryByTopicId(topicIdList);
+		for(TopicHistory t:topicHistoryList)
+		{
+			//System.out.println(t.topicId+"  "+t.publish_or_join);
+			//遍历每个话题下的成员
+			String key = t.authorId;
+			if(matchedMap.containsKey(key)){//存在直接添加
+				MatchedPeopleDetail  matchedPeopleDetail = matchedMap.get(key);
+				//判断该用户是发起还是参与
+				if(t.publish_or_join=='p'){//发起话题
+					matchedPeopleDetail.addPulishTopic(t.topicId);
+				}
+				else if(t.publish_or_join=='j'){
+					matchedPeopleDetail.addJoinTopic(t.topicId);
+				}
+			}else{//不存在要创建
+				MatchedPeopleDetail  matchedPeopleDetail = new MatchedPeopleDetail();
+				//判断该用户是发起还是参与
+				if(t.publish_or_join=='p'){//发起话题
+					matchedPeopleDetail.addPulishTopic(t.topicId);
+				}
+				else if(t.publish_or_join=='j'){
+					matchedPeopleDetail.addJoinTopic(t.topicId);
+				}
+				matchedMap.put(key,matchedPeopleDetail);
+			}
+		}
+		
+		return (List<MatchedPeopleDetail>) matchedMap.values();
+	}
 }

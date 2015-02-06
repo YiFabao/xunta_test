@@ -39,6 +39,11 @@ public interface TopicManager {
 	
 	//添加话题历史，当用户发起话题或参与话题时记录
 	public void addTopicHistory(TopicHistory topicHistory);
+	//从话题历史表中通过话题id获取所有的TopicHistory
+	public List<TopicHistory> findTopicHistoryByTopicId(List<String> topicIdList);
+	
+	
+	
 	//查询某用户是否是某话题id下的成员
 	public boolean checkIsTopicMember(String memberId,String topicId);
 	//查询话题topicId 下的联系人列表 [昵称 id]
@@ -57,6 +62,8 @@ public interface TopicManager {
 	public List<Topic> searchMyTopicHistory(String userId);
 	//查询我参与的话题
 	public List<Topic> searhMyJoinTopic(String userId);
+	
+
 	
 	//根据topicId 查询话题Topic
 	public Topic findTopicByTopicId(String topicId);

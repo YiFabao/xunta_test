@@ -11,13 +11,13 @@
         <!--全局导航-->
         <div class="top_global_nav">
             <ul class="menu">
-                <li>
-                   <a href="javascript:void(0)"> 
-	                   <input type="text" id="search_word">
-	                   <button id="btn_search">搜索</button>
-                   </a>
+                <li >
+            <!--        <a href="javascript:void(0)">  -->
+	                   <input type="text" id="search_word" style="position:relative;top:14px">
+	                   <button id="btn_search" style="position:relative;top:14px">搜索</button>
+                  <!--  </a> -->
                 </li>
-                <li><a href="javascript:void(0)" class="recommendTopic">话题推荐</a></li>
+                <li ><a href="javascript:void(0)" class="recommendTopic" style="border-left:none">话题推荐</a></li>
                 <li><a href="javascript:void(0)" class="writeTopic">发起话题</a></li>
                 <li><a href="javascript:void(0)" class="historicalTopic">话题记忆</a></li>
 <%--                 <li><a href="${pageContext.request.contextPath}/jsp/topic/httj.jsp" class="recommendTopic">话题推荐</a></li>
@@ -84,4 +84,5 @@
 	var contextPath ="${pageContext.request.contextPath}";
 	var currentUserId ="${sessionScope.user.id}";
 	var currentUserName="${sessionScope.user.xunta_username}";
+	
 </script>

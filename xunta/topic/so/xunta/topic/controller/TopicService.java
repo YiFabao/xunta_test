@@ -19,12 +19,21 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import so.xunta.entity.User;
+import so.xunta.manager.UserManager;
+import so.xunta.manager.impl.UserManagerImpl;
 import so.xunta.topic.entity.MatchedTopic;
 import so.xunta.topic.entity.MessageAlert;
+import so.xunta.topic.entity.SysMessage;
 import so.xunta.topic.entity.Topic;
+import so.xunta.topic.entity.TopicGroup;
+import so.xunta.topic.entity.TopicHistory;
+import so.xunta.topic.entity.TopicRequestMsg;
+import so.xunta.topic.entity.TopicRequestMsgPlusTopicDetail;
+import so.xunta.topic.model.MsgManager;
 import so.xunta.topic.model.TopicManager;
 import so.xunta.topic.model.TopicModel;
 import so.xunta.topic.model.impl.AddTopicIndexThread;
+import so.xunta.topic.model.impl.MsgManagerImpl;
 import so.xunta.topic.model.impl.SaveTopicThread;
 import so.xunta.topic.model.impl.TopicManagerImpl;
 import so.xunta.topic.model.impl.TopicModelImpl;
@@ -38,6 +47,7 @@ import so.xunta.utils.DateTimeUtils;
 public class TopicService extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private TopicManager topicManager = new TopicManagerImpl();
+	private MsgManager msgManager = new MsgManagerImpl();
 	private TopicModel topicModel = new TopicModelImpl();
     public TopicService() {
         super();
@@ -61,9 +71,27 @@ public class TopicService extends HttpServlet {
 		case "invite":
 			invite(request,response);
 			break;
+		case "receiveInvite":
+			receiveIntive(request,response);
+			break;
+		case "refuseInvite":
+			refuseInvite(request,response);
+			break;
+		case "clearNavBarMsgNum":
+			clearNavBarMsgNum(request,response);
+			break;
 		case "msgalert" :
 			//显示我的消息
 			showMyMessage(request,response);
+			break;
+		case "initTopicRequestMsg":
+			initTopicRequestMsg(request,response);//用户登录时初始化话题邀请信息
+			break;
+		case "initSysMsg":
+			initSysMsg(request,response);//用户登录时初始化系统消息
+			break;
+		case "addSysMsg":
+			addSysMsg(request,response);
 			break;
 		case "notAgreeToJoinTopic":
 			notAgreeToJoinTopic(request,response);
@@ -86,13 +114,118 @@ public class TopicService extends HttpServlet {
 		}
 	}
 
+	private void clearNavBarMsgNum(HttpServletRequest request, HttpServletResponse response) {
+		String userId = request.getParameter("userId");
+		msgManager.updateSysMsgToHandledByUserId(userId);
+		//msgManager.updateTopicRequestMsgHandledState(userId, topicId, state);
+		
+	}
+
+	private void initTopicRequestMsg(HttpServletRequest request, HttpServletResponse response) {
+		String userId = request.getParameter("userId");
+		System.out.println("userId:"+userId);
+		List<TopicRequestMsgPlusTopicDetail>  topicRequestMsgPlusTopicDetailList=msgManager.findTopicRequestMsgByUserId(userId);
+		request.setAttribute("topicRequestMsgPlusTopicDetailList", topicRequestMsgPlusTopicDetailList);
+		System.out.println(topicRequestMsgPlusTopicDetailList.size());
+		System.out.println("初始化话题邀请信息");
+		try {
+			request.getRequestDispatcher("/jsp/topic/include/topicRequest.jsp").forward(request, response);
+		} catch (ServletException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		};
+	
+	}
+
+	private void initSysMsg(HttpServletRequest request, HttpServletResponse response) {
+		String userId = request.getParameter("userId");
+		List<SysMessage> sysMsgList = msgManager.findSysMsgByUserId(userId);
+		request.setAttribute("sysMsgList", sysMsgList);
+		System.out.println("初始化系统信息");
+		try {
+			request.getRequestDispatcher("/jsp/topic/include/system_msg.jsp").forward(request, response);
+		} catch (ServletException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	
+	}
+
+	private void addSysMsg(HttpServletRequest request, HttpServletResponse response) {
+		String fromUserId=request.getParameter("fromUserId");
+		String fromUserName = request.getParameter("fromUserName");
+		String toUserId= request.getParameter("toUserId");
+		String toUserName = request.getParameter("toUserName");
+		String sysmsg = request.getParameter("sysmsg");
+		SysMessage sysMsg = new SysMessage(fromUserId, fromUserName, toUserId, toUserName, sysmsg,DateTimeUtils.getCurrentTimeStr(),0);
+		msgManager.addMsg(sysMsg);
+		System.out.println("保存系统信息到数据库成功");
+		try {
+			response.getWriter().write("ok");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void refuseInvite(HttpServletRequest request, HttpServletResponse response) {
+		String toUserId = request.getParameter("toUserId");
+		String topicId = request.getParameter("topicId");
+		System.out.println("拒绝邀请"+"toUserId:"+toUserId+"  topicId:"+topicId);
+		msgManager.updateTopicRequestMsgHandledState(toUserId, topicId,"0");
+		try {
+			response.getWriter().write("ok");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void receiveIntive(HttpServletRequest request, HttpServletResponse response) {
+/*		cmd:"receiveInvite",
+		toUserId:currentUserId,
+		topicId:topicId*/
+		String toUserId = request.getParameter("toUserId");
+		String topicId = request.getParameter("topicId");
+		System.out.println("接受邀请"+"toUserId:"+toUserId+"  topicId:"+topicId);
+		msgManager.updateTopicRequestMsgHandledState(toUserId, topicId,"1");//更改邀请信息的状态
+		
+		//参与话题
+		//查询出参与人
+		UserManager userManager = new UserManagerImpl();
+		User joinUser = userManager.findUserById(Integer.parseInt(toUserId));
+		
+		//保存参与话题历史,要检查在参与话题历史是否存在
+		String currentTime = DateTimeUtils.getCurrentTimeStr();
+		if(!topicManager.checkTopicIsExitInHistory(toUserId, topicId))
+		{
+			TopicHistory topicHistory = new TopicHistory(toUserId, topicId,currentTime ,'j');
+			topicManager.addTopicHistory(topicHistory);
+		}
+		//保存话题组,检查是否已经存在到话题组
+		if(!topicManager.checkIsTopicMember(toUserId, topicId))
+		{
+			TopicGroup topicMember =new TopicGroup(topicId,toUserId,joinUser.getXunta_username(),currentTime);
+			topicManager.saveTopicGroup(topicMember);
+		}
+		try {
+			response.getWriter().write("ok");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	private void searchUnreadMsgNum(HttpServletRequest request, HttpServletResponse response) {
 		String authorId=request.getParameter("authorId");
-		long num=topicManager.searchNotReadmessageNum(authorId);
+		long num1=msgManager.findUnreadSysMsgNum(authorId);
+		long num2=msgManager.findUnreadTopicRequestMsgNum(authorId);
 		try {
 			response.setContentType("text/json");
 			JSONObject jsonObj = new JSONObject();
-			jsonObj.put("num",num);
+			jsonObj.put("num",num1+num2);
 			response.getWriter().write(jsonObj.toString());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -228,22 +361,24 @@ public class TopicService extends HttpServlet {
 
 	private void invite(HttpServletRequest request, HttpServletResponse response) {
 		//获取请求参数
-		String userId = request.getParameter("userId");
-		String userName = request.getParameter("userName");
+		String fromUserId = request.getParameter("fromUserId");
 		String to_userId = request.getParameter("to_userId");
+		
+		String fromUserName = request.getParameter("fromUserName");
+		String to_userName = request.getParameter("to_userName");
 		String topicId = request.getParameter("topicId");
-		String topicContent = request.getParameter("topicContent");
-		
-		System.out.println("userId:"+userId);
-		System.out.println("userName:"+userName);
+		System.out.println("用户发出邀请参与话题请求：");
+		System.out.println("fromUserId:"+fromUserId);
+		System.out.println("fromUserName:"+fromUserName);
 		System.out.println("to_userId:"+to_userId);
+		System.out.println("to_userName:"+to_userName);
 		System.out.println("topicId:"+topicId);
-		System.out.println("topicContent:"+topicContent);
 		
-		MessageAlert messageAlert = new MessageAlert(to_userId,userName,userId, topicId, topicContent,DateTimeUtils.getCurrentTimeStr());
+		TopicRequestMsg topicRequestMsg = new TopicRequestMsg(fromUserId, to_userId, fromUserName, to_userName, topicId, DateTimeUtils.getCurrentTimeStr(),"-1","0");
 		
 		try {
-			topicManager.addMessageAlert(messageAlert);
+			//topicManager.addMessageAlert(messageAlert);
+			msgManager.addTopicRequestMsg(topicRequestMsg);
 			response.getWriter().write("ok");
 		} catch (IOException e) {
 			try {

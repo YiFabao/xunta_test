@@ -71,12 +71,12 @@ $(".historicalTopic").click(function(event){
 //用户点击消息提醒
 $(".message").click(function(event){
 	console.log("用户点击消息提醒");
-	$.post(contextPath+"/servlet/topic_service?cmd=msgalert",null,function(res,status){
+	/*$.post(contextPath+"/servlet/topic_service?cmd=msgalert",null,function(res,status){
 		//console.log(res);
 		$("#container_all").empty();
 		$("#container_all").append(res);
 		console.log($("#container_all")[0]);
-	});
+	});*/
 });
 
 //点击未读消息
@@ -94,18 +94,40 @@ $(".message").click(function(event){
 $(document).ready(function(){
 	  $("#topic_request_msg_num").click(function(){
 		  console.log("将消息总数清零");
-		  clearNavBarMsgAlertNum();
+		  //查询数目是否为0
 		  $(".alert_msg_pull_down").slideToggle("slow");
+		  var numStr =$("#topic_invite_msg_num").attr("num");
+		  console.log("导航栏消息是否为0:"+(parseInt(numStr)==0));
+		  //如果不为0就将该用户在数据库中所有的消息都置为已读
+		  if(parseInt(numStr)!=0)
+		  {
+			  $.post(contextPath+"/servlet/topic_service",{
+				  cmd:"clearNavBarMsgNum",
+				  userId:currentUserId
+			  },function(res,status){
+				  console.log(status);
+			  });
+		  }
+		  clearNavBarMsgAlertNum();
+		  
 	  });
+	  
 	  //初始化话题请求页页
 	  console.log("初始化话题请求消息提示...");
-	  $.post("include/topicRequest.jsp",null,function(res,status){
-		  //$(".msg_tab .content ul li:first").append(res);
+	  $.post(contextPath+"/servlet/topic_service",{
+		  cmd:"initTopicRequestMsg",
+		  userId:currentUserId
+	  },function(res,status){
+		  	console.log(res);
+		  	$(".msg_tab .content ul li:first").append(res);
 	  });
 	  //初始化系统消息
 	  console.log("初始化系统请求消息提示...");
-	  $.post("include/topicRequest.jsp",null,function(res,status){
-		  //$(".msg_tab .content ul li:eq(1)").append(res);
+	  $.post(contextPath+"/servlet/topic_service",{
+		  cmd:"initSysMsg",
+		  userId:currentUserId
+	  },function(res,status){
+		 $(".msg_tab .content ul li:eq(1)").append(res);
 	  });
 });
 
@@ -134,7 +156,7 @@ function addOneTopicInviteMsg(fromUserId,_fromNickName,topicName,topicId){
 	
 	p_node.innerHTML=_fromNickName+" 邀请您参与话题  #"+topicName+"#"+"<br/>"+new Date().format("yyyy-MM-dd hh:mm:ss");
 	button_agree.setAttribute("topicId",topicId);
-	
+	$(".msg_tab .content ul li:first").prepend(div_node);
 	//=================================================同意和不同意后
 	$(button_agree).click(function(event){
 		console.log("点击同意事件");
@@ -142,8 +164,8 @@ function addOneTopicInviteMsg(fromUserId,_fromNickName,topicName,topicId){
 		var current_datetime2=new Date().format("yyyy-MM-dd hh:mm:ss");
 		var parameters={
 				cmd:"agree_to_join_topic",
-				userId:currentUserId,
-				userName:currentUserName,
+				fromUserId:currentUserId,
+				fromUserName:currentUserName,
 				topicId:topicId,
 				topicName:topicName,
 				dateTime:current_datetime2
@@ -158,17 +180,59 @@ function addOneTopicInviteMsg(fromUserId,_fromNickName,topicName,topicId){
 		$(div_node).append("<span>===>已同意</span>");
 		//弹出聊天框
 		console.log("同意后要弹出聊天框");
+		//将对应的toUserId,topicId更改话题邀请信息的状态　,并执行参与话题流程
+		$.post(contextPath+"/servlet/topic_service",{
+			cmd:"receiveInvite",
+			toUserId:currentUserId,
+			topicId:topicId
+		},function(res,status){
+			console.log(status);
+			if(status=="success")
+			{
+				console.log("话题邀请信息改为已同意成功");
+			}else{
+				console.log("话题邀请信息改为已同意失败");
+			}
+		});
 		
-		//$(this).parent("div").get(0).append("<span>===>已同意</span>");
-		
-	});
-	$(button_refuse).click(function(event){
-		console.log("点击不同意事件");
-		$(this).parent("div").find("button").remove();
-		$(div_node).append("<span>===>已拒绝</span>");
 	});
 	
-	$(".msg_tab .content ul li:first").prepend(div_node);
+	
+	$(button_refuse).click(function(event){
+		console.log("点击不同意事件");
+		var current_datetime2=new Date().format("yyyy-MM-dd hh:mm:ss");
+		$(this).parent("div").find("button").remove();
+		$(div_node).append("<span>===>已拒绝</span>");
+		var parameters={
+				cmd:"refuseInvite",
+				fromUserId:currentUserId,
+				fromUserName:currentUserName,
+				topicId:topicId,
+				topicName:topicName,
+				dateTime:current_datetime2
+		};
+		var parametersStr=JSON.stringify(parameters);
+		var regx = new RegExp("\"","g");
+		var jsonStr = parametersStr.replace(regx,"\'");
+		inviteFriend("["+fromUserId+"]",jsonStr);
+		
+		//将对应的toUserId,topicId更改话题邀请信息的状态　
+		$.post(contextPath+"/servlet/topic_service",{
+			cmd:"refuseInvite",
+			toUserId:currentUserId,
+			topicId:topicId
+		},function(res,status){
+			console.log(status);
+			if(status=="success")
+			{
+				console.log("话题邀请信息改为已拒绝成功");
+			}else{
+				console.log("话题邀请信息改为已拒绝失败");
+			}
+		});
+	});
+
+	
 };
 
 //在邀请框里添加一条系统消息

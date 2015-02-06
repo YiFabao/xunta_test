@@ -903,6 +903,7 @@
 		 	//if(sum_unreadNum>0)
 		 	//{
 		 		//console.log("总的未读消息数是否大于0:"+sum_unreadNum);
+		 		console.log("显示聊天框");
 		 		showBarMessage();
 		 	//}
  	       	initChatBox(json);//初始化含有未读消息的话题列表
@@ -936,21 +937,52 @@
  			  //topicName==>上海哪好玩啊
 			  console.log("2.是话题邀请");
 			  //将邀请信息添加到消息框中
-			  addOneTopicInviteMsg(msg.userId,msg.userName,msg.topicName,msg.topicId);
+			  addOneTopicInviteMsg(msg.fromUserId,msg.fromUserName,msg.topicName,msg.topicId);
 		  } 
 		  //msg == "TOPIC_INVITE_RESPONSE"==>同意
 		  if(msg.cmd=="agree_to_join_topic"){
-			  var userId = msg.userId;
-			  var userName = msg.userName;
+			  var fromUserId = msg.fromUserId;
+			  var fromUserName = msg.fromUserName;
 			  var topicId = msg.topicId;
 			  var topicName = msg.topicName;
-			  var sysmsg=userName+" 接受了参与话题 #"+topicName+"# 的邀请"+"<br/>"+new Date().format("yyyy-MM-dd hh:mm:ss");
+			  var sysmsg=fromUserName+" 接受了参与话题 #"+topicName+"# 的邀请"+"<br/>"+new Date().format("yyyy-MM-dd hh:mm:ss");
 			  console.log(sysmsg);
 			 //将系统消息添加到消息框里
 			  addOneSystemMsg(sysmsg);
+			 //将系统消息添加到服务器
+			 $.post("${pageContext.request.contextPath}/servlet/topic_service",{
+				cmd:"addSysMsg",
+				fromUserId:fromUserId,
+				fromUserName:fromUserName,
+				toUserId:"${sessionScope.user.id}",//消息是发给谁的就是谁的
+				toUserName:"${sessionScope.user.xunta_username}",
+				sysmsg:fromUserName+" 接受了参与话题 #"+topicName+"# 的邀请"
+			 },function(res,status){
+				 console.log(status);
+			 });
+		  }else if(msg.cmd=="refuseInvite"){
+			  var fromUserId = msg.fromUserId;
+			  var fromUserName = msg.fromUserName;
+			  var topicId = msg.topicId;
+			  var topicName = msg.topicName;
+			  var sysmsg=fromUserName+" 拒绝了参与话题 #"+topicName+"# 的邀请"+"<br/>"+new Date().format("yyyy-MM-dd hh:mm:ss");
+			  console.log(sysmsg);
+			 //将系统消息添加到消息框里
+			  addOneSystemMsg(sysmsg);
+			 //将系统消息添加到服务器
+			 //将系统消息添加到服务器
+			 $.post("${pageContext.request.contextPath}/servlet/topic_service",{
+				cmd:"addSysMsg",
+				fromUserId:fromUserId,
+				fromUserName:fromUserName,
+				toUserId:"${sessionScope.user.id}",
+				toUserName:"${sessionScope.user.xunta_username}",
+				sysmsg:fromUserName+" 拒绝了参与话题 #"+topicName+"# 的邀请"
+			 },function(res,status){
+				 console.log(status);
+			 });
 		  }
 	  };
-	  
 	  
 	  //初始化聊天框
 	  function initChatBox(json_topicIdKey_unreadMsgNumValue){

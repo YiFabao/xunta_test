@@ -30,7 +30,7 @@ function onAppPause() { //运行环境从前台切换到后台事件
 
 function websocketEvent(userId) {
 	//可以做一个连接中的效果,如果连接成功,触发onpen方法在取消连接中效果,如果10秒中没连接上会触发checkWebSocketState方法的状态,显示当前网络状态
-	ws = new WebSocket('ws://aigine.eicp.net:21280/WebSocket/WebSocketServlet?userId='+userId);
+	ws = new WebSocket('ws://aigine.eicp.net:27272/WebSocket/WebSocketServlet?userId='+userId);
 	checkWebSocketState();
 	//连接服务器成功触发该事件
 	ws.onopen = function(event) {

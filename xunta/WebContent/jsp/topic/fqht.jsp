@@ -86,7 +86,7 @@
 						</td>
 						<td width="100px">${matched_topic.userName }</td>
 						<td align="right">
-							<input type="button" value="邀请" class="btn_invite" userId="${matched_topic.userId }">
+							<input type="button" value="邀请" class="btn_invite" userId="${matched_topic.userId }" userName="${matched_topic.userName }">
 						</td>
 					</tr>
 					<tr>
@@ -130,39 +130,50 @@
 				$("div.hover_box input.btn_invite").click(function(event){
 					console.log("放大的事件的邀请信息");
 					//var to_userId =$(this).attr(userId);//被邀请人的userId
-					var userId = "${sessionScope.user.id}";//邀请人的userId
-					var userName = "${sessionScope.user.xunta_username}";//邀请人的userId
+					var fromUserId = "${sessionScope.user.id}";//邀请人的userId
+					var fromUserName = "${sessionScope.user.xunta_username}";//邀请人的userId
 					var to_userId =this.getAttribute("userId");//被邀请人的userId
+					var to_userName =this.getAttribute("userName");//被邀请人的userId
 					var topicId = $("#myTopic").attr("topicId");
+					var topicName =$("#myTopic").attr("topicName");
 					var topicContent =$("#myTopic").attr("topicContent");
 					
-					console.log("userId:"+userId);
-					console.log("userName:"+userName);
+					console.log("fromUserId:"+fromUserId);
+					console.log("fromUserName:"+fromUserName);
 					console.log("to_userId:"+to_userId);
+					console.log("to_userName:"+to_userName);
 					console.log("topicId:"+topicId);
+					console.log("topicName:"+topicName);
 					console.log("topicContent:"+topicContent);
 					
-					$.post("${pageContext.request.contextPath}/servlet/topic_service",{
-						cmd:"invite",
-						topicId:topicId,
-						userId:userId,
-						userName:userName,
-						topicContent:topicContent,
-						to_userId:to_userId
-						},
+					var parameters = {
+							cmd:"invite",
+							topicId:topicId,
+							fromUserId:fromUserId,
+							fromUserName:fromUserName,
+							topicName:"${requestScope.myTopic.topicName }",
+							topicContent:topicContent,
+							to_userId:to_userId,
+							to_userName:to_userName
+							};
+					
+					$.post("${pageContext.request.contextPath}/servlet/topic_service",parameters,
 						function(res,status){
 							console.log("邀请状态:"+status+"===>"+res);
 							if(status=="success"&&res=="ok")
 							{
 								//ws通知邀请人
-								inviteFriend("["+to_userId+"]", "TOPIC_INVITE");
+								console.log(JSON.stringify(parameters).toString());
+								var parametersStr=JSON.stringify(parameters);
+								var regx = new RegExp("\"","g");
+								var jsonStr = parametersStr.replace(regx,"\'");
+								inviteFriend("["+to_userId+"]",jsonStr);
 								alert("邀请成功!!!  别人同意后，在顶部导航栏会看到消息提醒");
 							}
 							else{
 								alert("邀请失败，再试一次");
 							}
 					});
-					
 				});
 				
 				//获取悬浮框的高度和宽度
@@ -209,27 +220,31 @@
 		//被邀请人的userId
 		//邀请人的topicId
 		//邀请人的话题内容
-		var userId = "${sessionScope.user.id}";//邀请人的userId
-		var userName = "${sessionScope.user.xunta_username}";//邀请人的userId
+		var fromUserId = "${sessionScope.user.id}";//邀请人的userId
+		var fromUserName = "${sessionScope.user.xunta_username}";//邀请人的userId
 		var to_userId =this.getAttribute("userId");//被邀请人的userId
+		var to_userName =this.getAttribute("userName");//被邀请人的userId
 		var topicId = $("#myTopic").attr("topicId");
 		var topicContent =$("#myTopic").attr("topicContent");
 		
-		console.log("userId:"+userId);
-		console.log("userName:"+userName);
+		console.log("userId:"+fromUserId);
+		console.log("userName:"+fromUserName);
 		console.log("to_userId:"+to_userId);
 		console.log("topicId:"+topicId);
 		console.log("topicContent:"+topicContent);
+		console.log("to_userName:"+to_userName);
 		
 		var parameters = {
 				cmd:"invite",
 				topicId:topicId,
-				userId:userId,
-				userName:userName,
+				fromUserId:fromUserId,
+				fromUserName:fromUserName,
 				topicName:"${requestScope.myTopic.topicName }",
 				topicContent:topicContent,
-				to_userId:to_userId
+				to_userId:to_userId,
+				to_userName:to_userName
 				};
+		
 		$.post("${pageContext.request.contextPath}/servlet/topic_service",parameters,
 			function(res,status){
 				console.log("邀请状态:"+status+"===>"+res);

@@ -10,6 +10,21 @@ public class SysMessage {
 	public String dateTime;
 	public int isHandle;//是否处理过或查看过,0未，1处理过
 	
+	
+	
+	public SysMessage() {
+		super();
+	}
+	public SysMessage(String fromUserId, String fromUserName, String toUserId, String toUserName, String sysmsg, String dateTime, int isHandle) {
+		super();
+		this.fromUserId = fromUserId;
+		this.fromUserName = fromUserName;
+		this.toUserId = toUserId;
+		this.toUserName = toUserName;
+		this.sysmsg = sysmsg;
+		this.dateTime = dateTime;
+		this.isHandle = isHandle;
+	}
 	public int getId() {
 		return id;
 	}

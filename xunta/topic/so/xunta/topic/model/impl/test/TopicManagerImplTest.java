@@ -1,18 +1,57 @@
 package so.xunta.topic.model.impl.test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
 import so.xunta.entity.User;
 import so.xunta.manager.UserManager;
 import so.xunta.manager.impl.UserManagerImpl;
+import so.xunta.topic.entity.MatchedPeopleDetail;
 import so.xunta.topic.entity.Topic;
+import so.xunta.topic.entity.TopicHistory;
 import so.xunta.topic.model.TopicManager;
 import so.xunta.topic.model.impl.TopicManagerImpl;
 
 public class TopicManagerImplTest {
+	@Test
+	public void testmatchedPeopleDetaiList(){
+		TopicManager topicManager = new TopicManagerImpl();
+		List<String> topicIdList =  new ArrayList<String>();
+		//List<MatchedPeopleDetail> matchedPeopleDetaiList =topicManager.findTopicHistoryByTopicId(topicIdList );
+	}
+	
+	
+	@Test
+	public void testfindTopicHistoryByTopicId(){
+		TopicManager topicManager = new TopicManagerImpl();
+		List<String> topicIdList=new ArrayList<String>();
+		topicIdList.add("69078E1A128D0E3A9327037A3DB4BD9E");
+		topicIdList.add("E0C303E8B63FE2D169C564EFD1587E1D");
+		topicIdList.add("86A8CB81E691582620E9F52105B0AAFF");
+		List<TopicHistory> topicHistoryList = topicManager.findTopicHistoryByTopicId(topicIdList);
+		for(TopicHistory t:topicHistoryList)
+		{
+			System.out.println(t.topicId+"  "+t.publish_or_join+"  是否发起话题:"+(t.publish_or_join=='p'));
+		}
+	}
+	
+	@Test
+	public void testMap(){
+		
+		Map<String,User> map = new HashMap<String,User>();
+		User user1 = new User();
+		user1.setEmail("1019357922@qq.com");
+		map.put("user1",user1);
+		User user2 = map.get("user1");
+		user2.setEmail("fabaoyi@126.com");
+		
+		System.out.println(map.get("user1").email);
+	}
+	
 	@Test
 	public void testgetTopicListByTopicIdList(){
 		List<String> topicIdList = new ArrayList<>();

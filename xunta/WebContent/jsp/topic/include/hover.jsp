@@ -23,7 +23,7 @@
 				</td>
 				<td width="100px">${requestScope.topicList.get(0).userName }</td>
 				<td align="right">
-					<input type="button" value="邀请" class ="btn_invite" userId="<%=userId %>">
+					<input type="button" value="邀请" class ="btn_invite" userId="<%=userId %>" userName="${requestScope.topicList.get(0).userName }">
 					<input id="btn_exit" type="button" value=" x ">
 				</td>
 			</tr>
