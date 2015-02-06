@@ -190,7 +190,7 @@ function getHistoryMessage(topicId,count){
        biginIndex:count,
        endIndex:parseInt(count)+20
 	 };
-	 $.post("http://aigine.eicp.net:27272/WebSocket/TopicHistoryMessage",parameters,function(res,status){
+	 $.post("http://aigine.eicp.net:27272/WebSocket/TopicHistoryMessage/test",parameters,function(res,status){
 		 console.log("status:"+status);
 		 if(window.historyMessageHandle)
 		 {
