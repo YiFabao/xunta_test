@@ -117,7 +117,7 @@ public class TopicService extends HttpServlet {
 	private void clearNavBarMsgNum(HttpServletRequest request, HttpServletResponse response) {
 		String userId = request.getParameter("userId");
 		msgManager.updateSysMsgToHandledByUserId(userId);
-		//msgManager.updateTopicRequestMsgHandledState(userId, topicId, state);
+		msgManager.updateTopicRequestMsgReaded(userId);
 		
 	}
 
