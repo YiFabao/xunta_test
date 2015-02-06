@@ -739,6 +739,10 @@
 			   		 var W_new_count_node = getW_new_countByTopicId(topicId);
 			   		 var curr_num=getTopicItemAboutUnreadMsgByTopicId(topicId);
 			   		 changeW_new_count_unreadMsgNum(topicId,curr_num+1);//改变红块显示的数目　
+			   		 
+			   		 //总的消息数+1
+			   		  var totalUnreadMsgNum = getTotalUnReadMsgNum();
+			   		  changeMessageAlertState(totalUnreadMsgNum+1);
 		   		  }
 		   	  }
 	   	  }
